@@ -1,0 +1,10 @@
+# Git Ignore
+
+# Platformio
+.pioenvs
+.piolibdeps
+
+# Eclipse
+.cproject
+.project
+
