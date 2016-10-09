@@ -29,6 +29,8 @@ Revision: 1.1
 
 #### Indicating ERROR State
 - MC shall send **"Z"** to PC to indicate ERROR state.
+- MC shall send error message to PC.
+- MC shall send **"E"** to indicate end of message.
 - Action for PC will be **TBD**.
 
 #### Indicating Normal State
