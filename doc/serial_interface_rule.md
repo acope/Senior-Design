@@ -2,7 +2,7 @@
 
 This document defines the rules for serial communication between microcontroller and computer.
 
-Revision: 1.1
+Revision: 1.2
 
 ### Serial Communication Specification
 - Communication Speed: 115200 bps
@@ -23,15 +23,16 @@ Revision: 1.1
 
 #### Sending Recorded Data
 - MC shall send **"S"** to indicate start of data transmission.
-- Order of data and length will be **TBD** based on sensor selection.
+- MC shall send motor rpm reading in unsigned int format (2 bytes).
+- MC shall send measured voltage in unsigned int format (2 bytes).
 - MC shall send **"E"** to indicate end of data transmission.
 - PC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
 #### Indicating ERROR State
 - MC shall send **"Z"** to PC to indicate ERROR state.
-- MC shall send error message to PC.
+- MC shall send error message to PC in ASC2 string format.
 - MC shall send **"E"** to indicate end of message.
-- Action for PC will be **TBD**.
+- PC shall re-connect serial communication to Arduino board to cause RTS (Request To Send) to auto reset Arduino board.
 
 #### Indicating Normal State
 - MC shall send **"N"** to PC to indicate MC is back to normal state.
@@ -51,15 +52,22 @@ Revision: 1.1
 - PC shall send **"C"** to request end of testing.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
+#### Change Sampling Rate Request
+- PC shall send **"S"** to indicate sampling rate request.
+- Sampling rate can be 100ms to 60 sec (interval of every 100ms).
+- PC shall send in value between 1 (100ms) to 600 (60 sec) in unsigned char format (1 byte).
+- PC shall send **"E"** to indicate end of transmission.
+- MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
+
 #### Change Motor Speed Request
 - PC shall send **"M"** to indicate motor change request.
-- Details of data and length will be **TBD** based on motor selection.
+- PC shall send value in unsigned int format (2 bytes).
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
 #### Change Amplitude Request (Optional)
 - PC shall send **"D"** to indicate motor change request.
-- Details of data and length will be **TBD** based on motor selection
+- - PC shall send value in unsigned char format (1 byte).
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
