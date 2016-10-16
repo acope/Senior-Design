@@ -85,10 +85,25 @@ void loop()
   // Check commands from PC
   checkSerialInterrupt();
 
-  // TODO: condition based on state
-
-  // TODO: Check if timed task needs to be performed
+  if (state_ == error)
+  {
+    // TODO: Error Handling
+  }
+  else if (state_ == done)
+  {
+    // TODO: Termination code
+    termination();
+  }
+  else if (state_ == pause)
+  {
+    // Stop motor & recording
+    analogWrite(PWM_PIN, 0);
+  }
+  else // recording
+  {
+  // Check if timed task needs to be performed
   checkTimerTasks();
+  }
 }
 
 /**

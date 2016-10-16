@@ -8,6 +8,7 @@ typedef enum deviceState{
   initialization,
   ready,
   recording,
+  pause,
   done,
   error
 } DeviceState;

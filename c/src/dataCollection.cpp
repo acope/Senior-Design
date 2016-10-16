@@ -54,7 +54,7 @@ void timerCallback()
 
 void checkTimerTasks()
 {
-  if (f_data_collection_)
+  if (f_data_collection_ && state_ != ready)
   {
     f_data_collection_ = false;
     sendDataSerial();
@@ -89,7 +89,7 @@ void checkSerialInterrupt()
   {
     f_pause_request_ = false;
     Serial.write('A');
-    state_ = ready;
+    state_ = pause;
   }
 
   if (f_complete_request_)

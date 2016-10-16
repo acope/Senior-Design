@@ -140,4 +140,20 @@ bool motorTestRun()
 
 }
 
+bool termination()
+{
+  // TODO: Stop data recording
 
+  // TODO: Stop Motor
+
+  // TODO: Close SD card file system
+
+  // TODO: Close SPI connection
+
+  // TODO: Close any port
+
+  // TODO: Close Timer
+
+  // TODO: Close Serial
+
+}
