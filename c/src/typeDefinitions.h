@@ -38,4 +38,11 @@ typedef struct {
 #define MAX_SAMPLING 600
 #define ENCODER_TOOTH 15
 
+#define MAX_FREQUENCY   2000
+#define MIN_FREQUENCY   4000
+#define MAX_AMPLITUDE   8
+#define MIN_AMPLITUDE   12
+#define MAX_SAMPLE_RATE 1
+#define MIN_SAMPLE_RATE 600
+
 #endif /* SRC_TYPEDEFINITIONS_H_ */

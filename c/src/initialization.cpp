@@ -5,7 +5,7 @@ const unsigned long WAIT_TIME_MS = 500;
 const unsigned long UART_SPEED = 115200;
 const unsigned long TIMER_US = 100000; // 100 ms
 
-extern DeviceState state_;
+volatile extern DeviceState state_;
 
 extern Sd2Card sd_card_;
 extern SdVolume sd_volume_;
@@ -24,9 +24,6 @@ bool initializeBoard()
 
   // Make sure no interrupt happens
   noInterrupts();
-
-  // Global variable initialization
-  target_motor_speed_rpm_.reserve(10);
 
   // initialize digital pin
   pinMode(MOTOR_RPM_PIN, INPUT);

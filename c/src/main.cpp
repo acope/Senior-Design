@@ -26,20 +26,19 @@
 #include "initialization.h"
 
 /* Global Variables */
-DeviceState state_ = initialization;     ///< device state
+volatile DeviceState state_ = initialization;     ///< device state
 
 // Input information
 volatile InputCondition input_condition_;
 volatile unsigned int multiply_factor_;
+volatile InputCondition new_input_condition_;
 
 // Data to be written
 volatile DataCollection collected_data_;
-
-// Data Collection
 volatile unsigned long raw_motor_rpm_count_ = 0;   ///< Totoal number of pulse used by IRS
 volatile unsigned long raw_motor_speed_ = 0;       ///< Plase to store pulse reading
-volatile unsigned int raw_voltage_ = 0;            ///< measured voltage from ATC
-
+volatile unsigned long raw_motor_feedback_count_ = 0;
+volatile unsigned long raw_motor_feedback_ = 0;
 
 // Timer related variables
 volatile unsigned int p_data_collection_ = 10;  ///< data collection period in 100ms
@@ -59,10 +58,6 @@ volatile bool f_complete_request_ = false;       ///< complete request task flag
 volatile bool f_motor_speed_request_ = false;    ///< change motor speed request task flag
 volatile bool f_amplitude_request_ = false;      ///< change amplitude request task flag
 volatile bool f_sampling_rate_request_ = false;  ///< sampling rate change request task flag
-
-// Motor target speed
-String target_motor_speed_rpm_ = "";    ///< Motor target speed in rpm
-
 
 /**
  * @brief Setup code that runs once Arduino powers on
@@ -90,10 +85,15 @@ void loop()
   // Check commands from PC
   checkSerialInterrupt();
 
-  // TODO: Check if timed task needs to be performed
+  // TODO: condition based on state
 
+  // TODO: Check if timed task needs to be performed
+  checkTimerTasks();
 }
 
+/**
+ * @brief Function called by serial interrupt
+ */
 void serialEvent()
 {
   while (Serial.available())
@@ -115,7 +115,7 @@ void serialEvent()
       if (Serial.readBytesUntil('E', data, 5) == 2)
       {
         unsigned int speed = *((unsigned int*)&data[0]);
-        input_condition_.frequency = __builtin_bswap16(speed);
+        new_input_condition_.frequency = __builtin_bswap16(speed);
         f_motor_speed_request_ = true;
       }
       else
@@ -129,7 +129,7 @@ void serialEvent()
       if (Serial.readBytesUntil('E', data, 5) == 2)
       {
         unsigned int amplitude = *((unsigned int*)&data[0]);
-        input_condition_.amplitude = __builtin_bswap16(amplitude);
+        new_input_condition_.amplitude = __builtin_bswap16(amplitude);
         f_amplitude_request_ = true;
       }
       else
@@ -143,7 +143,7 @@ void serialEvent()
       if (Serial.readBytesUntil('E', data, 5) == 2)
       {
         unsigned int rate = *((unsigned int*)&data[0]);
-        input_condition_.sampling_rate = __builtin_bswap16(rate);
+        new_input_condition_.sampling_rate = __builtin_bswap16(rate);
         f_sampling_rate_request_ = true;
       }
       else

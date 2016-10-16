@@ -29,5 +29,10 @@ bool initializeSPI();
  */
 bool motorTestRun();
 
+/**
+ * @brief Close all connection and file system
+ */
+bool termination();
+
 
 #endif /* SRC_INITIALIZATION_H_ */

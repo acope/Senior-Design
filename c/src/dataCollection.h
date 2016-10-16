@@ -18,14 +18,14 @@ void checkSerialInterrupt();
 void timerCallback();
 
 /**
+ * @brief check timer flag
+ */
+void checkTimerTasks();
+
+/**
  * @brief read motor pulse
  */
 void MotorRpmCountISR();
-
-/**
- * @brief Change target motor speed
- */
-bool changeMotorTargetSpeed(unsigned int target_speed);
 
 /**
  * @brief Start motor
@@ -38,24 +38,19 @@ bool startMotor();
 bool stopMotor();
 
 /**
- * @brief PID motor control
+ * @brief Motor Control PID
  */
 void motorSpeedControlPID();
-
-/**
- * @brief get current motor rotation speed in rpm.
- */
-unsigned int getMotorRPM();
-
-/**
- * @brief get current generated voltage in V
- */
-unsigned int getVoltage();
 
 /**
  * @brief Send data to serial
  */
 bool sendDataSerial();
+
+/**
+ * @brief Send input data to SPI
+ */
+bool sendInputSPI();
 
 /**
  * @brief Send data to SPI
