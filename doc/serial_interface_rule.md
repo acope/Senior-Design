@@ -55,7 +55,7 @@ Revision: 1.2
 #### Change Sampling Rate Request
 - PC shall send **"S"** to indicate sampling rate request.
 - Sampling rate can be 100ms to 60 sec (interval of every 100ms).
-- PC shall send in value between 1 (100ms) to 600 (60 sec) in unsigned char format (1 byte).
+- PC shall send in value between 1 (100ms) to 600 (60 sec) in unsigned int format (2 bytes).
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
@@ -67,7 +67,7 @@ Revision: 1.2
 
 #### Change Amplitude Request (Optional)
 - PC shall send **"D"** to indicate motor change request.
-- - PC shall send value in unsigned char format (1 byte).
+- - PC shall send value in unsigned int format (2 bytes).
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
