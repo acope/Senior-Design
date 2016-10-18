@@ -34,5 +34,9 @@ bool motorTestRun();
  */
 bool termination();
 
+/**
+ * @berif Error Handle
+ */
+
 
 #endif /* SRC_INITIALIZATION_H_ */

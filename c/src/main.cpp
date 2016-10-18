@@ -27,6 +27,7 @@
 
 /* Global Variables */
 volatile DeviceState state_ = initialization;     ///< device state
+String error_msg_;
 
 // Input information
 volatile InputCondition input_condition_;
@@ -46,10 +47,10 @@ volatile unsigned int p_motor_control_ = 2;     ///< motor control period in 100
 volatile bool f_data_collection_ = false;       ///< data collection task flag
 volatile bool f_motor_control_ = false;         ///< motor control task flag
 
-// SD card
-Sd2Card sd_card_;
-SdVolume sd_volume_;
-SdFile sd_root_;
+// SD Card
+char sd_card_dir_path_[DIR_PATH_LENGTH];
+char sd_card_file_path_[FILE_PATH_LENGTH];
+volatile unsigned int file_index_ = 0;           ///< index of file number
 
 // Flags
 volatile bool f_record_request_ = false;         ///< record request task flag

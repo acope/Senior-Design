@@ -34,10 +34,12 @@ typedef struct {
 // analog output pin
 #define PWM_PIN 6
 // sd card pin
-#define SD_PIN 10         // Adafruit SD shields
+#define SD_CS_PIN 4     // TODO: Understand which pin is this
 
 #define MAX_SAMPLING 600
 #define ENCODER_TOOTH 15
+
+#define ERROR_LENGTH 100
 
 #define MAX_FREQUENCY   2000
 #define MIN_FREQUENCY   4000
@@ -45,5 +47,10 @@ typedef struct {
 #define MIN_AMPLITUDE   12
 #define MAX_SAMPLE_RATE 1
 #define MIN_SAMPLE_RATE 600
+
+#define DIR_LENGTH 10
+#define FILE_LENGTH 13
+#define DIR_PATH_LENGTH 11
+#define FILE_PATH_LENGTH 25
 
 #endif /* SRC_TYPEDEFINITIONS_H_ */

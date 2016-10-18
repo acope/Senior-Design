@@ -6,14 +6,16 @@ const unsigned long UART_SPEED = 115200;
 const unsigned long TIMER_US = 100000; // 100 ms
 
 volatile extern DeviceState state_;
+extern String error_msg_;
 
-extern Sd2Card sd_card_;
-extern SdVolume sd_volume_;
-extern SdFile sd_root_;
 extern String target_motor_speed_rpm_;
 extern volatile InputCondition input_condition_;
 extern volatile unsigned int multiply_factor_;
 extern volatile DataCollection collected_data_;
+
+extern char sd_card_dir_path_[DIR_PATH_LENGTH];
+extern char sd_card_file_path_[FILE_PATH_LENGTH];
+extern volatile unsigned int file_index_;
 
 bool initializeBoard()
 {
@@ -64,6 +66,7 @@ bool initializeBoard()
   {
     // let PC know it is error
     Serial.write('Z');
+    Serial.println(error_msg_);
     state_ = error;
   }
   else
@@ -113,25 +116,41 @@ bool initializeSerial(unsigned long speed)
   }
 }
 
+// NOTE: SD card will create new file every 50,000 records
 bool initializeSPI()
 {
-  if (!sd_card_.init(SPI_FULL_SPEED, SD_PIN))
+  if (!SD.begin(SD_CS_PIN))
   {
-    // indicate sd card error
-    Serial.write('Z');
-    Serial.println("Fail to initialize SD card.");
-    state_ = error;
+    // TODO: CHange to store error message
+    error_msg_ = "SD card initialization failed.";
     return false;
   }
 
-  if (!sd_volume_.init(sd_card_))
-  {
-    Serial.write('Z');
-    Serial.println("Fail to find FAT16/FAT32 partition.");
-  }
-  // TODO: Check following code
-  sd_root_.openRoot(sd_volume_);
+  // Create new test folder
+  unsigned int count = 0;
+  File root;
+  root = SD.open("/");
+  char dirname[DIR_LENGTH];
 
+  while (true)
+  {
+    sprintf(dirname, "TestRun%03d", count);
+
+    if (SD.exists(dirname))
+      count++;
+    else
+      break;
+  }
+
+  if (!SD.mkdir(dirname))
+  {
+    error_msg_ = "Cannot create directory in SD card.";
+    return false;
+  }
+  sprintf(sd_card_dir_path_, "/%s", dirname);
+
+  file_index_ = 1;
+  sprintf(sd_card_file_path_, "%s/Result%03d", sd_card_dir_path_, file_index_);
   return true;
 }
 
