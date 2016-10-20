@@ -1,8 +1,6 @@
 package odrive;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionListener;
 import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 
