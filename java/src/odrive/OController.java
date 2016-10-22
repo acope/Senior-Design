@@ -16,8 +16,9 @@ public class OController{
         view = new OView();
         serialComm = new OSerialComm();
         
-        //Instantiate action listeners
+        //Add action listeners
         connectButtonActionListener();
+        disconnectButtonActionListener();
         startButtonActionListener();
         stopButtonActionListener();
     }
@@ -51,7 +52,7 @@ public class OController{
         view.buttonDisconnect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                
+                Link.getDefaultInstance().disconnect();
             }
         });
     }
