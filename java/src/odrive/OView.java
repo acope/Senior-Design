@@ -22,6 +22,8 @@ public class OView extends JFrame{
     
     public OView(){
         initGUI();
+        //initallize objects to their starting values
+        guiDefaults();
     }
     
     private void initGUI(){
@@ -87,5 +89,12 @@ public class OView extends JFrame{
         //Add panel to the frame
         mainFrame.add(mainPanel);
         mainFrame.setVisible(true);
+    }
+    
+    public void guiDefaults(){
+        buttonConnect.setEnabled(true);
+        buttonDisconnect.setEnabled(false);
+        buttonStart.setEnabled(false);
+        buttonStop.setEnabled(false);
     }
 }
