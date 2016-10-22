@@ -41,12 +41,12 @@ typedef struct {
 
 #define ERROR_LENGTH 100
 
-#define MAX_FREQUENCY   2000
-#define MIN_FREQUENCY   4000
-#define MAX_AMPLITUDE   8
-#define MIN_AMPLITUDE   12
-#define MAX_SAMPLE_RATE 1
-#define MIN_SAMPLE_RATE 600
+#define MAX_FREQUENCY   4000
+#define MIN_FREQUENCY   2000
+#define MAX_AMPLITUDE   12
+#define MIN_AMPLITUDE   8
+#define MAX_SAMPLE_RATE 600
+#define MIN_SAMPLE_RATE 1
 
 #define DIR_LENGTH 10
 #define FILE_LENGTH 13

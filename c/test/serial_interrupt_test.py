@@ -61,14 +61,15 @@ while (complete_request == False):
         print data
 
     if (data == 'A'):
-        "Complete Request Completed"
+        print "Complete Request Completed"
         complete_request = True
 
     data = ""
 
 #Motor Speed
 ser.write(b'M')
-ser.write(struct.pack('>2B', 0, 3))
+# send 2007
+ser.write(struct.pack('>2B', 7, 215))
 ser.write(b'E')
 
 while (motor_change_request == False):
@@ -84,7 +85,8 @@ while (motor_change_request == False):
 
 #Amplitude
 ser.write(b'D')
-ser.write(struct.pack('>2B', 0, 200))
+# send 8
+ser.write(struct.pack('>2B', 0, 8))
 ser.write(b'E')
 
 while (amplitude_change_request == False):
@@ -101,7 +103,8 @@ while (amplitude_change_request == False):
 
 #Sample Rate
 ser.write(b'X')
-ser.write(struct.pack('>2B', 0, 20))
+# send 10
+ser.write(struct.pack('>2B', 0, 10))
 ser.write(b'E')
 
 while (sample_rate_change_request == False):
