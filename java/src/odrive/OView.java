@@ -3,10 +3,22 @@ package odrive;
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
+import org.zu.ardulink.gui.ConnectionStatus;
 
 public class OView extends JFrame{
-    private final int MAIN_FRAME_HEIGHT = 768; //X
-    private final int MAIN_FRAME_WIDTH = 1024; //Y
+    private final int MAIN_FRAME_HEIGHT = 400; //X
+    private final int MAIN_FRAME_WIDTH = 600; //Y
+    
+    protected JButton buttonStop;
+    protected JButton buttonStart;
+    protected JButton buttonConnect;
+    protected JButton buttonDisconnect;
+    protected JTextField  freqTextField;
+    protected JTextField  statusTextField;
+    protected JTextField upTimeTextField;
+    protected JComboBox ampComboBox;
+    protected SerialConnectionPanel serialConnectionPanel;
+    protected ConnectionStatus connectionStatus;
     
     public OView(){
         initGUI();
@@ -20,34 +32,41 @@ public class OView extends JFrame{
         
         
         // MiG Layout, Column and Row constraints as arguments.
-        MigLayout layout = new MigLayout("debug");
+        MigLayout layout = new MigLayout();
         //Create a new panel with MiG Layout constraints
         JPanel mainPanel = new JPanel(layout); 
         //Create JButtons
-        JButton buttonStart = new JButton("Start");
-        JButton buttonStop = new JButton("Stop");
+        buttonStart = new JButton("Start");
+        buttonStop = new JButton("Stop");
+        buttonConnect = new JButton("Connect");
+        buttonDisconnect = new JButton("Disconnect");
+        
         //Create JLabels
         JLabel ampLabel = new JLabel("Amplitude:");
         JLabel freqLabel = new JLabel("Frequency:");
         JLabel statusLabel = new JLabel("Status:");
         JLabel upTimeLabel = new JLabel("Up Time:");
         //Create JTextfield
-        JTextField  freqTextField = new JTextField();
-        JTextField  statusTextField = new JTextField();
-        JTextField upTimeTextField = new JTextField();
+        freqTextField = new JTextField();
+        statusTextField = new JTextField();
+        upTimeTextField = new JTextField();
         //Create ComboBox
         String[] ampString = {"Amp1", "Amp2", "Amp3", "Amp4"};
-        JComboBox ampComboBox = new JComboBox(ampString);
+        ampComboBox = new JComboBox(ampString);
         
         //Create other needed panels
-        SerialConnectionPanel serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
+        serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
+        connectionStatus = new ConnectionStatus();
         
         //Define Text Field Attributes
         statusTextField.setEditable(false);
         upTimeTextField.setEditable(false);
 
         //Add objects to panel
-        mainPanel.add(serialConnectionPanel, "wrap");
+        mainPanel.add(serialConnectionPanel);
+        mainPanel.add(buttonConnect,"split 3");
+        mainPanel.add(buttonDisconnect);
+        mainPanel.add(connectionStatus,"wrap");
         
         mainPanel.add(ampLabel, "split 2");
         mainPanel.add(ampComboBox, "wrap");

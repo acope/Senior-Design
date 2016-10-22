@@ -1,9 +1,11 @@
 package odrive;
 
-/**
- *
- * @author mr_co_000
- */
+import org.zu.ardulink.Link;
+import org.zu.ardulink.RawDataListener;
+
 public class OSerialComm {
     
+    public void OSerialComm(){
+        
+    }
 }
