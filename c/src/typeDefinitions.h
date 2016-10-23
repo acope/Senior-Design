@@ -32,7 +32,7 @@ typedef struct {
 // analog input pins
 #define VOLTAGE_PIN 4
 // analog output pin
-#define PWM_PIN 6
+#define PWM_PIN 7
 // sd card pin
 #define SD_CS_PIN 4     // TODO: Understand which pin is this
 

@@ -8,7 +8,6 @@ const unsigned long TIMER_US = 100000; // 100 ms
 volatile extern DeviceState state_;
 extern String error_msg_;
 
-extern String target_motor_speed_rpm_;
 extern volatile InputCondition input_condition_;
 extern volatile unsigned int multiply_factor_;
 extern volatile DataCollection collected_data_;
