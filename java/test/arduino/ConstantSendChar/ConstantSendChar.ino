@@ -4,7 +4,8 @@ Serial.begin(115200);
 }
 
 void loop() {
-  while(1){
-    Serial.write("T");
-  }
+    Serial.write("Test");
+    //Needed or else Ardulink has an overflow
+    Serial.write(255);
+    delay(500);
 }

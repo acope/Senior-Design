@@ -7,8 +7,10 @@ import java.awt.event.ActionListener;
 import javax.swing.Action;
 import javax.swing.JOptionPane;
 
+//Ardulink imports
 import org.zu.ardulink.Link;
 import org.zu.ardulink.RawDataListener;
+
 
 public class OController{
     private OView view;
@@ -29,7 +31,6 @@ public class OController{
         stopButtonActionListener();
         freqTextFieldActionListener();
         ampComboBoxActionListener();
-        rawDataListener();
     }
     
     //#TODO add handshaking
@@ -45,10 +46,11 @@ public class OController{
                } else if (baudRateS == null || "".equals(baudRateS)){
                    JOptionPane.showMessageDialog(view.buttonConnect,"Invalid baud rate set", "Error", JOptionPane.ERROR_MESSAGE);
                }else{
-               
+               //Connect to Arduino board on com and baud
                 try{
                     int baudRate = Integer.parseInt(baudRateS);
                     boolean connected = link.connect(comPort, baudRate);
+                    //If connected enable/disable buttons
                     if (connected) {
                              view.buttonConnect.setEnabled(false);
                              view.buttonDisconnect.setEnabled(true);
@@ -69,6 +71,7 @@ public class OController{
              }
             }
         });
+        
     }
     
     private void disconnectButtonActionListener(){
@@ -131,7 +134,7 @@ public class OController{
 					build.append((char)message[i]);
 				}
 				rawToString = build.toString();
-                                System.out.println(rawToString);
+                               //System.out.println(rawToString); //Used for debugging
 			}
 		});
         
