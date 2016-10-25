@@ -12,6 +12,7 @@ import org.zu.ardulink.Link;
 import org.zu.ardulink.RawDataListener;
 
 
+
 public class OController{
     private OView view;
     private OSerialComm serialComm;
@@ -23,7 +24,7 @@ public class OController{
     public OController(){
         view = new OView();
         serialComm = new OSerialComm();
-        
+
         //Add action listeners
         connectButtonActionListener();
         disconnectButtonActionListener();
@@ -31,6 +32,8 @@ public class OController{
         stopButtonActionListener();
         freqTextFieldActionListener();
         ampComboBoxActionListener();
+        
+        
     }
     
     //#TODO add handshaking
@@ -55,7 +58,7 @@ public class OController{
                              view.buttonConnect.setEnabled(false);
                              view.buttonDisconnect.setEnabled(true);
                              view.buttonStart.setEnabled(true);
-                             view.buttonStop.setEnabled(true);
+                             view.buttonStop.setEnabled(false);
                          }
 
                 }
@@ -70,8 +73,9 @@ public class OController{
                 }
              }
             }
-        });
+        });   
         
+        rawDataListener();
     }
     
     private void disconnectButtonActionListener(){
@@ -93,18 +97,25 @@ public class OController{
         view.buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Add code
+                //PC sends an R to initiate recording
+                link.sendCustomMessage("R");
+                sendMotorSpeed(30);
             }
-        });    
+        });
+        view.buttonStart.setEnabled(false);
+        view.buttonStop.setEnabled(true);
     }
     
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //Add code
+               //PC sends C for end of testing
+                link.sendCustomMessage("C");
             }
         });
+        view.buttonStart.setEnabled(true);
+        view.buttonStop.setEnabled(false);
     }
     
     private void freqTextFieldActionListener(){
@@ -125,7 +136,7 @@ public class OController{
         });
     }
     
-        public String rawDataListener(){
+        public void rawDataListener(){
         link.addRawDataListener(new RawDataListener() {
 			@Override
 			public void parseInput(String id, int numBytes, int[] message) {
@@ -133,12 +144,16 @@ public class OController{
 				for (int i = 0; i < numBytes; i++) {
 					build.append((char)message[i]);
 				}
-				rawToString = build.toString();
-                               //System.out.println(rawToString); //Used for debugging
+				rawToString = build.toString(); 
+                                System.out.println(rawToString);
 			}
 		});
+    }   
         
-        return rawToString;
+    public void sendMotorSpeed(int speed){ 
+        link.sendCustomMessage("M");
+        link.sendCustomMessage(Integer.toString(speed));
+        link.sendCustomMessage("E");
     }
-    
+   
 }
