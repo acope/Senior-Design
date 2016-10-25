@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 
 import javax.swing.Action;
 import javax.swing.JOptionPane;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 //Ardulink imports
 import org.zu.ardulink.Link;
@@ -20,23 +22,24 @@ public class OController{
     private final Link link = Link.getDefaultInstance();
     
     private String rawToString;
+    private int motorFreq;
     
     public OController(){
         view = new OView();
         serialComm = new OSerialComm();
 
-        //Add action listeners
+        //Add action listeners     
         connectButtonActionListener();
         disconnectButtonActionListener();
         startButtonActionListener();
         stopButtonActionListener();
-        freqTextFieldActionListener();
         ampComboBoxActionListener();
+        freqSliderActionListener();
         
         
     }
     
-    //#TODO add handshaking
+    
     private void connectButtonActionListener(){
         view.buttonConnect.addActionListener(new ActionListener() {
             @Override
@@ -49,33 +52,30 @@ public class OController{
                } else if (baudRateS == null || "".equals(baudRateS)){
                    JOptionPane.showMessageDialog(view.buttonConnect,"Invalid baud rate set", "Error", JOptionPane.ERROR_MESSAGE);
                }else{
-               //Connect to Arduino board on com and baud
-                try{
-                    int baudRate = Integer.parseInt(baudRateS);
-                    boolean connected = link.connect(comPort, baudRate);
-                    //If connected enable/disable buttons
-                    if (connected) {
-                             view.buttonConnect.setEnabled(false);
-                             view.buttonDisconnect.setEnabled(true);
-                             view.buttonStart.setEnabled(true);
-                             view.buttonStop.setEnabled(false);
-                         }
-
+                //Connect to Arduino board on com and baud
+                 try{
+                     int baudRate = Integer.parseInt(baudRateS);
+                     boolean connected = link.connect(comPort, baudRate);
+                     //If connected enable/disable buttons
+                     if(connected) {
+                         view.buttonConnect.setEnabled(false);
+                         view.buttonDisconnect.setEnabled(true);
+                         view.buttonStart.setEnabled(true);
+                         view.buttonStop.setEnabled(false);
+                     }
+                 }
+                 catch(Exception ex){
+                     ex.printStackTrace();
+                     String message = ex.getMessage();
+                     if(message == null || message.trim().equals(" ")){
+                         message = "Generic Error on Connection!";
+                     }
+                     view.statusTextField.setText(message);
+                     view.statusTextField.setBackground(Color.red);
+                 }
                 }
-                catch(Exception ex){
-                    ex.printStackTrace();
-                    String message = ex.getMessage();
-                    if(message == null || message.trim().equals(" ")){
-                        message = "Generic Error on Connection!";
-                    }
-                    view.statusTextField.setText(message);
-                    view.statusTextField.setBackground(Color.red);
-                }
-             }
             }
-        });   
-        
-        rawDataListener();
+        });          
     }
     
     private void disconnectButtonActionListener(){
@@ -97,13 +97,16 @@ public class OController{
         view.buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                //PC sends an R to initiate recording
-                link.sendCustomMessage("R");
-                sendMotorSpeed(30);
+                String motorSpeed = Integer.toString(view.freqSlider.getValue());
+                String amplitude = view.ampComboBox.getSelectedItem().toString();
+                //PC sends an R to initiate recording, motor speed, amplitude and sample rate
+                link.sendCustomMessage("R" + motorSpeed + amplitude);
+                //link.sendCutomMessage(sampleRate);
+                //Enable/Disable Buttons
+                view.buttonStart.setEnabled(false);
+                view.buttonStop.setEnabled(true);
             }
         });
-        view.buttonStart.setEnabled(false);
-        view.buttonStop.setEnabled(true);
     }
     
     private void stopButtonActionListener(){
@@ -112,17 +115,20 @@ public class OController{
             public void actionPerformed(ActionEvent e) {
                //PC sends C for end of testing
                 link.sendCustomMessage("C");
+                //Enable/Disable buttons
+                view.buttonStart.setEnabled(true);
+                view.buttonStop.setEnabled(false);
             }
         });
-        view.buttonStart.setEnabled(true);
-        view.buttonStop.setEnabled(false);
+        
     }
     
-    private void freqTextFieldActionListener(){
-        view.freqTextField.addActionListener(new ActionListener() {
+    private void freqSliderActionListener(){
+        view.freqSlider.addChangeListener(new ChangeListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
-                //add code
+            public void stateChanged(ChangeEvent e) {
+                motorFreq = view.freqSlider.getValue();
+                view.freqTextField.setText(Integer.toString(motorFreq));
             }
         });
     }
@@ -136,7 +142,7 @@ public class OController{
         });
     }
     
-        public void rawDataListener(){
+    public void rawDataListener(){
         link.addRawDataListener(new RawDataListener() {
 			@Override
 			public void parseInput(String id, int numBytes, int[] message) {
@@ -151,9 +157,6 @@ public class OController{
     }   
         
     public void sendMotorSpeed(int speed){ 
-        link.sendCustomMessage("M");
-        link.sendCustomMessage(Integer.toString(speed));
-        link.sendCustomMessage("E");
+        link.sendCustomMessage("M" + Integer.toString(speed)+ "E");
     }
-   
 }

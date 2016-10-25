@@ -19,6 +19,7 @@ public class OView extends JFrame{
     protected JComboBox ampComboBox;
     protected SerialConnectionPanel serialConnectionPanel;
     protected ConnectionStatus connectionStatus;
+    protected JSlider freqSlider;
     
     public OView(){
         initGUI();
@@ -48,13 +49,25 @@ public class OView extends JFrame{
         JLabel freqLabel = new JLabel("Frequency:");
         JLabel statusLabel = new JLabel("Status:");
         JLabel upTimeLabel = new JLabel("Up Time:");
+        
         //Create JTextfield
         freqTextField = new JTextField();
         statusTextField = new JTextField();
         upTimeTextField = new JTextField();
+        
         //Create ComboBox
         String[] ampString = {"Amp1", "Amp2", "Amp3", "Amp4"};
         ampComboBox = new JComboBox(ampString);
+        
+        //Create JSlider
+        int FREQ_MIN = 0; //Minimun motor speed
+        int FREQ_MAX = 1023; //Max motor speed
+        int FREQ_INIT = 0; //Initial motor speed
+        freqSlider = new JSlider(JSlider.HORIZONTAL,FREQ_MIN,FREQ_MAX,FREQ_INIT);
+        freqSlider.setMajorTickSpacing(FREQ_MAX/4);
+        freqSlider.setMinorTickSpacing(FREQ_MAX/12);
+        freqSlider.setPaintTicks(true);
+        freqSlider.setPaintLabels(true);
         
         //Create other needed panels
         serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
@@ -63,6 +76,8 @@ public class OView extends JFrame{
         //Define Text Field Attributes
         statusTextField.setEditable(false);
         upTimeTextField.setEditable(false);
+        freqTextField.setEditable(false);
+        
 
         //Add objects to panel
         mainPanel.add(serialConnectionPanel);
@@ -74,7 +89,9 @@ public class OView extends JFrame{
         mainPanel.add(ampComboBox, "wrap");
         
         mainPanel.add(freqLabel, "split 2");
-        mainPanel.add(freqTextField, "grow, wrap");
+        mainPanel.add(freqTextField, "grow");
+        mainPanel.add(freqSlider, "grow, wrap");
+        
         
         mainPanel.add(buttonStart, "split 2");
         mainPanel.add(buttonStop, "wrap");
