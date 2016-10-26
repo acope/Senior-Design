@@ -97,10 +97,11 @@ public class OController{
         view.buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String motorSpeed = Integer.toString(view.freqSlider.getValue());
-                String amplitude = view.ampComboBox.getSelectedItem().toString();
+                String motorSpeed = Integer.toString(getMotorSpeedSlider());
+                String amplitude = getAmplitudeComboBox().toString();
+                String sampRate = Integer.toString(getSampleRateSlider());
                 //PC sends an R to initiate recording, motor speed, amplitude and sample rate
-                link.sendCustomMessage("R" + motorSpeed + amplitude);
+                link.sendCustomMessage("R" + motorSpeed + amplitude + sampRate);
                 //link.sendCutomMessage(sampleRate);
                 //Enable/Disable Buttons
                 view.buttonStart.setEnabled(false);
@@ -155,8 +156,16 @@ public class OController{
 			}
 		});
     }   
-        
-    public void sendMotorSpeed(int speed){ 
-        link.sendCustomMessage("M" + Integer.toString(speed)+ "E");
+    
+    public int getMotorSpeedSlider(){
+        return view.freqSlider.getValue();
     }
+    public Object getAmplitudeComboBox(){
+        return view.ampComboBox.getSelectedItem();
+    }
+    
+    public int getSampleRateSlider(){
+        return view.sampRateSlider.getValue();
+    }
+    
 }
