@@ -9,6 +9,7 @@ void loop() {
   if(Serial.available() > 0){
     char data = Serial.read();
     Serial.write(data);
+    Serial.write(255);
   }
 
 }

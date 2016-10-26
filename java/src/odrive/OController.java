@@ -23,6 +23,7 @@ public class OController{
     
     private String rawToString;
     private int motorFreq;
+    private int sampRate;
     
     public OController(){
         view = new OView();
@@ -35,7 +36,7 @@ public class OController{
         stopButtonActionListener();
         ampComboBoxActionListener();
         freqSliderActionListener();
-        
+        sampRateSliderActionListener();
         
     }
     
@@ -74,6 +75,7 @@ public class OController{
                      view.statusTextField.setBackground(Color.red);
                  }
                 }
+               rawDataListener();
             }
         });          
     }
@@ -92,20 +94,24 @@ public class OController{
             }
         });
     }
-    
-    private void startButtonActionListener(){
+        private void startButtonActionListener(){
         view.buttonStart.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String motorSpeed = Integer.toString(getMotorSpeedSlider());
                 String amplitude = getAmplitudeComboBox().toString();
                 String sampRate = Integer.toString(getSampleRateSlider());
+                String message = "R" + motorSpeed + amplitude + sampRate;
+                
                 //PC sends an R to initiate recording, motor speed, amplitude and sample rate
-                link.sendCustomMessage("R" + motorSpeed + amplitude + sampRate);
-                //link.sendCutomMessage(sampleRate);
-                //Enable/Disable Buttons
+                link.writeSerial(message);
+                
+                //Enable/Disable GUI
                 view.buttonStart.setEnabled(false);
                 view.buttonStop.setEnabled(true);
+                view.freqSlider.setEnabled(false);
+                view.sampRateSlider.setEnabled(false);
+                view.ampComboBox.setEnabled(false);
             }
         });
     }
@@ -115,13 +121,15 @@ public class OController{
             @Override
             public void actionPerformed(ActionEvent e) {
                //PC sends C for end of testing
-                link.sendCustomMessage("C");
-                //Enable/Disable buttons
+                link.writeSerial("C");
+                //Enable/Disable GUI
                 view.buttonStart.setEnabled(true);
                 view.buttonStop.setEnabled(false);
+                view.freqSlider.setEnabled(true);
+                view.sampRateSlider.setEnabled(true);
+                view.ampComboBox.setEnabled(true);
             }
-        });
-        
+        }); 
     }
     
     private void freqSliderActionListener(){
@@ -130,6 +138,16 @@ public class OController{
             public void stateChanged(ChangeEvent e) {
                 motorFreq = view.freqSlider.getValue();
                 view.freqTextField.setText(Integer.toString(motorFreq));
+            }
+        });
+    }
+    
+        private void sampRateSliderActionListener(){
+        view.sampRateSlider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                sampRate = view.sampRateSlider.getValue();
+                view.sampRateTextField.setText(Integer.toString(sampRate));
             }
         });
     }
@@ -147,15 +165,23 @@ public class OController{
         link.addRawDataListener(new RawDataListener() {
 			@Override
 			public void parseInput(String id, int numBytes, int[] message) {
-				StringBuilder build = new StringBuilder(numBytes + 1);
-				for (int i = 0; i < numBytes; i++) {
-					build.append((char)message[i]);
-				}
-				rawToString = build.toString(); 
-                                System.out.println(rawToString);
+                            StringBuilder build = new StringBuilder(numBytes + 1);
+                            for (int i = 0; i < numBytes; i++) {
+                            	build.append((char)message[i]);
+                            }                              
+                            setRawToString(build.toString());  
 			}
 		});
     }   
+    
+    private void setRawToString(String newString){
+         rawToString = newString;
+         System.out.print(rawToString);
+    }
+    
+    public String getRawToString(){
+        return rawToString;
+    }
     
     public int getMotorSpeedSlider(){
         return view.freqSlider.getValue();
