@@ -2,7 +2,7 @@
 
 This document defines the rules for serial communication between microcontroller and computer.
 
-Revision: 1.2
+Revision: 1.3
 
 ### Serial Communication Specification
 - Communication Speed: 115200 bps
@@ -23,8 +23,11 @@ Revision: 1.2
 
 #### Sending Recorded Data
 - MC shall send **"S"** to indicate start of data transmission.
-- MC shall send motor rpm reading in unsigned int format (2 bytes).
-- MC shall send measured voltage in unsigned int format (2 bytes).
+- MC shall send *time stamp* in unsigned long format (4 bytes).
+- MC shall send *motor rpm* reading in unsigned int format (2 bytes).
+- MC shall send *input rpm* reading in unsigned int format (2 bytes).
+- MC shall send *output rpm* reading in unsigned int format (2 bytes).
+- MC shall send *measured voltage* in unsigned int format (2 bytes).
 - MC shall send **"E"** to indicate end of data transmission.
 - PC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
@@ -32,7 +35,7 @@ Revision: 1.2
 - MC shall send **"Z"** to PC to indicate ERROR state.
 - MC shall send error message to PC in ASC2 string format.
 - MC shall send **"E"** to indicate end of message.
-- PC shall re-connect serial communication to Arduino board to cause RTS (Request To Send) to auto reset Arduino board.
+- PC shall perform **TBD**
 
 #### Indicating Normal State
 - MC shall send **"N"** to PC to indicate MC is back to normal state.
@@ -65,11 +68,13 @@ Revision: 1.2
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
-#### Change Amplitude Request (Optional)
+#### Change Amplitude Request
 - PC shall send **"D"** to indicate motor change request.
-- - PC shall send value in unsigned int format (2 bytes).
+- PC shall send value in unsigned int format (2 bytes).
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
 ### Note
-If additional definitions are needed, create a issue or email to discuss.
+- If additional definitions are needed, create a issue or email to discuss.
+- Due to Ardulink Library used by computer side code, microcontroller must send **255** or **0xFF** at end of serial TX to [prevent Ardulink from getting into buffer overflow](http://stackoverflow.com/questions/27654046/confirming-message-received-from-ardulinks-sendcustommessage-through-serial-r). 
+
