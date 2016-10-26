@@ -1,9 +1,11 @@
 package odrive;
 
 import javax.swing.*;
+import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 import org.zu.ardulink.gui.ConnectionStatus;
+
 
 public class OView extends JFrame{
     private final int MAIN_FRAME_HEIGHT = 600; //X
@@ -132,5 +134,9 @@ public class OView extends JFrame{
         buttonDisconnect.setEnabled(false);
         buttonStart.setEnabled(false);
         buttonStop.setEnabled(false);
+    }
+    
+    public void errorJOptionPane(String errorString){
+        JOptionPane.showMessageDialog(buttonConnect,errorString, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
