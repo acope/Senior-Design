@@ -77,6 +77,7 @@ void checkSerialInterrupt()
   {
     f_record_request_ = false;
     startMotor();
+    sendInputSD();
     OpenSDFile();
     Serial.write('A');
     state_ = prepare;
@@ -106,7 +107,7 @@ void checkSerialInterrupt()
     {
       Serial.write('A');
       input_condition_.frequency = new_input_condition_.frequency;
-//      sendInputSPI();
+      sendInputSD();
     }
     else
       Serial.write('F');
@@ -120,7 +121,7 @@ void checkSerialInterrupt()
     {
       Serial.write('A');
       input_condition_.amplitude = new_input_condition_.amplitude;
-//      sendInputSPI();
+      sendInputSD();
     }
     else
       Serial.write('F');
@@ -135,7 +136,7 @@ void checkSerialInterrupt()
       Serial.write('A');
       input_condition_.sampling_rate = new_input_condition_.sampling_rate;
       multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
-//      sendInputSPI();
+      sendInputSD();
     }
     Serial.write('A');
   }
@@ -152,6 +153,7 @@ bool stopMotor()
   analogWrite(PWM_PIN, 0);
 }
 
+/// TODO: Motor Control Implementation
 void motorSpeedControlPID()
 {
 }
@@ -181,11 +183,32 @@ bool sendDataSerial()
 
 bool sendInputSD()
 {
+  sd_card_input_ = SD.open(sd_card_input_path_, FILE_WRITE);
+  sd_card_input_.print(collected_data_.timestamp, 4);
+  sd_card_input_.write(", ");
+  sd_card_input_.print(input_condition_.frequency);
+  sd_card_input_.write(", ");
+  sd_card_input_.print(input_condition_.amplitude);
+  sd_card_input_.write(", ");
+  sd_card_input_.print(input_condition_.sampling_rate);
+  sd_card_input_.println(" ");
+  sd_card_input_.close();
 }
-
 
 bool sendDataSD()
 {
+  sd_card_file_.print(collected_data_.timestamp, 4);
+  sd_card_file_.write(", ");
+  sd_card_file_.print(collected_data_.motor_rpm, 2);
+  sd_card_file_.write(", ");
+  sd_card_file_.print(collected_data_.input_rpm, 2);
+  sd_card_file_.write(", ");
+  sd_card_file_.print(collected_data_.output_rpm, 2);
+  sd_card_file_.write(", ");
+  sd_card_file_.print(collected_data_.generated_voltage, 2);
+  sd_card_file_.write(", ");
+
+  return true;
 }
 
 void OpenSDFile()

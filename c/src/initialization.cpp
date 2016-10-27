@@ -158,6 +158,7 @@ bool initializeSD()
 
   file_index_ = 1;
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
+  sprintf(sd_card_input_path_, "%s/INPUT.csv", sd_card_dir_path_);
 
   return true;
 }

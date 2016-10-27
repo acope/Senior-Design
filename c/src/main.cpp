@@ -55,6 +55,8 @@ char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current direct
 char sd_card_file_path_[FILE_PATH_LENGTH];     //!< store path to current file
 volatile unsigned int file_index_ = 1;         //!< index of file number
 File sd_card_file_;                            //!< File object
+char sd_card_input_path_[FILE_PATH_LENGTH];    //!< Path to Input File
+File sd_card_input_;                           //!< File object
 
 // Flags
 volatile bool f_record_request_ = false;         ///< record request task flag

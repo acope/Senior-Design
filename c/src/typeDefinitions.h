@@ -95,6 +95,9 @@ extern char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current
 extern char sd_card_file_path_[FILE_PATH_LENGTH];     //!< store path to current file
 extern volatile unsigned int file_index_;             //!< index of file number
 extern File sd_card_file_;                            //!< File object
+extern char sd_card_input_path_[FILE_PATH_LENGTH];    //!< Path to Input File
+extern File sd_card_input_;                           //!< File object
+
 
 // Flags
 extern volatile bool f_record_request_;         ///< record request task flag
