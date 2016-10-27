@@ -20,14 +20,19 @@ bool initializeBoard();
 bool initializeSerial(unsigned long speed);
 
 /**
- * @brief initialize and test SPI communication
+ * @brief initialize and test SD card
  */
-bool initializeSPI();
+bool initializeSD();
 
 /**
  * @brief Test run motor and measure rpm
  */
 bool motorTestRun();
+
+/**
+ * @brief Print Directory Structure
+ */
+void printDirectory(File dir, int numTabs);
 
 /**
  * @brief Close all connection and file system

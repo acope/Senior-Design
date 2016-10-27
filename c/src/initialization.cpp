@@ -23,6 +23,9 @@ bool initializeBoard()
   // setup and test PC connection
   isInitialized &= initializeSerial(UART_SPEED);
 
+  // setup and test SD card connection
+ isInitialized &= initializeSD();
+
   // Make sure no interrupt happens
   noInterrupts();
 
@@ -47,10 +50,7 @@ bool initializeBoard()
   multiply_factor_ = MAX_SAMPLING - input_condition_.sampling_rate;
   collected_data_.timestamp = 0;
 
-  // TODO: setup and test SD card connection
-//  isInitialized &= initializeSPI();
-
-  // TODO: Timer setup
+  // Timer setup
   Timer1.initialize(TIMER_US);
   Timer1.attachInterrupt(timerCallback);
 
@@ -86,9 +86,6 @@ bool initializeBoard()
 
 bool initializeSerial(unsigned long speed)
 {
-  // Note that serial.write is non-blocking code (writes to buffer)
-  int timeout = 10;
-
   Serial.begin(speed);
 
   while (!Serial);      // wait untill serial is connected.
@@ -105,41 +102,60 @@ bool initializeSerial(unsigned long speed)
       if (inChar == 'A')
         return true;
     }
-    else
-    {
-      delay(WAIT_TIME_MS);
-      timeout--;
-      if (!timeout)
-        return false;
+  }
+}
+
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+
+    File entry =  dir.openNextFile();
+    if (! entry) {
+      // no more files
+      break;
     }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
   }
 }
 
 // NOTE: SD card will create new file every 50,000 records
-bool initializeSPI()
+bool initializeSD()
 {
+  // Setup connection
   if (!SD.begin(SD_CS_PIN))
   {
-    // TODO: CHange to store error message
     error_msg_ = "SD card initialization failed.";
     return false;
   }
 
   // Create new test folder
-  unsigned int count = 0;
+  unsigned int count = 1;
   File root;
   root = SD.open("/");
   char dirname[DIR_LENGTH];
 
   while (true)
   {
-    sprintf(dirname, "TestRun%03d", count);
+    sprintf(dirname, "TEST%03d", count);
 
     if (SD.exists(dirname))
       count++;
     else
       break;
   }
+
+  Serial.println(dirname);
 
   if (!SD.mkdir(dirname))
   {
@@ -148,8 +164,10 @@ bool initializeSPI()
   }
   sprintf(sd_card_dir_path_, "/%s", dirname);
 
+  printDirectory(root, 0);
+
   file_index_ = 1;
-  sprintf(sd_card_file_path_, "%s/Result%03d", sd_card_dir_path_, file_index_);
+  sprintf(sd_card_file_path_, "%s/RUN%04d", sd_card_dir_path_, file_index_);
   return true;
 }
 

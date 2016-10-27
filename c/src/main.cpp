@@ -65,17 +65,9 @@ volatile bool f_sampling_rate_request_ = false;  ///< sampling rate change reque
  */
 void setup()
 {
-  pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);
-
-  // setup board
+  //setup board
   bool status = false;
   status = initializeBoard();
-
-  if (status)
-  {
-    digitalWrite(13, HIGH);
-  }
 }
 
 /**
