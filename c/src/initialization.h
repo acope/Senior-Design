@@ -35,11 +35,6 @@ bool motorTestRun();
 void printDirectory(File dir, int numTabs);
 
 /**
- * @brief Close all connection and file system
- */
-bool termination();
-
-/**
  * @berif Error Handle
  */
 

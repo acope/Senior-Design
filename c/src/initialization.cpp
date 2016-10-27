@@ -31,9 +31,13 @@ bool initializeBoard()
 
   // initialize digital pin
   pinMode(MOTOR_RPM_PIN, INPUT);
+  pinMode(INPUT_RPM_PIN, INPUT);
+  pinMode(OUTPUT_RPM_PIN, INPUT);
 
   // setup interrupt for rpm reading pin
   attachInterrupt(digitalPinToInterrupt(MOTOR_RPM_PIN), MotorRpmCountISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(INPUT_RPM_PIN), InputRpmCountISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(OUTPUT_RPM_PIN), OutputRpmCountISR, RISING);
 
   // setup PWM
   pinMode(PWM_PIN, OUTPUT);
@@ -60,24 +64,21 @@ bool initializeBoard()
   // TODO: Watchdog (later)
 
 
+  interrupts();
+
   // Check result of initialization
   if (!isInitialized)
   {
     // let PC know it is error
+    state_ = error;
     Serial.write('Z');
     Serial.println(error_msg_);
-    state_ = error;
   }
   else
   {
-  // TODO: change state to ready and send ready signal
+  // Ready
   state_ = ready;
-
-  // Send ready signal to PC
   Serial.write('G');
-
-  // Enable Interrupts
-  interrupts();
   }
 
   return isInitialized;
@@ -174,15 +175,5 @@ bool initializeSD()
 
 bool motorTestRun()
 {
-
-}
-
-bool termination()
-{
-  // TODO: Stop data recording
-
-  // TODO: Stop Motor
-
-  // TODO: Close SD card file system
 
 }
