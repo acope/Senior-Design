@@ -38,11 +38,14 @@ void timerCallback()
 
 void checkTimerTasks()
 {
-  if (f_data_collection_ && state_ != ready)
+  if (f_data_collection_)
   {
     f_data_collection_ = false;
+    if (state_ == recording)
+    {
     sendDataSerial();
     sendDataSD();
+    }
   }
 
   if (f_motor_control_)
@@ -141,10 +144,12 @@ void checkSerialInterrupt()
 
 bool startMotor()
 {
+  analogWrite(PWM_PIN, input_condition_.frequency);
 }
 
 bool stopMotor()
 {
+  analogWrite(PWM_PIN, 0);
 }
 
 void motorSpeedControlPID()

@@ -52,8 +52,8 @@ typedef struct {
 #define ERROR_LENGTH 100
 
 // Input Restriction @TODO: Ask EE/ME
-#define MAX_FREQUENCY   4000
-#define MIN_FREQUENCY   2000
+#define MAX_FREQUENCY   3000
+#define MIN_FREQUENCY   0
 #define MAX_AMPLITUDE   12
 #define MIN_AMPLITUDE   8
 #define MAX_SAMPLE_RATE 600
