@@ -23,9 +23,19 @@ void timerCallback();
 void checkTimerTasks();
 
 /**
- * @brief read motor pulse
+ * @brief count motor pulse
  */
 void MotorRpmCountISR();
+
+/**
+ * @brief count input pulse
+ */
+void InputRpmCountISR();
+
+/**
+ * @brief count output pulse
+ */
+void OutputRpmCountISR();
 
 /**
  * @brief Start motor
@@ -43,18 +53,28 @@ bool stopMotor();
 void motorSpeedControlPID();
 
 /**
+ * @brief Open SD card file
+ */
+void OpenSDFile();
+
+/**
+ * @brief Close SD card file
+ */
+void CloseSDFile();
+
+/**
  * @brief Send data to serial
  */
 bool sendDataSerial();
 
 /**
- * @brief Send input data to SPI
+ * @brief Send input data to SD
  */
-bool sendInputSPI();
+bool sendInputSD();
 
 /**
- * @brief Send data to SPI
+ * @brief Send data to SD
  */
-bool sendDataSPI();
+bool sendDataSD();
 
 #endif /* SRC_DATACOLLECTION_H_ */
