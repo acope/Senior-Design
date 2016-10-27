@@ -5,12 +5,13 @@
 
 // indication of current state
 typedef enum deviceState{
-  initialization,
-  ready,
-  recording,
-  pause,
-  done,
-  error
+  initialization,  // device in initializing
+  ready,           // done initialization
+  prepare,         // start motor and prepare to record
+  recording,       // recording
+  pause,           // stop recording while motor is running
+  done,            // stop recording, stop motor
+  error            // error
 } DeviceState;
 
 // structure to store all sensor data
@@ -44,7 +45,9 @@ typedef struct {
 #define SD_CS_PIN 4
 
 // Encoder tooth number @TODO: Add tooth of other encoder
-#define ENCODER_TOOTH 15
+#define MOTOR_ENCODER_TOOTH 15
+#define ODRIVE_ENCODER_TOOTH 360
+
 #define ERROR_LENGTH 100
 
 // Input Restriction @TODO: Ask EE/ME
