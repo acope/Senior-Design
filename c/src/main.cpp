@@ -26,31 +26,35 @@
 #include "initialization.h"
 
 /* Global Variables */
-volatile DeviceState state_ = initialization;     ///< device state
+volatile DeviceState state_ = initialization;  //!< microcontroller state
 String error_msg_;
 
 // Input information
-volatile InputCondition input_condition_;
-volatile unsigned int multiply_factor_;
-volatile InputCondition new_input_condition_;
+volatile InputCondition input_condition_;      //!< current input condition
+volatile unsigned int multiply_factor_;        //!< multiply factor for calculating rpm
+volatile InputCondition new_input_condition_;  //!< new input condition
 
 // Data to be written
 volatile DataCollection collected_data_;
-volatile unsigned long raw_motor_rpm_count_ = 0;   ///< Totoal number of pulse used by IRS
-volatile unsigned long raw_motor_speed_ = 0;       ///< Plase to store pulse reading
-volatile unsigned long raw_motor_feedback_count_ = 0;
-volatile unsigned long raw_motor_feedback_ = 0;
-
+volatile unsigned long r_motor_rpm_count_ = 0;       //!< total # of pulse by ISR for motor rpm
+volatile unsigned long r_motor_rpm_ = 0;             //!< plase to store pulse reading for motor rpm
+volatile unsigned long r_motor_feedback_count_ = 0;  //!< total # of pulse by ISR for feedback rpm
+volatile unsigned long r_motor_feedback_rpm_ = 0;    //!< plase to store pulse reading for feedback rpm
+volatile unsigned long r_input_rpm_count_ = 0;       //!< total # of pulse by ISR for input rpm
+volatile unsigned long r_input_rpm_ = 0;             //!< plase to store pulse reading for input rpm
+volatile unsigned long r_output_rpm_count_ = 0;      //!< total # of pulse by ISR for output rpm
+volatile unsigned long r_output_rpm_ = 0;            //!< plase to store pulse reading for output rpm
 // Timer related variables
-volatile unsigned int p_data_collection_ = 10;  ///< data collection period in 100ms
-volatile unsigned int p_motor_control_ = 2;     ///< motor control period in 100ms
-volatile bool f_data_collection_ = false;       ///< data collection task flag
-volatile bool f_motor_control_ = false;         ///< motor control task flag
+volatile unsigned int p_data_collection_ = 10;  //!< data collection period in 100ms
+volatile unsigned int p_motor_control_ = 2;     //!< motor control period in 100ms
+volatile bool f_data_collection_ = false;       //!< data collection task flag
+volatile bool f_motor_control_ = false;         //!< motor control task flag
 
 // SD Card
-char sd_card_dir_path_[DIR_PATH_LENGTH];
-char sd_card_file_path_[FILE_PATH_LENGTH];
-volatile unsigned int file_index_ = 0;           ///< index of file number
+char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current directory
+char sd_card_file_path_[FILE_PATH_LENGTH];     //!< store path to current file
+volatile unsigned int file_index_ = 1;         //!< index of file number
+File sd_card_file_;                            //!< File object
 
 // Flags
 volatile bool f_record_request_ = false;         ///< record request task flag
@@ -65,17 +69,9 @@ volatile bool f_sampling_rate_request_ = false;  ///< sampling rate change reque
  */
 void setup()
 {
-  pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);
-
-  // setup board
+  //setup board
   bool status = false;
   status = initializeBoard();
-
-  if (status)
-  {
-    digitalWrite(13, HIGH);
-  }
 }
 
 /**
@@ -90,21 +86,17 @@ void loop()
   {
     // TODO: Error Handling
   }
-  else if (state_ == done)
+  else if (state_ == prepare)
   {
-    // TODO: Termination code
-    termination();
+    checkTimerTasks();
+    // if feedback motor speed reaches desired speed, move to recording state
+    // state_ = recording
   }
-  else if (state_ == pause)
+  else if (state_ == recording)
   {
-    // Stop motor & recording
-    analogWrite(PWM_PIN, 0);
+    checkTimerTasks();
   }
-  else // recording
-  {
-  // Check if timed task needs to be performed
-  checkTimerTasks();
-  }
+  else {}
 }
 
 /**
