@@ -1,33 +1,5 @@
 #include "dataCollection.h"
 
-extern volatile DeviceState state_;
-
-extern volatile unsigned long r_motor_rpm_count_;
-extern volatile unsigned long r_motor_rpm_;
-extern volatile unsigned long r_motor_feedback_count_;
-extern volatile unsigned long r_motor_feedback_rpm_;
-extern volatile unsigned long r_input_rpm_count_;
-extern volatile unsigned long r_input_rpm_;
-extern volatile unsigned long r_output_rpm_count_;
-extern volatile unsigned long r_output_rpm_;
-
-extern volatile bool f_record_request_;
-extern volatile bool f_pause_request_;
-extern volatile bool f_complete_request_;
-extern volatile bool f_motor_speed_request_;
-extern volatile bool f_amplitude_request_;
-extern volatile bool f_sampling_rate_request_;
-
-extern volatile unsigned int p_data_collection_;
-extern volatile unsigned int p_motor_control_;
-extern volatile bool f_data_collection_;
-extern volatile bool f_motor_control_;
-extern volatile InputCondition input_condition_;
-extern volatile InputCondition new_input_condition_;
-extern volatile unsigned int multiply_factor_;
-extern volatile DataCollection collected_data_;
-
-
 void timerCallback()
 {
   static unsigned int data_collection_count = 0;
@@ -213,10 +185,18 @@ bool sendDataSD()
 
 void OpenSDFile()
 {
-
+  sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
 }
 
 void CloseSDFile()
 {
-  
+  sd_card_file_.close();
+}
+
+void updateSDFile()
+{
+  sd_card_file_.close();
+  file_index_++;
+  sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
+  sd_card_file_ = SD.open(sd_card_dir_path_, FILE_WRITE);
 }

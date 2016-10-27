@@ -5,17 +5,6 @@ const unsigned long WAIT_TIME_MS = 500;
 const unsigned long UART_SPEED = 115200;
 const unsigned long TIMER_US = 100000; // 100 ms
 
-volatile extern DeviceState state_;
-extern String error_msg_;
-
-extern volatile InputCondition input_condition_;
-extern volatile unsigned int multiply_factor_;
-extern volatile DataCollection collected_data_;
-
-extern char sd_card_dir_path_[DIR_PATH_LENGTH];
-extern char sd_card_file_path_[FILE_PATH_LENGTH];
-extern volatile unsigned int file_index_;
-
 bool initializeBoard()
 {
   bool isInitialized = true;

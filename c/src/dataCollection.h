@@ -76,5 +76,9 @@ bool sendInputSD();
  * @brief Send data to SD
  */
 bool sendDataSD();
+/**
+ * @brief Update SD card file to new one
+ */
+void updateSDFile();
 
 #endif /* SRC_DATACOLLECTION_H_ */
