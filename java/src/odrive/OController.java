@@ -53,18 +53,11 @@ public class OController{
                     boolean connected = link.connect(comPort, baudRate);
                     
                     //If connected start listening to COM port and enable/disable GUI
-                    if(connected) {
-                        //rawDataListener();
-                        //Send acknowledge to Arduino                     
+                    if(connected) {                  
                         view.buttonConnect.setEnabled(false);
                         view.buttonDisconnect.setEnabled(true);
                         view.buttonStart.setEnabled(true);
-                        view.buttonStop.setEnabled(false);
-                        
-                        //Wait for Java prpogram to connect to Arduino
-                        Thread.sleep(2000);
-                        //Send Acknowledgement
-                        writeToSerial("A");
+                        view.buttonStop.setEnabled(false);                     
                     }
                 }
                 catch(Exception ex){
@@ -78,7 +71,6 @@ public class OController{
                 }
             }
         });    
-        writeToSerial("A");
     }
     
     private void disconnectButtonActionListener(){
@@ -111,7 +103,7 @@ public class OController{
     
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
-            //PC sends C for end of testing
+            //PC sends C for complete of testing
             link.writeSerial("C");
             //Enable/Disable GUI
             view.buttonStart.setEnabled(true);
@@ -152,6 +144,7 @@ public class OController{
             for (int i = 0; i < numBytes; i++) {
                 build.append((char)message[i]);
             }
+            serialArduinoEvent(build.substring(0));
             setRawToString(build.toString());
             System.out.print(build.toString()); //For testing
         });
@@ -183,8 +176,64 @@ public class OController{
         return view.sampRateSlider.getValue();
     }
     
-    public boolean writeToSerial(String str){
-        link.writeSerial(str);
-        return true;
+    /**
+     * Cases for received state from Arduino
+     * @param str 
+     */
+    private void serialArduinoEvent(String str){
+        switch (str){
+            //Acknowledge
+            case "A":
+                break;
+                
+            //Fail
+            case "F":
+                break;
+                
+            //Connection Test
+            case "T":
+                link.writeSerial("A");
+                break;
+                
+            //Read to collect data
+            case "G":
+                link.writeSerial("A");
+                break;
+            
+            //Sending recorded data(data sent from Arduino)
+            case "S":
+                //add in code for recieving data
+                /*
+                    MC shall send "S" to indicate start of data transmission.
+                    MC shall send time stamp in unsigned long format (4 bytes).
+                    MC shall send motor rpm reading in unsigned int format (2 bytes).
+                    MC shall send input rpm reading in unsigned int format (2 bytes).
+                    MC shall send output rpm reading in unsigned int format (2 bytes).
+                    MC shall send measured voltage in unsigned int format (2 bytes).
+                    MC shall send "E" to indicate end of data transmission.
+                    PC shall respond with "A" or "F" to indicate acknowledge or fail.
+                */
+                break;
+                
+            //Error state
+            case "Z":
+                //add in code for error state handling
+                /*
+                    MC shall send "Z" to PC to indicate ERROR state.
+                    MC shall send error message to PC in ASC2 string format.
+                    MC shall send "E" to indicate end of message.
+                    PC shall perform TBD
+                */
+                break;
+                
+            //Indicate normal state
+            case "N":
+                link.writeSerial("A");
+                break;
+            
+            default:
+                break;
+        }
     }
+    
 }
