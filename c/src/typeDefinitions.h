@@ -17,6 +17,8 @@ typedef enum deviceState{
 typedef struct {
   unsigned long timestamp;
   unsigned int motor_rpm;
+  unsigned int input_rpm;
+  unsigned int output_rpm;
   unsigned int generated_voltage;
 } DataCollection;
 
@@ -27,20 +29,25 @@ typedef struct {
   unsigned int sampling_rate;
 } InputCondition;
 
-// digital input pins
-#define MOTOR_RPM_PIN 2   // Must be digital pin with interrupt
+// Digital input pin (Must be digital pin with interrupt)
+#define MOTOR_RPM_PIN  18
+#define INPUT_RPM_PIN  19
+#define OUTPUT_RPM_PIN 20
+
 // analog input pins
 #define VOLTAGE_PIN 4
+
 // analog output pin
 #define PWM_PIN 7
+
 // sd card pin
-#define SD_CS_PIN 4     // TODO: Understand which pin is this
+#define SD_CS_PIN 4
 
-#define MAX_SAMPLING 600
+// Encoder tooth number @TODO: Add tooth of other encoder
 #define ENCODER_TOOTH 15
-
 #define ERROR_LENGTH 100
 
+// Input Restriction @TODO: Ask EE/ME
 #define MAX_FREQUENCY   4000
 #define MIN_FREQUENCY   2000
 #define MAX_AMPLITUDE   12
@@ -48,9 +55,10 @@ typedef struct {
 #define MAX_SAMPLE_RATE 600
 #define MIN_SAMPLE_RATE 1
 
-#define DIR_LENGTH 10
-#define FILE_LENGTH 13
-#define DIR_PATH_LENGTH 11
-#define FILE_PATH_LENGTH 25
+// File name length @TODO
+#define DIR_LENGTH 7
+#define FILE_LENGTH 10
+#define DIR_PATH_LENGTH 8
+#define FILE_PATH_LENGTH 20
 
 #endif /* SRC_TYPEDEFINITIONS_H_ */

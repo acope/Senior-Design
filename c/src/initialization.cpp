@@ -47,7 +47,7 @@ bool initializeBoard()
   input_condition_.amplitude = 4;
   input_condition_.frequency = 10;
   input_condition_.sampling_rate = 10;
-  multiply_factor_ = MAX_SAMPLING - input_condition_.sampling_rate;
+  multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
   collected_data_.timestamp = 0;
 
   // Timer setup
@@ -163,11 +163,12 @@ bool initializeSD()
     return false;
   }
   sprintf(sd_card_dir_path_, "/%s", dirname);
-
+  // @TODO: Remove
   printDirectory(root, 0);
 
   file_index_ = 1;
-  sprintf(sd_card_file_path_, "%s/RUN%04d", sd_card_dir_path_, file_index_);
+  sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
+
   return true;
 }
 
@@ -183,13 +184,5 @@ bool termination()
   // TODO: Stop Motor
 
   // TODO: Close SD card file system
-
-  // TODO: Close SPI connection
-
-  // TODO: Close any port
-
-  // TODO: Close Timer
-
-  // TODO: Close Serial
 
 }
