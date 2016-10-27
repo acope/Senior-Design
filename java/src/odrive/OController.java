@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JOptionPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -34,6 +33,7 @@ public class OController{
         ampComboBoxActionListener();
         freqSliderActionListener();
         sampRateSliderActionListener();
+        rawDataListener();
     }
     
     
@@ -51,16 +51,20 @@ public class OController{
                 try{
                     int baudRate = Integer.parseInt(baudRateS);
                     boolean connected = link.connect(comPort, baudRate);
-             
+                    
                     //If connected start listening to COM port and enable/disable GUI
                     if(connected) {
-                        rawDataListener();
-                        //Send acknowledge to Arduino
-                        link.writeSerial("A");
+                        //rawDataListener();
+                        //Send acknowledge to Arduino                     
                         view.buttonConnect.setEnabled(false);
                         view.buttonDisconnect.setEnabled(true);
                         view.buttonStart.setEnabled(true);
                         view.buttonStop.setEnabled(false);
+                        
+                        //Wait for Java prpogram to connect to Arduino
+                        Thread.sleep(2000);
+                        //Send Acknowledgement
+                        writeToSerial("A");
                     }
                 }
                 catch(Exception ex){
@@ -73,7 +77,8 @@ public class OController{
                     view.statusTextField.setBackground(Color.red);
                 }
             }
-        });          
+        });    
+        writeToSerial("A");
     }
     
     private void disconnectButtonActionListener(){
@@ -178,4 +183,8 @@ public class OController{
         return view.sampRateSlider.getValue();
     }
     
+    public boolean writeToSerial(String str){
+        link.writeSerial(str);
+        return true;
+    }
 }
