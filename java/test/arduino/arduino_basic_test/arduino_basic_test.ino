@@ -111,27 +111,31 @@ void serialEvent()
   while (Serial.available())
   {
     char inChar = (char)Serial.read();
-
+    
+    //Start data recording request (Start button pressed)
     if (inChar == 'R')
     {
       f_record = true;
       Serial.write('A');
       Serial.write(255);
     }
-
+    
+    //Pause data request
     if (inChar == 'P')
     {
       Serial.write('F');
       Serial.write(255);
     }
-
+    
+    //Complete testing request (Stop Button)
     if (inChar == 'C')
     {
       f_record = false;
       Serial.write('A');
       Serial.write(255);
     }
-
+    
+    //Change motor speed request
     if (inChar == 'M')
     {
       char data[5];
@@ -143,7 +147,8 @@ void serialEvent()
       else
         Serial.write('F');
     }
-
+    
+    //Change AMplitude Request
     if (inChar == 'D')
     {
       char data[5];
@@ -155,7 +160,8 @@ void serialEvent()
       else
         Serial.write('F');
     }
-
+    
+    //Change Sampling Rate
     if (inChar == 'X')
     {
       char data[5];
