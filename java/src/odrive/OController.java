@@ -140,13 +140,15 @@ public class OController{
      */
     public void rawDataListener(){
         link.addRawDataListener((String id, int numBytes, int[] message) -> {
+            //Need to fix for data recieved from arduino          
             StringBuilder build = new StringBuilder(numBytes + 1);
             for (int i = 0; i < numBytes; i++) {
                 build.append((char)message[i]);
+                //System.out.print((char)message[i]);
             }
+            System.out.println(convertStringToHex(build.toString()));
             serialArduinoEvent(build.substring(0));
             setRawToString(build.toString());
-            System.out.print(build.toString()); //For testing
         });
     }   
     
@@ -200,7 +202,7 @@ public class OController{
                 link.writeSerial("A");
                 break;
             
-            //Sending recorded data(data sent from Arduino)
+            //Sending recorded data(data sent from Arduino)Total 14 bytes
             case "S":
                 //add in code for recieving data
                 /*
@@ -235,5 +237,18 @@ public class OController{
                 break;
         }
     }
+    
+    //Used for testing purposes of rawToText
+      public String convertStringToHex(String str){
+
+	  char[] chars = str.toCharArray();
+
+	  StringBuffer hex = new StringBuffer();
+	  for(int i = 0; i < chars.length; i++){
+	    hex.append(Integer.toHexString((int)chars[i]));
+	  }
+
+	  return hex.toString();
+  }
     
 }
