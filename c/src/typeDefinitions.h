@@ -45,25 +45,31 @@ typedef struct {
 // sd card pin
 #define SD_CS_PIN 4
 
-// Encoder tooth number @TODO: Add tooth of other encoder
+// Encoder tooth number @TODO: 3. Add tooth of other encoder
 #define MOTOR_ENCODER_TOOTH 15
 #define ODRIVE_ENCODER_TOOTH 360
 
 #define ERROR_LENGTH 100
+#define SD_CARD_RECORD_PER_FILE 50000
 
-// Input Restriction @TODO: Ask EE/ME
+// Default Input TODO: ASK default input
+#define DEF_FREQUENCY 1600
+#define DEF_AMPLITUDE 90
+#define DEF_SAMPLE_RATE 10
+
+// Input Restriction
 #define MAX_FREQUENCY   3000
 #define MIN_FREQUENCY   0
-#define MAX_AMPLITUDE   12
-#define MIN_AMPLITUDE   8
+#define MAX_AMPLITUDE   120
+#define MIN_AMPLITUDE   90
 #define MAX_SAMPLE_RATE 600
 #define MIN_SAMPLE_RATE 1
 
-// File name length @TODO
-#define DIR_LENGTH 7
-#define FILE_LENGTH 10
-#define DIR_PATH_LENGTH 8
-#define FILE_PATH_LENGTH 20
+// File name length
+#define DIR_LENGTH 8
+#define FILE_LENGTH 12
+#define DIR_PATH_LENGTH 10
+#define FILE_PATH_LENGTH 23
 
 /* Global Variables */
 extern volatile DeviceState state_;  //!< microcontroller state
@@ -73,6 +79,7 @@ extern String error_msg_;
 extern volatile InputCondition input_condition_;      //!< current input condition
 extern volatile unsigned int multiply_factor_;        //!< multiply factor for calculating rpm
 extern volatile InputCondition new_input_condition_;  //!< new input condition
+extern unsigned long sd_card_new_file_count_;         //!< count sd_card new file
 
 // Data to be written
 extern volatile DataCollection collected_data_;
@@ -97,6 +104,7 @@ extern volatile unsigned int file_index_;             //!< index of file number
 extern File sd_card_file_;                            //!< File object
 extern char sd_card_input_path_[FILE_PATH_LENGTH];    //!< Path to Input File
 extern File sd_card_input_;                           //!< File object
+extern volatile bool restart_;                        //!< Indicates that that is restarted
 
 
 // Flags

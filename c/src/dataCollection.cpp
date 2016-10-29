@@ -20,11 +20,12 @@ void timerCallback()
     r_output_rpm_ = r_output_rpm_count_;
     r_output_rpm_count_ = 0;
 
+    // FIXME: Put Back
     collected_data_.timestamp++;
     collected_data_.generated_voltage = analogRead(VOLTAGE_PIN);
-    collected_data_.motor_rpm = (r_motor_rpm_ * multiply_factor_) / MOTOR_ENCODER_TOOTH;
-    collected_data_.input_rpm = (r_input_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
-    collected_data_.output_rpm = (r_output_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
+    collected_data_.motor_rpm = r_motor_rpm_;//(r_motor_rpm_ * multiply_factor_) / MOTOR_ENCODER_TOOTH;
+    collected_data_.input_rpm = r_input_rpm_;//(r_input_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
+    collected_data_.output_rpm = r_output_rpm_;//(r_output_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
   }
 
   if (motor_control_count == p_motor_control_)
@@ -80,7 +81,9 @@ void checkSerialInterrupt()
     sendInputSD();
     OpenSDFile();
     Serial.write('A');
-    state_ = prepare;
+    // FIXME: Put Back
+    state_ = recording;
+    //state_ = prepare;
   }
 
   if (f_pause_request_)
@@ -96,6 +99,7 @@ void checkSerialInterrupt()
     stopMotor();
     CloseSDFile();
     Serial.write('A');
+    restart_ = true;
     state_ = done;
   }
 
@@ -146,16 +150,19 @@ void checkSerialInterrupt()
 bool startMotor()
 {
   analogWrite(PWM_PIN, input_condition_.frequency);
+  return true;
 }
 
 bool stopMotor()
 {
   analogWrite(PWM_PIN, 0);
+  return true;
 }
 
-/// TODO: Motor Control Implementation
+/// TODO: 5. Motor Control Implementation
 void motorSpeedControlPID()
 {
+
 }
 
 
@@ -175,50 +182,81 @@ bool sendDataSerial()
   buf[10] = (collected_data_.generated_voltage) & 255;
   buf[11] = (collected_data_.generated_voltage >> 6) && 255;
 
-  Serial.write('S');
-  Serial.write(buf, 12);
-  Serial.write('E');
+  // FIXME: For Debugging
+  Serial.println(collected_data_.timestamp);
+  Serial.println(collected_data_.motor_rpm);
+  Serial.println(collected_data_.input_rpm);
+  Serial.println(collected_data_.output_rpm);
+  Serial.println(collected_data_.generated_voltage);
+  Serial.println("");
+
+  //Serial.write('S');
+  //Serial.write(buf, 12);
+  //Serial.write('E');
   return true;
 }
 
 bool sendInputSD()
 {
+  static bool first_time = true;
   sd_card_input_ = SD.open(sd_card_input_path_, FILE_WRITE);
-  sd_card_input_.print(collected_data_.timestamp, 4);
-  sd_card_input_.write(", ");
-  sd_card_input_.print(input_condition_.frequency);
-  sd_card_input_.write(", ");
-  sd_card_input_.print(input_condition_.amplitude);
-  sd_card_input_.write(", ");
-  sd_card_input_.print(input_condition_.sampling_rate);
-  sd_card_input_.println(" ");
+
+  if (first_time)
+  {
+    sd_card_input_.write("TIMESTAMP, FREQUENCY, AMPLITUDE, SAMPLE_RATE,\n");
+  }
+
+  sd_card_input_.print(collected_data_.timestamp, DEC);
+  sd_card_input_.write(",");
+  sd_card_input_.print(input_condition_.frequency, DEC);
+  sd_card_input_.write(",");
+  sd_card_input_.print(input_condition_.amplitude, DEC);
+  sd_card_input_.write(",");
+  sd_card_input_.print(input_condition_.sampling_rate, DEC);
+  sd_card_input_.println(",\n");
   sd_card_input_.close();
+  // FIXME: Remove
+  Serial.println("INPUT TO SD CARD");
+  return true;
 }
 
 bool sendDataSD()
 {
-  sd_card_file_.print(collected_data_.timestamp, 4);
-  sd_card_file_.write(", ");
-  sd_card_file_.print(collected_data_.motor_rpm, 2);
-  sd_card_file_.write(", ");
-  sd_card_file_.print(collected_data_.input_rpm, 2);
-  sd_card_file_.write(", ");
-  sd_card_file_.print(collected_data_.output_rpm, 2);
-  sd_card_file_.write(", ");
-  sd_card_file_.print(collected_data_.generated_voltage, 2);
-  sd_card_file_.write(", ");
+  sd_card_new_file_count_++;
+  // FIXME: Back the number
+  if (sd_card_new_file_count_ == 20)//SD_CARD_RECORD_PER_FILE)
+  {
+   sd_card_new_file_count_ = 0;
+   updateSDFile();
+  }
+
+  sd_card_file_.print(collected_data_.timestamp, DEC);
+  sd_card_file_.write(",");
+  sd_card_file_.print(collected_data_.motor_rpm, DEC);
+  sd_card_file_.write(",");
+  sd_card_file_.print(collected_data_.input_rpm, DEC);
+  sd_card_file_.write(",");
+  sd_card_file_.print(collected_data_.output_rpm, DEC);
+  sd_card_file_.write(",");
+  sd_card_file_.print(collected_data_.generated_voltage, DEC);
+  sd_card_file_.write(",\n");
+  // FIXME: Remove
+  Serial.println("SD CARD written");
 
   return true;
 }
 
+// FIXME: All Serial from following functions.
 void OpenSDFile()
 {
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
+  Serial.println("SD FILE OPEN");
 }
 
 void CloseSDFile()
 {
   sd_card_file_.close();
+  Serial.println("SD FILE CLOSE");
 }
 
 void updateSDFile()
@@ -226,5 +264,11 @@ void updateSDFile()
   sd_card_file_.close();
   file_index_++;
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
-  sd_card_file_ = SD.open(sd_card_dir_path_, FILE_WRITE);
+
+  Serial.println(sd_card_dir_path_);
+  Serial.println(sd_card_file_path_);
+
+  sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
+  sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
+  Serial.println("SD CARD FILE NEW ONE!");
 }

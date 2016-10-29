@@ -24,47 +24,50 @@
 #include <Arduino.h>
 #include "typeDefinitions.h"
 #include "initialization.h"
+#include "dataCollection.h"
 
 /* Global Variables */
-volatile DeviceState state_ = initialization;  //!< microcontroller state
+volatile DeviceState state_ = initialization;
 String error_msg_;
 
 // Input information
-volatile InputCondition input_condition_;      //!< current input condition
-volatile unsigned int multiply_factor_;        //!< multiply factor for calculating rpm
-volatile InputCondition new_input_condition_;  //!< new input condition
+volatile InputCondition input_condition_;
+volatile unsigned int multiply_factor_;
+volatile InputCondition new_input_condition_;
+unsigned long sd_card_new_file_count_ = 0;
 
 // Data to be written
 volatile DataCollection collected_data_;
-volatile unsigned long r_motor_rpm_count_ = 0;       //!< total # of pulse by ISR for motor rpm
-volatile unsigned long r_motor_rpm_ = 0;             //!< plase to store pulse reading for motor rpm
-volatile unsigned long r_motor_feedback_count_ = 0;  //!< total # of pulse by ISR for feedback rpm
-volatile unsigned long r_motor_feedback_rpm_ = 0;    //!< plase to store pulse reading for feedback rpm
-volatile unsigned long r_input_rpm_count_ = 0;       //!< total # of pulse by ISR for input rpm
-volatile unsigned long r_input_rpm_ = 0;             //!< plase to store pulse reading for input rpm
-volatile unsigned long r_output_rpm_count_ = 0;      //!< total # of pulse by ISR for output rpm
-volatile unsigned long r_output_rpm_ = 0;            //!< plase to store pulse reading for output rpm
+volatile unsigned long r_motor_rpm_count_ = 0;
+volatile unsigned long r_motor_rpm_ = 0;
+volatile unsigned long r_motor_feedback_count_ = 0;
+volatile unsigned long r_motor_feedback_rpm_ = 0;
+volatile unsigned long r_input_rpm_count_ = 0;
+volatile unsigned long r_input_rpm_ = 0;
+volatile unsigned long r_output_rpm_count_ = 0;
+volatile unsigned long r_output_rpm_ = 0;
 // Timer related variables
-volatile unsigned int p_data_collection_ = 10;  //!< data collection period in 100ms
-volatile unsigned int p_motor_control_ = 2;     //!< motor control period in 100ms
-volatile bool f_data_collection_ = false;       //!< data collection task flag
-volatile bool f_motor_control_ = false;         //!< motor control task flag
+volatile unsigned int p_data_collection_ = 10;
+volatile unsigned int p_motor_control_ = 2;
+volatile bool f_data_collection_ = false;
+volatile bool f_motor_control_ = false;
 
 // SD Card
-char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current directory
-char sd_card_file_path_[FILE_PATH_LENGTH];     //!< store path to current file
-volatile unsigned int file_index_ = 1;         //!< index of file number
-File sd_card_file_;                            //!< File object
-char sd_card_input_path_[FILE_PATH_LENGTH];    //!< Path to Input File
-File sd_card_input_;                           //!< File object
+char sd_card_dir_path_[DIR_PATH_LENGTH];
+char sd_card_file_path_[FILE_PATH_LENGTH];
+volatile unsigned int file_index_ = 1;
+File sd_card_file_;
+char sd_card_input_path_[FILE_PATH_LENGTH];
+File sd_card_input_;
+volatile bool restart_ = false;
 
 // Flags
-volatile bool f_record_request_ = false;         ///< record request task flag
-volatile bool f_pause_request_ = false;          ///< pause request task flag
-volatile bool f_complete_request_ = false;       ///< complete request task flag
-volatile bool f_motor_speed_request_ = false;    ///< change motor speed request task flag
-volatile bool f_amplitude_request_ = false;      ///< change amplitude request task flag
-volatile bool f_sampling_rate_request_ = false;  ///< sampling rate change request task flag
+volatile bool f_record_request_ = false;
+volatile bool f_pause_request_ = false;
+volatile bool f_complete_request_ = false;
+volatile bool f_motor_speed_request_ = false;
+volatile bool f_amplitude_request_ = false;
+volatile bool f_sampling_rate_request_ = false;
 
 /**
  * @brief Setup code that runs once Arduino powers on
@@ -86,12 +89,13 @@ void loop()
 
   if (state_ == error)
   {
-    // TODO: Error Handling
+    // TODO: 1. Error Handling
   }
   else if (state_ == prepare)
   {
     checkTimerTasks();
-    // if feedback motor speed reaches desired speed, move to recording state
+    // TODO: 2. Transition from prepare to recording
+    // Also Start Timestamp from 0
     // state_ = recording
   }
   else if (state_ == recording)

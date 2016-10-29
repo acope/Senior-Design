@@ -25,11 +25,6 @@ bool initializeSerial(unsigned long speed);
 bool initializeSD();
 
 /**
- * @brief Test run motor and measure rpm
- */
-bool motorTestRun();
-
-/**
  * @brief Print Directory Structure
  */
 void printDirectory(File dir, int numTabs);
@@ -37,6 +32,6 @@ void printDirectory(File dir, int numTabs);
 /**
  * @berif Error Handle
  */
-
+bool errorCheck();
 
 #endif /* SRC_INITIALIZATION_H_ */

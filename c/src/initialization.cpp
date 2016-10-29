@@ -24,9 +24,9 @@ bool initializeBoard()
   pinMode(OUTPUT_RPM_PIN, INPUT);
 
   // setup interrupt for rpm reading pin
-  attachInterrupt(digitalPinToInterrupt(MOTOR_RPM_PIN), MotorRpmCountISR, RISING);
-  attachInterrupt(digitalPinToInterrupt(INPUT_RPM_PIN), InputRpmCountISR, RISING);
-  attachInterrupt(digitalPinToInterrupt(OUTPUT_RPM_PIN), OutputRpmCountISR, RISING);
+  attachInterrupt(digitalPinToInterrupt(MOTOR_RPM_PIN), MotorRpmCountISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(INPUT_RPM_PIN), InputRpmCountISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(OUTPUT_RPM_PIN), OutputRpmCountISR, FALLING);
 
   // setup PWM
   pinMode(PWM_PIN, OUTPUT);
@@ -37,21 +37,15 @@ bool initializeBoard()
   analogRead(VOLTAGE_PIN);
 
   // set default input information
-  input_condition_.amplitude = 4;
-  input_condition_.frequency = 10;
-  input_condition_.sampling_rate = 10;
+  input_condition_.amplitude = DEF_AMPLITUDE;
+  input_condition_.frequency = DEF_FREQUENCY;
+  input_condition_.sampling_rate = DEF_SAMPLE_RATE;
   multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
   collected_data_.timestamp = 0;
 
   // Timer setup
   Timer1.initialize(TIMER_US);
   Timer1.attachInterrupt(timerCallback);
-
-  // TODO: Test motor and read rom
-//  isInitialized &= motorTestRun();
-
-  // TODO: Watchdog (later)
-
 
   interrupts();
 
@@ -95,6 +89,7 @@ bool initializeSerial(unsigned long speed)
   }
 }
 
+// Supporting function, not actively used
 void printDirectory(File dir, int numTabs) {
   while (true) {
 
@@ -122,18 +117,21 @@ void printDirectory(File dir, int numTabs) {
 // NOTE: SD card will create new file every 50,000 records
 bool initializeSD()
 {
-  // Setup connection
-  if (!SD.begin(SD_CS_PIN))
+  if (!restart_)
   {
-    error_msg_ = "SD card initialization failed.";
-    return false;
+    // Setup connection
+    if (!SD.begin(SD_CS_PIN))
+    {
+      error_msg_ = "SD card initialization failed.";
+      return false;
+    }
   }
-
   // Create new test folder
   unsigned int count = 1;
   File root;
   root = SD.open("/");
   char dirname[DIR_LENGTH];
+
 
   while (true)
   {
@@ -153,17 +151,28 @@ bool initializeSD()
     return false;
   }
   sprintf(sd_card_dir_path_, "/%s", dirname);
-  // @TODO: Remove
+  // @FIXME: Remove
   printDirectory(root, 0);
 
   file_index_ = 1;
+  Serial.println(sd_card_dir_path_);
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
   sprintf(sd_card_input_path_, "%s/INPUT.csv", sd_card_dir_path_);
+
+  Serial.println(sd_card_file_path_);
+  Serial.println(sd_card_input_path_);
+  Serial.println(sd_card_dir_path_);
+
+  // write header to file
+  sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
+  sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
+  sd_card_file_.close();
 
   return true;
 }
 
-bool motorTestRun()
+// TODO: When motor is spinning, check all input and send error if condition is met
+bool errorCheck()
 {
 
 }
