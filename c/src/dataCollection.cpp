@@ -8,7 +8,7 @@ void timerCallback()
   data_collection_count++;
   motor_control_count++;
 
-  if (data_collection_count == p_data_collection_)
+  if (data_collection_count >= input_condition_.sampling_rate)
   {
     data_collection_count = 0;
     f_data_collection_ = true;
@@ -28,7 +28,7 @@ void timerCallback()
     collected_data_.output_rpm = r_output_rpm_;//(r_output_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
   }
 
-  if (motor_control_count == p_motor_control_)
+  if (motor_control_count >= p_motor_control_)
   {
     motor_control_count = 0;
     f_motor_control_ = true;
@@ -162,7 +162,23 @@ bool stopMotor()
 /// TODO: 5. Motor Control Implementation
 void motorSpeedControlPID()
 {
+  // slow start up of motor untill reach near speed
+  if (state_ == prepare)
+  {
+    // speed up motor slowly
 
+    // check status, if good, enable control and recording
+    f_start_pid_ = true;
+  }
+  else // recording (PID Control)
+  {
+
+
+
+
+
+
+  }
 }
 
 
@@ -224,7 +240,7 @@ bool sendDataSD()
 {
   sd_card_new_file_count_++;
   // FIXME: Back the number
-  if (sd_card_new_file_count_ == 20)//SD_CARD_RECORD_PER_FILE)
+  if (sd_card_new_file_count_ == SD_CARD_RECORD_PER_FILE)
   {
    sd_card_new_file_count_ = 0;
    updateSDFile();

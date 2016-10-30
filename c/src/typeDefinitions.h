@@ -91,11 +91,12 @@ extern volatile unsigned long r_input_rpm_count_;       //!< total # of pulse by
 extern volatile unsigned long r_input_rpm_;             //!< plase to store pulse reading for input rpm
 extern volatile unsigned long r_output_rpm_count_;      //!< total # of pulse by ISR for output rpm
 extern volatile unsigned long r_output_rpm_;            //!< plase to store pulse reading for output rpm
+
 // Timer related variables
-extern volatile unsigned int p_data_collection_;   //!< data collection period in 100ms
 extern volatile unsigned int p_motor_control_;     //!< motor control period in 100ms
 extern volatile bool f_data_collection_;           //!< data collection task flag
 extern volatile bool f_motor_control_;             //!< motor control task flag
+extern volatile bool f_start_pid_;                 //!< indicates to start using PID controller
 
 // SD Card
 extern char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current directory

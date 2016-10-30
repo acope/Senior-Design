@@ -46,11 +46,12 @@ volatile unsigned long r_input_rpm_count_ = 0;
 volatile unsigned long r_input_rpm_ = 0;
 volatile unsigned long r_output_rpm_count_ = 0;
 volatile unsigned long r_output_rpm_ = 0;
+
 // Timer related variables
-volatile unsigned int p_data_collection_ = 10;
 volatile unsigned int p_motor_control_ = 2;
 volatile bool f_data_collection_ = false;
 volatile bool f_motor_control_ = false;
+volatile bool f_start_pid_ = false;
 
 // SD Card
 char sd_card_dir_path_[DIR_PATH_LENGTH];
@@ -90,13 +91,17 @@ void loop()
   if (state_ == error)
   {
     // TODO: 1. Error Handling
+    // Shutdown port and restart
   }
   else if (state_ == prepare)
   {
     checkTimerTasks();
-    // TODO: 2. Transition from prepare to recording
-    // Also Start Timestamp from 0
-    // state_ = recording
+
+    if (f_start_pid_)
+    {
+      collected_data_.timestamp = 0;
+      state_ = recording;
+    }
   }
   else if (state_ == recording)
   {
