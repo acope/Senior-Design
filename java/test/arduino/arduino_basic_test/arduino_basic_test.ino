@@ -63,11 +63,11 @@ void loop() {
   if (f_send_data && f_record)
   {
     f_send_data = false;
-    timestamp++;
-    motor_rpm++;
-    input_rpm++;
-    output_rpm++;
-    voltage++;
+    //timestamp++;
+    //motor_rpm++;
+    //input_rpm++;
+    //output_rpm++;
+    //voltage++;
     if (motor_rpm == 3500) motor_rpm = 2500;
     if (input_rpm == 15) input_rpm = 8;
     if (output_rpm == 30) input_rpm = 15;
@@ -88,6 +88,11 @@ void loop() {
     buf[11] = (voltage >> 8) && 255;
 
     Serial.write('S');
+      //Serial.write(buf[0]);Serial.write(buf[1]);Serial.write(buf[2]);Serial.write(buf[3]);
+      //Serial.write(buf[4]);Serial.write(buf[5]);
+      //Serial.write(buf[6]);Serial.write(buf[7]);
+      //Serial.write(buf[8]);Serial.write(buf[9]);
+      //Serial.write(buf[10]);Serial.write(buf[11]);
     Serial.write(buf, 12);
     Serial.write('E');
     Serial.write(255);
