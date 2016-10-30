@@ -18,7 +18,6 @@ public class OController{
     
     private final Link link = Link.getDefaultInstance();
     
-    private String rawToString;
     private int motorFreq;
     private int sampRate;
     
@@ -146,26 +145,9 @@ public class OController{
                 build.append((char)message[i]);
                 //System.out.print((char)message[i]);
             }
-            System.out.println(convertStringToHex(build.toString()));
-            serialArduinoEvent(build.substring(0));
-            setRawToString(build.toString());
+            serialArduinoEvent(build.toString());
         });
     }   
-    
-    /**
-     * Sets the rawToString variable
-     * Calls the function to write to file
-     * @param str 
-     */
-    private void setRawToString(String str){
-        rawToString = str;
-        //Need to notify Save Function!
-        //NotifyOSave();???
-    }
-    
-    public String getRawToString(){
-        return rawToString;
-    }
     
     public int getMotorSpeedSlider(){
         return view.freqSlider.getValue();
@@ -183,27 +165,31 @@ public class OController{
      * @param str 
      */
     private void serialArduinoEvent(String str){
-        switch (str){
+        //Retrieve first character from sting
+        //First char is always event notification
+        char event = str.charAt(0);
+        
+        switch (event){
             //Acknowledge
-            case "A":
+            case 'A':
                 break;
                 
             //Fail
-            case "F":
+            case 'F':
                 break;
                 
             //Connection Test
-            case "T":
+            case 'T':
                 link.writeSerial("A");
                 break;
                 
             //Read to collect data
-            case "G":
+            case 'G':
                 link.writeSerial("A");
                 break;
             
             //Sending recorded data(data sent from Arduino)Total 14 bytes
-            case "S":
+            case 'S':
                 //add in code for recieving data
                 /*
                     MC shall send "S" to indicate start of data transmission.
@@ -215,10 +201,17 @@ public class OController{
                     MC shall send "E" to indicate end of data transmission.
                     PC shall respond with "A" or "F" to indicate acknowledge or fail.
                 */
+                StringBuilder build = new StringBuilder(str.length() - 1);
+                
+                //Retrieve the twelve bytes of data
+                for(int i=1; i<str.length()-1; i++){
+                    build.append(str.charAt(i));
+                }
+                String timestampArduino = build.toString();
                 break;
                 
             //Error state
-            case "Z":
+            case 'Z':
                 //add in code for error state handling
                 /*
                     MC shall send "Z" to PC to indicate ERROR state.
@@ -229,7 +222,7 @@ public class OController{
                 break;
                 
             //Indicate normal state
-            case "N":
+            case 'N':
                 link.writeSerial("A");
                 break;
             
@@ -237,18 +230,5 @@ public class OController{
                 break;
         }
     }
-    
-    //Used for testing purposes of rawToText
-      public String convertStringToHex(String str){
-
-	  char[] chars = str.toCharArray();
-
-	  StringBuffer hex = new StringBuffer();
-	  for(int i = 0; i < chars.length; i++){
-	    hex.append(Integer.toHexString((int)chars[i]));
-	  }
-
-	  return hex.toString();
-  }
     
 }
