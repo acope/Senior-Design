@@ -23,15 +23,15 @@
 
 void timerCallback();
 
-volatile unsigned int measurement_period = 10;
+volatile unsigned int measurement_period = 2;
 volatile unsigned int measurement_count = 0;
 volatile bool f_send_data = false;
 volatile bool f_record = false;
 volatile unsigned long timestamp = 0;
-volatile unsigned int motor_rpm = 3000;
+volatile unsigned int motor_rpm = 2500;
 volatile unsigned int input_rpm = 10;
-volatile unsigned int output_rpm = 20;
-volatile unsigned int voltage = 500;
+volatile unsigned int output_rpm = 10;
+volatile unsigned int voltage = 400;
 
 void setup() {
  
@@ -63,7 +63,7 @@ void loop() {
   if (f_send_data && f_record)
   {
     f_send_data = false;
-    //timestamp++;
+    timestamp++;
     //motor_rpm++;
     //input_rpm++;
     //output_rpm++;
@@ -74,6 +74,8 @@ void loop() {
     if (voltage == 1020) voltage = 5;
   
     byte buf[12];
+    
+    
     buf[0] = timestamp & 255;
     buf[1] = (timestamp >> 8)  & 255;
     buf[2] = (timestamp >> 16) & 255;
@@ -86,14 +88,33 @@ void loop() {
     buf[9] = (output_rpm >> 8) & 255;
     buf[10] = (voltage) & 255;
     buf[11] = (voltage >> 8) && 255;
-
+    
+    /*
+    buf[0] = (byte)((timestamp >> 24) & 255);
+    buf[1] = (byte)((timestamp >> 16)  & 255);
+    buf[2] = (byte)((timestamp >> 8) & 255);
+    buf[3] = (byte)((timestamp) & 255);
+    buf[4] = (byte)((motor_rpm >> 8) & 255);
+    buf[5] = (byte)((motor_rpm) & 255);
+    buf[6] = (byte)((input_rpm >> 8) & 255);
+    buf[7] = (byte)((input_rpm) & 255);
+    buf[8] = (byte)((output_rpm >> 8) & 255);
+    buf[9] = (byte)((output_rpm) & 255);
+    buf[10] = (byte)((voltage >> 8) & 255);
+    buf[11] = (byte)((voltage) & 255);
+    */
+    //WHEN VALUE REACHES 255 CAUSES JAVA TO CREATE A NEW LINE!!!! NEED TO USE ASCII???
     Serial.write('S');
-      //Serial.write(buf[0]);Serial.write(buf[1]);Serial.write(buf[2]);Serial.write(buf[3]);
-      //Serial.write(buf[4]);Serial.write(buf[5]);
-      //Serial.write(buf[6]);Serial.write(buf[7]);
-      //Serial.write(buf[8]);Serial.write(buf[9]);
-      //Serial.write(buf[10]);Serial.write(buf[11]);
-    Serial.write(buf, 12);
+    //Serial.write(buf, 12);
+    Serial.print(timestamp);
+    Serial.print(",");
+    Serial.print(motor_rpm);
+    Serial.print(",");
+    Serial.print(input_rpm);
+    Serial.print(",");
+    Serial.print(output_rpm);
+    Serial.print(",");
+    Serial.print(voltage);
     Serial.write('E');
     Serial.write(255);
   }
