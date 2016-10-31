@@ -3,6 +3,8 @@ package odrive;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -20,6 +22,7 @@ public class OController{
     
     private int motorFreq;
     private int sampRate;
+    private String arduinoSerialData; //Data recieved from Arduino serially
     
     public OController(){
         view = new OView();
@@ -85,9 +88,15 @@ public class OController{
     }
         private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
+            try {
+                //Allows Arduino to get ready
+                Thread.sleep(2000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             String motorSpeed = Integer.toString(getMotorSpeedSlider());
             String amplitude = getAmplitudeComboBox().toString();
-            String sampRate1 = Integer.toString(getSampleRateSlider());
+            String sampRate1 = Integer.toString(getSampleRateSlider()*1000);
             String message = "R" + motorSpeed + amplitude + sampRate1;
             //PC sends an R to initiate recording, motor speed, amplitude and sample rate
             link.writeSerial(message);
@@ -138,12 +147,10 @@ public class OController{
      * Listens for data on the serial port
      */
     public void rawDataListener(){
-        link.addRawDataListener((String id, int numBytes, int[] message) -> {
-            //Need to fix for data recieved from arduino          
+        link.addRawDataListener((String id, int numBytes, int[] message) -> {         
             StringBuilder build = new StringBuilder(numBytes + 1);
             for (int i = 0; i < numBytes; i++) {
-                build.append((char)message[i]);
-                //System.out.print((char)message[i]);
+                    build.append((char)message[i]);     
             }
             serialArduinoEvent(build.toString());
         });
@@ -160,6 +167,10 @@ public class OController{
         return view.sampRateSlider.getValue();
     }
     
+    public void setArduinoSerialData(String data){
+        arduinoSerialData = data;
+    }
+    
     /**
      * Cases for received state from Arduino
      * @param str 
@@ -168,7 +179,7 @@ public class OController{
         //Retrieve first character from sting
         //First char is always event notification
         char event = str.charAt(0);
-        
+
         switch (event){
             //Acknowledge
             case 'A':
@@ -201,13 +212,15 @@ public class OController{
                     MC shall send "E" to indicate end of data transmission.
                     PC shall respond with "A" or "F" to indicate acknowledge or fail.
                 */
-                StringBuilder build = new StringBuilder(str.length() - 1);
-                
-                //Retrieve the twelve bytes of data
+                StringBuilder build = new StringBuilder(str.length()+1);
+                //Convert the string back into bytes and removes start and end char
                 for(int i=1; i<str.length()-1; i++){
-                    build.append(str.charAt(i));
+                    char c = str.charAt(i);
+                    build.append(c);
+                   // build.append(Integer.parseInt(Character.toString(c)));
                 }
-                String timestampArduino = build.toString();
+                String arduinoData = build.toString();
+                System.out.println(arduinoData);
                 break;
                 
             //Error state
