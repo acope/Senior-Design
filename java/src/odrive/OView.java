@@ -12,8 +12,8 @@ public class OView extends JFrame{
     private final int MAIN_FRAME_WIDTH = 1024; //Y
     private final int FREQ_MIN = 0; //Minimun motor frequency 
     private final int FREQ_MAX = 50; //Max motor frequency = 3000RPM * (1/60)Hz (1RPM = 1/60Hz)
-    private final int FREQ_INIT = 0; //Initial motor speed
-    private final int SAMPRATE_MIN = 1; //Minimun samping rate in seconds
+    private final int FREQ_INIT = 25; //Initial motor speed
+    private final int SAMPRATE_MIN = 0; //Minimun samping rate in seconds
     private final int SAMPRATE_MAX = 60; //Max samping rate in seconds
     private final int SAMPRATE_INIT = 60; //Initial samping rate
     private final String DEGREE = "\u00B0"; //Degree symbol Unicode
@@ -93,8 +93,8 @@ public class OView extends JFrame{
         freqSlider.setPaintLabels(true);
            
         sampRateSlider = new JSlider(JSlider.HORIZONTAL,SAMPRATE_MIN,SAMPRATE_MAX,SAMPRATE_INIT);
-        sampRateSlider.setMajorTickSpacing((SAMPRATE_MAX+1)/5);
-        sampRateSlider.setMinorTickSpacing((SAMPRATE_MAX+1)/10);
+        sampRateSlider.setMajorTickSpacing(SAMPRATE_MAX/5);
+        sampRateSlider.setMinorTickSpacing(SAMPRATE_MAX/10);
         sampRateSlider.setPaintTicks(true);
         sampRateSlider.setPaintLabels(true);
         
@@ -112,10 +112,10 @@ public class OView extends JFrame{
         //Add objects to panel
         
         //Connection section
-        mainPanel.add(serialConnectionPanel);
-        mainPanel.add(buttonConnect,"split 3");
-        mainPanel.add(buttonDisconnect);
-        mainPanel.add(connectionStatus,"wrap");
+        mainPanel.add(serialConnectionPanel, "");
+        mainPanel.add(buttonConnect, "split 3");
+        mainPanel.add(buttonDisconnect, "");
+        mainPanel.add(connectionStatus, "wrap");
         
         //Input section
         mainPanel.add(ampLabel, "split 2");
@@ -128,8 +128,8 @@ public class OView extends JFrame{
         
         
         mainPanel.add(sampRateLabel, "split 3");
-        mainPanel.add(sampRateSlider, "");
-        mainPanel.add(sampRateTextField,"");
+        mainPanel.add(sampRateSlider, "grow");
+        mainPanel.add(sampRateTextField, "");
         mainPanel.add(sampUnitLabel, "wrap");
         
         mainPanel.add(buttonStart, "split 2");
@@ -137,9 +137,9 @@ public class OView extends JFrame{
         
         //Status section
         mainPanel.add(statusLabel, "split 2");
-        mainPanel.add(statusTextField, "grow, wrap");     
+        mainPanel.add(statusTextField, "width :400:, wrap");     
         mainPanel.add(upTimeLabel, "split 2");
-        mainPanel.add(upTimeTextField, "grow");
+        mainPanel.add(upTimeTextField, "width :100:");
         
 
         //Add panel to the frame
