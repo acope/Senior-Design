@@ -168,31 +168,19 @@ void motorSpeedControlPID()
 
 bool sendDataSerial()
 {
-  byte buf[12];
-  buf[0] = collected_data_.timestamp & 255;
-  buf[1] = (collected_data_.timestamp >> 8)  & 255;
-  buf[2] = (collected_data_.timestamp >> 16) & 255;
-  buf[3] = (collected_data_.timestamp >> 24) & 255;
-  buf[4] = (collected_data_.motor_rpm) & 255;
-  buf[5] = (collected_data_.motor_rpm >> 8) & 255;
-  buf[6] = (collected_data_.input_rpm) & 255;
-  buf[7] = (collected_data_.input_rpm >> 8) & 255;
-  buf[8] = (collected_data_.output_rpm) & 255;
-  buf[9] = (collected_data_.output_rpm >> 8) & 255;
-  buf[10] = (collected_data_.generated_voltage) & 255;
-  buf[11] = (collected_data_.generated_voltage >> 6) && 255;
+  Serial.write('S');
+  Serial.print(collected_data_.timestamp, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.motor_rpm, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.input_rpm, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.output_rpm, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.generated_voltage, DEC);
+  Serial.write('E');
+  //Serial.write(255);
 
-  // FIXME: For Debugging
-  Serial.println(collected_data_.timestamp);
-  Serial.println(collected_data_.motor_rpm);
-  Serial.println(collected_data_.input_rpm);
-  Serial.println(collected_data_.output_rpm);
-  Serial.println(collected_data_.generated_voltage);
-  Serial.println("");
-
-  //Serial.write('S');
-  //Serial.write(buf, 12);
-  //Serial.write('E');
   return true;
 }
 
