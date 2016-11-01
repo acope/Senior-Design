@@ -1,6 +1,6 @@
 /**************************************************************
  * Copyright (C) 2016 by Wave Water Works                     *
- *               Developed by Oakland University             *
+ *               Developed by Oakland University              *
  *                                                            *
  *  This file is part of Oscillo Drive Microcontroller        *
  *  Source code developed for Wave Water Works                *
@@ -8,15 +8,19 @@
  **************************************************************/
 
 /**
- * @file main.c
- * @author Oakland University
- * @data October 10 2016
- * @brief Microcontroller main.c file
+ * @file main.cpp
+ * @author Oakland University Senior Design Group 9/10
+ * @date October 31 2016
+ * @brief  Main File of Microcontroller Code.
  *
- * More details explanation goes here!
- *
- *
- *
+ * @details This program performs following functionalities:
+ * 1. Receive command from PC via serial communication
+ * 2. Control motor speed using PID controller
+ * 3. Measure motor rpm, intput/output rpm and
+ *    generated voltage at custom sample rate
+ * 4. Send measurements to PC via serial communication
+ * 5. Save input condition to SD card
+ * 6. Save measurements to SD card
  *
  */
 
@@ -46,11 +50,16 @@ volatile unsigned long r_input_rpm_count_ = 0;
 volatile unsigned long r_input_rpm_ = 0;
 volatile unsigned long r_output_rpm_count_ = 0;
 volatile unsigned long r_output_rpm_ = 0;
+
 // Timer related variables
-volatile unsigned int p_data_collection_ = 10;
 volatile unsigned int p_motor_control_ = 2;
 volatile bool f_data_collection_ = false;
 volatile bool f_motor_control_ = false;
+volatile bool f_start_pid_ = false;
+
+// Error Checking
+volatile unsigned int p_error_check_ = 60;
+volatile bool f_error_check_ = false;
 
 // SD Card
 char sd_card_dir_path_[DIR_PATH_LENGTH];
@@ -89,14 +98,17 @@ void loop()
 
   if (state_ == error)
   {
-    // TODO: 1. Error Handling
+    handleError();
   }
   else if (state_ == prepare)
   {
     checkTimerTasks();
-    // TODO: 2. Transition from prepare to recording
-    // Also Start Timestamp from 0
-    // state_ = recording
+
+    if (f_start_pid_)
+    {
+      collected_data_.timestamp = 0;
+      state_ = recording;
+    }
   }
   else if (state_ == recording)
   {

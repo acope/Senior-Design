@@ -1,3 +1,12 @@
+/**************************************************************
+ * Copyright (C) 2016 by Wave Water Works                     *
+ *               Developed by Oakland University              *
+ *                                                            *
+ *  This file is part of Oscillo Drive Microcontroller        *
+ *  Source code developed for Wave Water Works                *
+ *                                                            *
+ **************************************************************/
+
 #include "initialization.h"
 
 // Serial
@@ -56,6 +65,7 @@ bool initializeBoard()
     state_ = error;
     Serial.write('Z');
     Serial.println(error_msg_);
+    Serial.write('E');
   }
   else
   {
@@ -170,9 +180,15 @@ bool initializeSD()
 
   return true;
 }
-
-// TODO: When motor is spinning, check all input and send error if condition is met
-bool errorCheck()
+// TODO: Consider error handle method
+void handleError()
 {
-
+  // stop motor, close SD card, then wait for restart_
+  analogWrite(PWM_PIN, 0);
+  sd_card_file_.close();
+  sd_card_input_.close();
+  // send restart message
+  Serial.write('Z');
+  Serial.print("Please check equipment and restart experiment...");
+  Serial.write('E');
 }
