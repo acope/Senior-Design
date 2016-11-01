@@ -162,23 +162,76 @@ bool stopMotor()
 /// TODO: 5. Motor Control Implementation
 void motorSpeedControlPID()
 {
+  // TODO: PID Coefficients
+  static const float kp = 1;
+  static const float ki = 1;
+  static const float kd = 0.1;
+  static const char out_min = 0;
+  static const char out_max = 255;
+  static float prev_feedback = 0;
+  char output_cmd;
+
+  // sample rate is 200ms, so multiply by 5 then divide by tooth
+  float feedback = (float)r_motor_feedback_rpm_ * 5.0 / MOTOR_ENCODER_TOOTH;
+
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
   {
     // speed up motor slowly
+    static unsigned int motor_speed_unit = input_condition_.frequency / 10;
+    static unsigned int motor_speed = motor_speed_unit;
 
-    // check status, if good, enable control and recording
-    f_start_pid_ = true;
+    // if motor is near target, move to pid
+    if (abs(input_condition_.frequency - feedback) <= 300)
+    {
+      f_start_pid_ = true;
+    }
+    // if motor is near temp target, move to next temp target
+    else if (abs(motor_speed - feedback) <= 200)
+    {
+      motor_speed += motor_speed_unit;
+    }
+    // TODO: Scale for Motor rpm to voltage
   }
   else // recording (PID Control)
   {
+    // static Variables
+    static float i_error = 0;
+    static float d_error = 0; prev_feedback;
 
+    float error = (float)input_condition_.frequency - feedback;
+    i_error += (ki * error);
 
+    if (i_error > out_max)
+    {
+      i_error = (float)out_max;
+    }
+    else if (i_error < out_min)
+    {
+      i_error = (float)out_min;
+    }
 
+    d_error = (feedback - prev_feedback);
 
+    // compute output
+    output_cmd = (char)(kp * error + i_error - kd * d_error);
+  }
 
+  if (output_cmd > out_max)
+  {
+    output_cmd = out_max;
+  }
+  else if (output_cmd < out_min)
+  {
+    output_cmd = out_min;
+  }
+  else
+  {
+    // TODO: Scale
 
   }
+  // set output
+  analogWrite(PWM_PIN, output_cmd);
 }
 
 
