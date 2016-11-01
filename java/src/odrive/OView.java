@@ -1,5 +1,7 @@
 package odrive;
 
+import java.awt.Dimension;
+import java.awt.Font;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import net.miginfocom.swing.MigLayout;
@@ -20,7 +22,10 @@ public class OView extends JFrame{
     private final String[] ampString = {"90"+DEGREE, "105"+DEGREE, "120"+DEGREE}; //String for constant amplitudes
     
     protected JFrame mainFrame;
+    
     protected JPanel mainPanel;
+    protected JPanel connectionPanel;
+    
     protected JLabel ampLabel;
     protected JLabel freqLabel;
     protected JLabel statusLabel;
@@ -28,21 +33,32 @@ public class OView extends JFrame{
     protected JLabel sampRateLabel;
     protected JLabel freqUnitLabel;
     protected JLabel sampUnitLabel;
+    
     protected JButton buttonStop;
     protected JButton buttonStart;
     protected JButton buttonConnect;
     protected JButton buttonDisconnect;
+    
     protected JTextField  freqTextField;
     protected JTextField  statusTextField;
     protected JTextField upTimeTextField;
     protected JTextField sampRateTextField;
+    
     protected JComboBox ampComboBox;
+    
     protected SerialConnectionPanel serialConnectionPanel;
+    
     protected ConnectionStatus connectionStatus;
+    
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
-    protected MigLayout layout;
+    
+    protected MigLayout migLayout;
+    
     protected GroupLayout gPanel;
+    
+    private final Dimension buttonSize = new Dimension(250,50);
+    private final Font buttonFont = new Font("Dialog", Font.PLAIN, 30);
     
     public OView(){
         initGUI();
@@ -57,14 +73,23 @@ public class OView extends JFrame{
         mainFrame.setResizable(false);
         
         // MiG Layout, Column and Row constraints as arguments.
-        layout = new MigLayout();
+        migLayout = new MigLayout();
         //Create a new panel with MiG Layout constraints
-        mainPanel = new JPanel(layout); 
+        mainPanel = new JPanel(migLayout); 
+        //connectionPanel = new JPanel(migLayout);
         //Create JButtons
         buttonStart = new JButton("Start");
+        buttonStart.setPreferredSize(buttonSize);
+        buttonStart.setFont(buttonFont);
         buttonStop = new JButton("Stop");
+        buttonStop.setPreferredSize(buttonSize);
+        buttonStop.setFont(buttonFont);
         buttonConnect = new JButton("Connect");
+        buttonConnect.setPreferredSize(buttonSize);
+        buttonConnect.setFont(buttonFont);
         buttonDisconnect = new JButton("Disconnect");
+        buttonDisconnect.setPreferredSize(buttonSize);
+        buttonDisconnect.setFont(buttonFont);
         
         //Create JLabels
         ampLabel = new JLabel("Amplitude:");
@@ -112,11 +137,13 @@ public class OView extends JFrame{
         //Add objects to panel
         
         //Connection section
-        mainPanel.add(serialConnectionPanel, "");
-        mainPanel.add(buttonConnect, "split 3");
-        mainPanel.add(buttonDisconnect, "");
-        mainPanel.add(connectionStatus, "wrap");
         
+        mainPanel.add(serialConnectionPanel, "split 2");
+        mainPanel.add(connectionStatus, "wrap");
+        mainPanel.add(buttonConnect, "split 2");
+        mainPanel.add(buttonDisconnect, "wrap");
+
+
         //Input section
         mainPanel.add(ampLabel, "split 2");
         mainPanel.add(ampComboBox, "wrap");
