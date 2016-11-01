@@ -20,7 +20,7 @@ public class OController{
     
     private final Link link = Link.getDefaultInstance();
     
-    private int motorFreq;
+    private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
     private String arduinoSerialData; //Data recieved from Arduino serially
     
@@ -94,11 +94,13 @@ public class OController{
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            String motorSpeed = Integer.toString(getMotorSpeedSlider());
-            String amplitude = getAmplitudeComboBox().toString();
-            String sampRate1 = Integer.toString(getSampleRateSlider()*1000);
-            String message = "R" + motorSpeed + amplitude + sampRate1;
-            //PC sends an R to initiate recording, motor speed, amplitude and sample rate
+            
+            String motorSpeed = Integer.toString(getMotorFreqSlider()*60); //Arduino takes RPM, 1RPM = 1/60Hz
+            String amplitude = getAmplitudeComboBox();
+            String sampRate1 = Integer.toString(getSampleRateSlider()*10); //Arduino takes in 600 for 60 seconds and 1 for 0.1 second
+            
+            //PC sends an R to initiate recording, Then sends other requests for other information
+            String message = "R" + "M" + motorSpeed + "E" + "D" + amplitude+ "E" + "X" + sampRate1 + "E";
             link.writeSerial(message);
             //Enable/Disable GUI
             view.buttonStart.setEnabled(false);
@@ -156,11 +158,17 @@ public class OController{
         });
     }   
     
-    public int getMotorSpeedSlider(){
+    public int getMotorFreqSlider(){
         return view.freqSlider.getValue();
     }
-    public Object getAmplitudeComboBox(){
-        return view.ampComboBox.getSelectedItem();
+    
+    public String getAmplitudeComboBox(){
+        String amp = view.ampComboBox.getSelectedItem().toString();
+        int l = amp.length();     
+        //Trim off degree symbol
+        String newAmp = amp.substring(0, l-1);
+
+        return newAmp;
     }
     
     public int getSampleRateSlider(){
