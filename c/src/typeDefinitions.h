@@ -1,8 +1,25 @@
+/**************************************************************
+ * Copyright (C) 2016 by Wave Water Works                     *
+ *               Developed by Oakland University              *
+ *                                                            *
+ *  This file is part of Oscillo Drive Microcontroller        *
+ *  Source code developed for Wave Water Works                *
+ *                                                            *
+ **************************************************************/
+
 #ifndef SRC_TYPEDEFINITIONS_H_
 #define SRC_TYPEDEFINITIONS_H_
 
 #include <Arduino.h>
 #include <SD.h>
+
+/**
+ * @file typeDefinitions.h
+ * @author Oakland University Senior Design Group 9/10
+ * @date October 31 2016
+ * @brief  Defines types and constants, and global variables.
+ *
+ */
 
 // indication of current state
 typedef enum deviceState{

@@ -10,10 +10,10 @@
 /**
  * @file main.cpp
  * @author Oakland University Senior Design Group 9/10
- * @data October 31 2016
- * @brief Microcontroller main.cpp file
+ * @date October 31 2016
+ * @brief  Main File of Microcontroller Code.
  *
- * This program performs following functionalities:
+ * @details This program performs following functionalities:
  * 1. Receive command from PC via serial communication
  * 2. Control motor speed using PID controller
  * 3. Measure motor rpm, intput/output rpm and

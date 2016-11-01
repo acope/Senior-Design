@@ -1,3 +1,12 @@
+/**************************************************************
+ * Copyright (C) 2016 by Wave Water Works                     *
+ *               Developed by Oakland University              *
+ *                                                            *
+ *  This file is part of Oscillo Drive Microcontroller        *
+ *  Source code developed for Wave Water Works                *
+ *                                                            *
+ **************************************************************/
+
 #include "initialization.h"
 
 // Serial
