@@ -4,9 +4,11 @@ void timerCallback()
 {
   static unsigned int data_collection_count = 0;
   static unsigned int motor_control_count = 0;
+  static unsigned int error_check_count = 0;
 
   data_collection_count++;
   motor_control_count++;
+  error_check_count++;
 
   if (data_collection_count >= input_condition_.sampling_rate)
   {
@@ -35,6 +37,12 @@ void timerCallback()
     r_motor_feedback_rpm_ = r_motor_feedback_count_;
     r_motor_feedback_count_ = 0;
   }
+
+  if (error_check_count >= p_error_check_)
+  {
+    error_check_count = 0;
+    f_error_check_ = true;
+  }
 }
 
 void checkTimerTasks()
@@ -53,6 +61,12 @@ void checkTimerTasks()
   {
     f_motor_control_ = false;
     motorSpeedControlPID();
+  }
+
+  if (f_error_check_)
+  {
+    f_error_check_ = false;
+    errorCheck();
   }
 }
 
@@ -340,4 +354,37 @@ void updateSDFile()
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
   sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
   Serial.println("SD CARD FILE NEW ONE!");
+}
+
+// TODO: When motor is spinning, check all input and send error if condition is met
+bool errorCheck()
+{
+  if (state_ == recording)
+  {
+    if (collected_data_.motor_rpm == 0)
+    {
+      state_ = error;
+      Serial.write('Z');
+      Serial.print("motor is not spinning...");
+      Serial.write('E');
+      return false;
+    }
+    else if (collected_data_.input_rpm == 0 || collected_data_.output_rpm == 0)
+    {
+      state_ = error;
+      Serial.write('Z');
+      Serial.print("oscillo drive not spinnig...");
+      Serial.write('E');
+      return false;
+    }
+    else if (collected_data_.generated_voltage == 0)
+    {
+      state_ = error;
+      Serial.write('Z');
+      Serial.print("voltage not generated...");
+      Serial.write('E');
+      return false;
+    }
+  }
+  return true;
 }

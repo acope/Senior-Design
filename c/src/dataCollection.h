@@ -81,4 +81,9 @@ bool sendDataSD();
  */
 void updateSDFile();
 
+/**
+ * @berif Error Handle
+ */
+bool errorCheck();
+
 #endif /* SRC_DATACOLLECTION_H_ */

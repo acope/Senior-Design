@@ -98,6 +98,10 @@ extern volatile bool f_data_collection_;           //!< data collection task fla
 extern volatile bool f_motor_control_;             //!< motor control task flag
 extern volatile bool f_start_pid_;                 //!< indicates to start using PID controller
 
+// Error Checking
+extern volatile unsigned int p_error_check_;      //!< error check period in 1s
+extern volatile bool f_error_check_;              //!< error check task flag
+
 // SD Card
 extern char sd_card_dir_path_[DIR_PATH_LENGTH];       //!< store path to current directory
 extern char sd_card_file_path_[FILE_PATH_LENGTH];     //!< store path to current file

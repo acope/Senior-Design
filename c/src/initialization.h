@@ -30,8 +30,8 @@ bool initializeSD();
 void printDirectory(File dir, int numTabs);
 
 /**
- * @berif Error Handle
+ * @brief Handle Error
  */
-bool errorCheck();
+void handleError();
 
 #endif /* SRC_INITIALIZATION_H_ */
