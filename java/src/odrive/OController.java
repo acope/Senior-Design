@@ -2,16 +2,13 @@ package odrive;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 //Ardulink imports
 import org.zu.ardulink.Link;
-import org.zu.ardulink.RawDataListener;
 
 
 
@@ -94,14 +91,11 @@ public class OController{
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
-            String motorSpeed = Integer.toString(getMotorFreqSlider()*60); //Arduino takes RPM, 1RPM = 1/60Hz
-            String amplitude = getAmplitudeComboBox();
-            String sampRate1 = Integer.toString(getSampleRateSlider()*10); //Arduino takes in 600 for 60 seconds and 1 for 0.1 second
-            
-            //PC sends an R to initiate recording, Then sends other requests for other information
-            String message = "R" + "M" + motorSpeed + "E" + "D" + amplitude+ "E" + "X" + sampRate1 + "E";
-            link.writeSerial(message);
+
+            link.writeSerial("R"); //Send initiate recording
+            sendMotorRPM(getSetMotorRPM()); //Send motor speed
+            sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude
+            sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
             //Enable/Disable GUI
             view.buttonStart.setEnabled(false);
             view.buttonStop.setEnabled(true);
@@ -145,8 +139,7 @@ public class OController{
     }
     
     /**
-     * Serial Listener
-     * Listens for data on the serial port
+     * Listens for data on serial port and sends to serialArduinoEvent
      */
     public void rawDataListener(){
         link.addRawDataListener((String id, int numBytes, int[] message) -> {         
@@ -162,23 +155,103 @@ public class OController{
         return view.freqSlider.getValue();
     }
     
+    /**
+     * Returns the set motor RPM
+     * 1RPM = 1/60Hz
+     * @return 
+     */
+    public int getSetMotorRPM(){
+        return getMotorFreqSlider()*60;
+    }
+    
+    /**
+     * Retrieves Amplitude from combo box and removes degree symbol
+     * @return 
+     */
     public String getAmplitudeComboBox(){
         String amp = view.ampComboBox.getSelectedItem().toString();
         int l = amp.length();     
         //Trim off degree symbol
         String newAmp = amp.substring(0, l-1);
-
+        
         return newAmp;
     }
     
+    /**
+     * Retrieves the sample rate from GUI slider
+     * @return 
+     */
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
     }
     
-    public void setArduinoSerialData(String data){
+    /**
+     * Calls the file writing to store incoming serial data
+     * @param data 
+     */
+    public void recordIncomingSerialData(String data){
+        //Send to Dana
+        //#TODO
         arduinoSerialData = data;
     }
     
+    /**
+     * Sends motor RPM to serial
+     * @param rpm
+     * @return 
+     */
+    public boolean sendMotorRPM(int rpm){      
+        String str = Integer.toString(rpm);
+        int[] motorRPMArray = new int[str.length()];
+        
+        for(int i = 0; i < str.length(); i++){
+            motorRPMArray[i] = str.charAt(i)- '0';
+        }
+        
+        link.writeSerial("M");
+        link.writeSerial(str.length()-1, motorRPMArray);
+        link.writeSerial("E");
+        return true;
+    }
+    
+    /**
+     * Sends amplitude to serial
+     * @param amp
+     * @return 
+     */
+    public boolean sendAmplitude(int amp){
+        String str = Integer.toString(amp);
+        int[] ampArray = new int[str.length()];
+        
+        for(int i = 0; i < str.length(); i++){
+            ampArray[i] = str.charAt(i) - '0';
+        }
+        
+        link.writeSerial("D");
+        link.writeSerial(str.length()-1, ampArray);
+        link.writeSerial("E");
+        return true;
+    }
+    
+    /**
+     * Sends sampling rate to serial
+     * @param samplingRate
+     * @return 
+     */
+    public boolean sendSamplingRate(int samplingRate){
+        String str = Integer.toString(samplingRate);
+        int[] samplingRateArray = new int[str.length()];
+        
+        for(int i = 0; i < str.length(); i++){
+            samplingRateArray[i] = str.charAt(i) - '0';
+        }
+        
+        link.writeSerial("X");
+        link.writeSerial(str.length()-1, samplingRateArray);
+        link.writeSerial("E");
+        return true;
+    }
+   
     /**
      * Cases for received state from Arduino
      * @param str 
@@ -228,6 +301,7 @@ public class OController{
                    // build.append(Integer.parseInt(Character.toString(c)));
                 }
                 String arduinoData = build.toString();
+                recordIncomingSerialData(arduinoData);
                 System.out.println(arduinoData);
                 break;
                 
