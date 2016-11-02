@@ -12,13 +12,14 @@ import org.zu.ardulink.Link;
 
 
 
-public class OController{
+public final class OController{
     private OView view;
     
     private final Link link = Link.getDefaultInstance();
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
+    private boolean startRecording = false; //Used to start file logging, true = log false = stop
     private String arduinoSerialData; //Data recieved from Arduino serially
     
     public OController(){
@@ -35,7 +36,10 @@ public class OController{
         rawDataListener();
     }
     
-    
+    /**
+     * Listener for connect button
+     * Retrieves port and baud rate and establishes connection to Serial port
+     */
     private void connectButtonActionListener(){
         view.buttonConnect.addActionListener((ActionEvent e) -> {
             String comPort = view.serialConnectionPanel.getConnectionPort();
@@ -72,6 +76,11 @@ public class OController{
         });    
     }
     
+    /**
+     * Listener for disconnect button
+     * Calls link.disconnect which closes the serial port
+     * Enables/Disables GUI items
+     */
     private void disconnectButtonActionListener(){
         view.buttonDisconnect.addActionListener((ActionEvent e) -> {
             boolean disconnected = link.disconnect();
@@ -83,7 +92,14 @@ public class OController{
             }
         });
     }
-        private void startButtonActionListener(){
+    
+    /**
+     * Listener for start button
+     * Writes a "R" to serial to start data logging on Arduino
+     * Sends Motor RPM, Amplitude and Sampling Rate to Arduino
+     * Enables/Disables GUI items
+     */
+    private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
             try {
                 //Allows Arduino to get ready
@@ -96,6 +112,7 @@ public class OController{
             sendMotorRPM(getSetMotorRPM()); //Send motor speed
             sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude
             sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
+            setStartRecording(true);
             //Enable/Disable GUI
             view.buttonStart.setEnabled(false);
             view.buttonStop.setEnabled(true);
@@ -105,6 +122,11 @@ public class OController{
         });
     }
     
+    /**
+     * Listener for stop button
+     * Writes a "C" to serial for complete
+     * Enables/Disables GUI items
+     */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
             //PC sends C for complete of testing
@@ -118,6 +140,9 @@ public class OController{
         }); 
     }
     
+    /**
+     * Listener for frequency slider
+     */
     private void freqSliderActionListener(){
         view.freqSlider.addChangeListener((ChangeEvent e) -> {
             motorFreq = view.freqSlider.getValue();
@@ -125,13 +150,19 @@ public class OController{
         });
     }
     
-        private void sampRateSliderActionListener(){
+    /**
+     * Listener for sample rate slider
+     */
+    private void sampRateSliderActionListener(){
         view.sampRateSlider.addChangeListener((ChangeEvent e) -> {
             sampRate = view.sampRateSlider.getValue();
             view.sampRateTextField.setText(Integer.toString(sampRate));
         });
     }
     
+    /**
+     * Listener for amplitude combo box
+     */
     private void ampComboBoxActionListener(){
         view.ampComboBox.addActionListener((ActionEvent e) -> {
             //Add code
@@ -192,7 +223,7 @@ public class OController{
     public void recordIncomingSerialData(String data){
         //Send to Dana
         //#TODO
-        arduinoSerialData = data;
+        arduinoSerialData = data; //Dont need?
     }
     
     /**
@@ -250,6 +281,22 @@ public class OController{
         link.writeSerial(str.length()-1, samplingRateArray);
         link.writeSerial("E");
         return true;
+    }
+    
+    /**
+     * Used to start data logging for java
+     * @return 
+     */
+    public boolean getStartRecording(){
+        return startRecording;
+    }
+    
+    /**
+     * Sets start recording boolean
+     * @param start 
+     */
+    public void setStartRecording(boolean start){
+        startRecording = start;
     }
    
     /**
