@@ -25,41 +25,41 @@ public class OView extends JFrame{
     private final String DEGREE = "\u00B0"; //Degree symbol Unicode
     private final String[] ampString = {"90"+DEGREE, "105"+DEGREE, "120"+DEGREE}; //String for constant amplitudes
     
-    protected JFrame mainFrame;
+    private JFrame mainFrame;
     
-    protected JPanel mainPanel;
-    protected JPanel connectionPanel;
+    private JPanel mainPanel;
+    private JPanel connectionPanel;
     
-    protected JLabel ampLabel;
-    protected JLabel freqLabel;
-    protected JLabel statusLabel;
-    protected JLabel upTimeLabel;
-    protected JLabel sampRateLabel;
-    protected JLabel freqUnitLabel;
-    protected JLabel sampUnitLabel;
+    private JLabel ampLabel;
+    private JLabel freqLabel;
+    private JLabel statusLabel;
+    private JLabel upTimeLabel;
+    private JLabel sampRateLabel;
+    private JLabel freqUnitLabel;
+    private JLabel sampUnitLabel;
     
     protected JButton buttonStop;
     protected JButton buttonStart;
     protected JButton buttonConnect;
     protected JButton buttonDisconnect;
     
-    protected JTextField  freqTextField;
-    protected JTextField  statusTextField;
-    protected JTextField upTimeTextField;
-    protected JTextField sampRateTextField;
+    private JTextField  freqTextField;
+    private JTextField  statusTextField;
+    private JTextField upTimeTextField;
+    private JTextField sampRateTextField;
     
     protected JComboBox ampComboBox;
     
-    protected SerialConnectionPanel serialConnectionPanel;
+    private SerialConnectionPanel serialConnectionPanel;
     
-    protected ConnectionStatus connectionStatus;
+    private ConnectionStatus connectionStatus;
     
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
     
-    protected MigLayout migLayout;
+    private MigLayout migLayout;
     
-    protected GroupLayout gPanel;
+    private GroupLayout gPanel;
     
     private final Dimension buttonSize = new Dimension(150,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
@@ -178,7 +178,7 @@ public class OView extends JFrame{
         mainFrame.setVisible(true);
     }
     
-    public void guiDefaults(){
+    private void guiDefaults(){
         buttonConnect.setEnabled(true);
         buttonDisconnect.setEnabled(false);
         buttonStart.setEnabled(false);
@@ -189,18 +189,32 @@ public class OView extends JFrame{
         JOptionPane.showMessageDialog(buttonConnect,errorString, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
-    public boolean setStatusBarText(String status){
+    public void setStatusBarText(String status){
         statusTextField.setText(status);
-        return true;
     }
     
-    public boolean setStatusBarColor(Color color){
+    public void setStatusBarColor(Color color){
         statusTextField.setBackground(Color.red);
-        return true;
     }
     
-    public boolean setUpTimeText(String time){
+    public void setUpTimeText(String time){
         upTimeTextField.setText(time);
-        return true;
     }
+    
+    public void setFrequencyTextField(String frequency){
+        freqTextField.setText(frequency);
+    }
+    
+    public void setSampleRate(String rate){
+        sampRateTextField.setText(rate);
+    }
+    
+    public String getConnectionPort(){
+        return serialConnectionPanel.getConnectionPort();
+    }
+    
+    public String getBaudRate(){
+        return serialConnectionPanel.getBaudRate();
+    }
+    
 }
