@@ -3,8 +3,18 @@ package odrive;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JOptionPane;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 import org.zu.ardulink.gui.ConnectionStatus;
@@ -50,6 +60,9 @@ public class OView extends JFrame{
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
     
+    private BufferedImage wwwLogo;
+    private JLabel label;
+    
     private final Dimension buttonSize = new Dimension(150,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
@@ -64,14 +77,14 @@ public class OView extends JFrame{
         JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
+        JPanel interfacePanel = new JPanel();
+        interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));
         
-        JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
-        
-        mainPanel.add(connectionPanel());
-        mainPanel.add(inputPanel());
-        mainPanel.add(statusPanel());
-        mainFrame.add(mainPanel);
+        interfacePanel.add(imageLogoPanel());
+        interfacePanel.add(connectionPanel());
+        interfacePanel.add(inputPanel());
+        interfacePanel.add(statusPanel());
+        mainFrame.add(interfacePanel);
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
@@ -81,8 +94,10 @@ public class OView extends JFrame{
      * @return JPanel
      */
     private JPanel connectionPanel(){
-        JPanel connectionPanel = new JPanel(new MigLayout("","","")); //"Layout","Column","Row"
-        connectionPanel.setBorder(BorderFactory.createEtchedBorder());
+        JPanel connectionPanel = new JPanel(new MigLayout("insets 10 10 10 10","","")); //"Layout","Column","Row"
+        BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
+        EmptyBorder empty = new EmptyBorder(2, 10, 5, 10);
+        connectionPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
         buttonConnect = new JButton("Connect");
         buttonConnect.setPreferredSize(buttonSize);
         buttonConnect.setFont(buttonFont);
@@ -101,8 +116,11 @@ public class OView extends JFrame{
     }
     
     private JPanel inputPanel(){
-        JPanel inputPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
-        inputPanel.setBorder(BorderFactory.createEtchedBorder());
+        JPanel inputPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));//"Layout","Column","Row"
+        BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
+        EmptyBorder empty = new EmptyBorder(5, 10, 5, 10);
+        inputPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
+        
         buttonStart = new JButton("Start");
         buttonStart.setPreferredSize(buttonSize);
         buttonStart.setFont(buttonFont);
@@ -156,8 +174,15 @@ public class OView extends JFrame{
     }
     
     private JPanel statusPanel(){
-        JPanel statusPanel = new JPanel(new MigLayout("insets 0 10 10 20","",""));//"Layout","Column","Row"
-        statusPanel.setBorder(BorderFactory.createEtchedBorder());
+        JPanel statusPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));//"Layout","Column","Row"
+        
+        //Create border
+        BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
+        EmptyBorder empty = new EmptyBorder(5, 10, 10, 10);
+        statusPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
+
+        //statusPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
+        //statusPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         statusLabel = new JLabel("Status:");
         upTimeLabel = new JLabel("Up Time:");
         statusTextField = new JTextField();
@@ -172,6 +197,20 @@ public class OView extends JFrame{
         statusPanel.add(upTimeTextField, "width :400:");
         
         return statusPanel;
+    }
+    
+    private JPanel imageLogoPanel(){
+        JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
+        try {
+            wwwLogo = ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/logo-wave-water-works-white.png"));
+            label = new JLabel(new ImageIcon(wwwLogo));
+            imageLogoPanel.add(label);
+        } catch (IOException ex) {
+            Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+        return imageLogoPanel;
     }
     
     private void guiDefaults(){
