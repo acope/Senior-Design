@@ -1,9 +1,13 @@
 package odrive;
 
+import helper.UpTimeCounter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.Timer;
 
 import javax.swing.event.ChangeEvent;
 
@@ -20,6 +24,8 @@ public final class OController{
     private final OView view;
     private final OSerial serial;
     private final Link link = Link.getDefaultInstance();
+    private final UpTimeCounter upTime;
+    private Timer t;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -27,6 +33,7 @@ public final class OController{
     public OController(){
         view = new OView();
         serial = new OSerial(link.getName());
+        upTime = new UpTimeCounter();
         
         //Add action listeners     
         connectButtonActionListener();
@@ -37,6 +44,7 @@ public final class OController{
         freqSliderActionListener();
         sampRateSliderActionListener();
         rawDataListener();
+        updateUpTime();
     }
     
     /**
@@ -74,8 +82,8 @@ public final class OController{
                     if(message == null || message.trim().equals(" ")){
                         message = "Generic Error on Connection!";
                     }
-                    view.statusTextField.setText(message);
-                    view.statusTextField.setBackground(Color.red);
+                    view.setStatusBarText(message);
+                    view.setStatusBarColor(Color.red);
                 }
             }
         });    
@@ -112,6 +120,10 @@ public final class OController{
             try {
                 //Allows Arduino to get ready
                 Thread.sleep(2000);
+                //Start up time counter
+                upTime.start();
+                //Start update up time timer
+                t.start();
                 //#TODO Create new workbook here, Dana
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
@@ -138,6 +150,7 @@ public final class OController{
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
+            upTime.stop();
             //#TODO close workbook here
             
             //PC sends C for complete of testing
@@ -195,6 +208,19 @@ public final class OController{
         });
     }   
     
+    /**
+     * Updates up time text field
+     * Updates every half second
+     */
+    private void updateUpTime(){
+        t = new Timer(500, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                view.setUpTimeText(upTime.getUpTime());
+            }
+        });
+    }
+    
     public int getMotorFreqSlider(){
         return view.freqSlider.getValue();
     }
@@ -228,4 +254,5 @@ public final class OController{
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
     }
+
 }
