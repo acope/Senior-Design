@@ -14,8 +14,6 @@ import org.zu.ardulink.gui.ConnectionStatus;
  * @author Austin Copeman
  */
 public class OView extends JFrame{
-    private final int MAIN_FRAME_HEIGHT = 768; //X
-    private final int MAIN_FRAME_WIDTH = 1024; //Y
     private final int FREQ_MIN = 0; //Minimun motor frequency 
     private final int FREQ_MAX = 50; //Max motor frequency = 3000RPM * (1/60)Hz (1RPM = 1/60Hz)
     private final int FREQ_INIT = 25; //Initial motor speed
@@ -24,11 +22,6 @@ public class OView extends JFrame{
     private final int SAMPRATE_INIT = 60; //Initial samping rate
     private final String DEGREE = "\u00B0"; //Degree symbol Unicode
     private final String[] ampString = {"90"+DEGREE, "105"+DEGREE, "120"+DEGREE}; //String for constant amplitudes
-    
-    private JFrame mainFrame;
-    
-    private JPanel mainPanel;
-    private JPanel connectionPanel;
     
     private JLabel ampLabel;
     private JLabel freqLabel;
@@ -57,63 +50,77 @@ public class OView extends JFrame{
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
     
-    private MigLayout migLayout;
-    
-    private GroupLayout gPanel;
-    
     private final Dimension buttonSize = new Dimension(150,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
     public OView(){
+        //initGUI();
         initGUI();
         //initallize objects to their starting values
         guiDefaults();
     }
     
     private void initGUI(){
-        mainFrame = new JFrame("ODrive Test Simulation"); //Creates new Frame with name at top
+        JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
-        mainFrame.setSize(MAIN_FRAME_WIDTH, MAIN_FRAME_HEIGHT);
         mainFrame.setResizable(false);
         
-        // MiG Layout, Column and Row constraints as arguments.
-        migLayout = new MigLayout();
-        //Create a new panel with MiG Layout constraints
-        mainPanel = new JPanel(migLayout); 
-        //connectionPanel = new JPanel(migLayout);
-        //Create JButtons
-        buttonStart = new JButton("Start");
-        buttonStart.setPreferredSize(buttonSize);
-        buttonStart.setFont(buttonFont);
-        buttonStop = new JButton("Stop");
-        buttonStop.setPreferredSize(buttonSize);
-        buttonStop.setFont(buttonFont);
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
+        
+        mainPanel.add(connectionPanel());
+        mainPanel.add(inputPanel());
+        mainPanel.add(statusPanel());
+        mainFrame.add(mainPanel);
+        mainFrame.pack();
+        mainFrame.setVisible(true);
+    }
+    
+    /**
+     * Creates connection panel
+     * @return JPanel
+     */
+    private JPanel connectionPanel(){
+        JPanel connectionPanel = new JPanel(new MigLayout("","","")); //"Layout","Column","Row"
         buttonConnect = new JButton("Connect");
         buttonConnect.setPreferredSize(buttonSize);
         buttonConnect.setFont(buttonFont);
         buttonDisconnect = new JButton("Disconnect");
         buttonDisconnect.setPreferredSize(buttonSize);
         buttonDisconnect.setFont(buttonFont);
+        serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
+        connectionStatus = new ConnectionStatus();
         
-        //Create JLabels
+        connectionPanel.add(serialConnectionPanel, "split 2");
+        connectionPanel.add(connectionStatus, "wrap");
+        connectionPanel.add(buttonConnect, "split 2");
+        connectionPanel.add(buttonDisconnect, "wrap");
+        
+        return connectionPanel;
+    }
+    
+    private JPanel inputPanel(){
+        JPanel inputPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
+        
+        buttonStart = new JButton("Start");
+        buttonStart.setPreferredSize(buttonSize);
+        buttonStart.setFont(buttonFont);
+        buttonStop = new JButton("Stop");
+        buttonStop.setPreferredSize(buttonSize);
+        buttonStop.setFont(buttonFont);
+        
         ampLabel = new JLabel("Amplitude:");
         freqLabel = new JLabel("Frequency:");
-        statusLabel = new JLabel("Status:");
-        upTimeLabel = new JLabel("Up Time:");
         sampRateLabel = new JLabel("Sampling Rate:");
         freqUnitLabel = new JLabel("Hz");
         sampUnitLabel = new JLabel("Seconds");
         
-        //Create JTextfield
         freqTextField = new JTextField(Integer.toString(FREQ_INIT));
-        statusTextField = new JTextField();
-        upTimeTextField = new JTextField();
+        freqTextField.setEditable(false);
         sampRateTextField = new JTextField(Integer.toString(SAMPRATE_INIT));
+        sampRateTextField.setEditable(false);
         
-        //Create ComboBox
         ampComboBox = new JComboBox(ampString);
-        
-        //Create JSlider
         
         freqSlider = new JSlider(JSlider.HORIZONTAL,FREQ_MIN,FREQ_MAX,FREQ_INIT);
         freqSlider.setMajorTickSpacing(FREQ_MAX/5);
@@ -127,55 +134,43 @@ public class OView extends JFrame{
         sampRateSlider.setPaintTicks(true);
         sampRateSlider.setPaintLabels(true);
         
-        //Create other needed panels
-        serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
-        connectionStatus = new ConnectionStatus();
+        inputPanel.add(ampLabel, "split 2");
+        inputPanel.add(ampComboBox, "wrap");
         
-        //Define Text Field Attributes
+        inputPanel.add(freqLabel, "split 3");
+        inputPanel.add(freqSlider, "grow");
+        inputPanel.add(freqTextField, "");
+        inputPanel.add(freqUnitLabel, "wrap");
+        
+        
+        inputPanel.add(sampRateLabel, "split 3");
+        inputPanel.add(sampRateSlider, "grow");
+        inputPanel.add(sampRateTextField, "");
+        inputPanel.add(sampUnitLabel, "wrap");
+        
+        inputPanel.add(buttonStart, "split 2");
+        inputPanel.add(buttonStop, "wrap");
+        
+        return inputPanel;
+    }
+    
+    private JPanel statusPanel(){
+        JPanel statusPanel = new JPanel(new MigLayout("insets 0 10 10 20","",""));//"Layout","Column","Row"
+        
+        statusLabel = new JLabel("Status:");
+        upTimeLabel = new JLabel("Up Time:");
+        statusTextField = new JTextField();
+        upTimeTextField = new JTextField();
+        
         statusTextField.setEditable(false);
         upTimeTextField.setEditable(false);
-        freqTextField.setEditable(false);
-        sampRateTextField.setEditable(false);
         
-
-        //Add objects to panel
+        statusPanel.add(statusLabel, "split 2");
+        statusPanel.add(statusTextField, "width :400:, wrap");     
+        statusPanel.add(upTimeLabel, "split 2");
+        statusPanel.add(upTimeTextField, "width :400:");
         
-        //Connection section
-        
-        mainPanel.add(serialConnectionPanel, "split 2");
-        mainPanel.add(connectionStatus, "wrap");
-        mainPanel.add(buttonConnect, "split 2");
-        mainPanel.add(buttonDisconnect, "wrap");
-
-
-        //Input section
-        mainPanel.add(ampLabel, "split 2");
-        mainPanel.add(ampComboBox, "wrap");
-        
-        mainPanel.add(freqLabel, "split 3");
-        mainPanel.add(freqSlider, "grow");
-        mainPanel.add(freqTextField, "");
-        mainPanel.add(freqUnitLabel, "wrap");
-        
-        
-        mainPanel.add(sampRateLabel, "split 3");
-        mainPanel.add(sampRateSlider, "grow");
-        mainPanel.add(sampRateTextField, "");
-        mainPanel.add(sampUnitLabel, "wrap");
-        
-        mainPanel.add(buttonStart, "split 2");
-        mainPanel.add(buttonStop, "wrap");
-        
-        //Status section
-        mainPanel.add(statusLabel, "split 2");
-        mainPanel.add(statusTextField, "width :400:, wrap");     
-        mainPanel.add(upTimeLabel, "split 2");
-        mainPanel.add(upTimeTextField, "width :400:");
-        
-
-        //Add panel to the frame
-        mainFrame.add(mainPanel);
-        mainFrame.setVisible(true);
+        return statusPanel;
     }
     
     private void guiDefaults(){
