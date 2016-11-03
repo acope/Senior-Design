@@ -107,7 +107,7 @@ public class OSerial {
                 }
                 String arduinoData = build.toString();
                 //Send to ExcelWrite in OFile
-                System.out.println(arduinoData);
+                //System.out.println(arduinoData);
                 break;
                 
             //Error state
