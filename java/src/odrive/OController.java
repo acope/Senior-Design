@@ -3,8 +3,6 @@ package odrive;
 import helper.UpTimeCounter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
@@ -53,8 +51,8 @@ public final class OController{
      */
     private void connectButtonActionListener(){
         view.buttonConnect.addActionListener((ActionEvent e) -> {
-            String comPort = view.serialConnectionPanel.getConnectionPort();
-            String baudRateS = view.serialConnectionPanel.getBaudRate();
+            String comPort = view.getConnectionPort();
+            String baudRateS = view.getBaudRate();
             
             if(comPort == null || "".equals(comPort)){
                 view.errorJOptionPane("No COM port found");
@@ -68,6 +66,7 @@ public final class OController{
                     
                     //If connected start listening to COM port and enable/disable GUI
                     if(connected) {
+                        view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
                         view.buttonConnect.setEnabled(false);
                         view.buttonDisconnect.setEnabled(true);
                         view.buttonStart.setEnabled(true);
@@ -98,6 +97,7 @@ public final class OController{
         view.buttonDisconnect.addActionListener((ActionEvent e) -> {
             boolean disconnected = link.disconnect();
             if (disconnected) {
+                view.setStatusBarText("Disconnected from Arduino");
                 view.buttonConnect.setEnabled(true);
                 view.buttonDisconnect.setEnabled(false);
                 view.buttonStart.setEnabled(false);
@@ -119,7 +119,9 @@ public final class OController{
         view.buttonStart.addActionListener((ActionEvent e) -> {
             try {
                 //Allows Arduino to get ready
+                view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 Thread.sleep(2000);
+                view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
                 //Start up time counter
                 upTime.start();
                 //Start update up time timer
@@ -131,7 +133,7 @@ public final class OController{
 
             link.writeSerial("R"); //Send initiate recording
             serial.sendMotorRPM(getSetMotorRPM()); //Send motor speed
-            serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude
+            serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude 
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
             
             //Enable/Disable GUI
@@ -172,7 +174,7 @@ public final class OController{
     private void freqSliderActionListener(){
         view.freqSlider.addChangeListener((ChangeEvent e) -> {
             motorFreq = view.freqSlider.getValue();
-            view.freqTextField.setText(Integer.toString(motorFreq));
+            view.setFrequencyTextField(Integer.toString(motorFreq));
         });
     }
     
@@ -182,7 +184,7 @@ public final class OController{
     private void sampRateSliderActionListener(){
         view.sampRateSlider.addChangeListener((ChangeEvent e) -> {
             sampRate = view.sampRateSlider.getValue();
-            view.sampRateTextField.setText(Integer.toString(sampRate));
+            view.setSampleRate(Integer.toString(sampRate));
         });
     }
     
@@ -213,11 +215,8 @@ public final class OController{
      * Updates every half second
      */
     private void updateUpTime(){
-        t = new Timer(500, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.setUpTimeText(upTime.getUpTime());
-            }
+        t = new Timer(500, (ActionEvent e) -> {
+            view.setUpTimeText(upTime.getUpTime());
         });
     }
     
