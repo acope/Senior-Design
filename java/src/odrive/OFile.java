@@ -26,7 +26,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  * @author Dana
  */
 public class OFile {
-
     /**
      * @param args the command line arguments
      */

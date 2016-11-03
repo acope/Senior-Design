@@ -64,7 +64,10 @@ public final class OController{
                         view.buttonConnect.setEnabled(false);
                         view.buttonDisconnect.setEnabled(true);
                         view.buttonStart.setEnabled(true);
-                        view.buttonStop.setEnabled(false);                     
+                        view.buttonStop.setEnabled(false); 
+                        view.freqSlider.setEnabled(true);
+                        view.sampRateSlider.setEnabled(true);
+                        view.ampComboBox.setEnabled(true);
                     }
                 }
                 catch(Exception ex){
@@ -93,6 +96,9 @@ public final class OController{
                 view.buttonDisconnect.setEnabled(false);
                 view.buttonStart.setEnabled(false);
                 view.buttonStop.setEnabled(false);
+                view.freqSlider.setEnabled(false);
+                view.sampRateSlider.setEnabled(false);
+                view.ampComboBox.setEnabled(false);
             }
         });
     }
@@ -108,6 +114,7 @@ public final class OController{
             try {
                 //Allows Arduino to get ready
                 Thread.sleep(2000);
+                //#TODO Create new workbook here, Dana
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -136,9 +143,10 @@ public final class OController{
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
+            //#TODO close workbook here
+            
             //PC sends C for complete of testing
             link.writeSerial("C");
-            
             //Stop file logging
             setStartRecording(false);
             

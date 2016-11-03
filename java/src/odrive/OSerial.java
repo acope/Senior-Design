@@ -9,7 +9,6 @@ import org.zu.ardulink.Link;
  */
 public class OSerial {
     private final Link link;
-    private String arduinoSerialData; //Data recieved from Arduino serially
     
     /**
      * Constructor, takes in link instance to communicate with serial
@@ -76,16 +75,6 @@ public class OSerial {
         return true;
     }
     
-        /**
-     * Calls the file writing to store incoming serial data
-     * @param data 
-     */
-    public void recordIncomingSerialData(String data){
-        //Send to Dana
-        //#TODO
-        arduinoSerialData = data; //Dont need?
-    }
-    
     /**
      * Cases for received state from Arduino
      * @param str 
@@ -135,7 +124,7 @@ public class OSerial {
                    // build.append(Integer.parseInt(Character.toString(c)));
                 }
                 String arduinoData = build.toString();
-                //recordIncomingSerialData(arduinoData);
+                //Send to ExcelWrite in OFile
                 System.out.println(arduinoData);
                 break;
                 
