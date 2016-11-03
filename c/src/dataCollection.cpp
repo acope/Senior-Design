@@ -69,13 +69,13 @@ void checkTimerTasks()
   if (f_motor_control_)
   {
     f_motor_control_ = false;
-    motorSpeedControlPID();
+    //motorSpeedControlPID();
   }
 
   if (f_error_check_)
   {
     f_error_check_ = false;
-    errorCheck();
+    //errorCheck();
   }
 }
 
@@ -104,6 +104,7 @@ void checkSerialInterrupt()
     sendInputSD();
     OpenSDFile();
     Serial.write('A');
+    Serial.write(255);
     // FIXME: Put Back
     state_ = recording;
     //state_ = prepare;
@@ -114,6 +115,7 @@ void checkSerialInterrupt()
     // Not implemented as Computer side don't have this feature
     f_pause_request_ = false;
     Serial.write('F');
+    Serial.write(255);
   }
 
   if (f_complete_request_)
@@ -122,6 +124,7 @@ void checkSerialInterrupt()
     stopMotor();
     CloseSDFile();
     Serial.write('A');
+    Serial.write(255);
     restart_ = true;
     state_ = done;
   }
@@ -133,11 +136,13 @@ void checkSerialInterrupt()
         new_input_condition_.frequency >= MIN_FREQUENCY)
     {
       Serial.write('A');
+      Serial.write(255);
       input_condition_.frequency = new_input_condition_.frequency;
       sendInputSD();
     }
     else
       Serial.write('F');
+      Serial.write(255);
   }
 
   if (f_amplitude_request_)
@@ -147,11 +152,13 @@ void checkSerialInterrupt()
         new_input_condition_.amplitude >= MIN_AMPLITUDE)
     {
       Serial.write('A');
+      Serial.write(255);
       input_condition_.amplitude = new_input_condition_.amplitude;
       sendInputSD();
     }
     else
       Serial.write('F');
+      Serial.write(255);
   }
 
   if (f_sampling_rate_request_)
@@ -161,11 +168,13 @@ void checkSerialInterrupt()
         new_input_condition_.sampling_rate >= MIN_SAMPLE_RATE)
     {
       Serial.write('A');
+      Serial.write(255);
       input_condition_.sampling_rate = new_input_condition_.sampling_rate;
       multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
       sendInputSD();
     }
     Serial.write('A');
+    Serial.write(255);
   }
 
 }
@@ -271,7 +280,11 @@ bool sendDataSerial()
   Serial.print(",");
   Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
-  //Serial.write(255);
+  Serial.println(input_condition_.amplitude);
+  Serial.println(input_condition_.frequency);
+  Serial.println(input_condition_.sampling_rate);
+
+  Serial.write(255);
 
   return true;
 }
@@ -296,7 +309,7 @@ bool sendInputSD()
   sd_card_input_.println(",\n");
   sd_card_input_.close();
   // FIXME: Remove
-  Serial.println("INPUT TO SD CARD");
+  //Serial.println("INPUT TO SD CARD");
   return true;
 }
 
@@ -321,7 +334,7 @@ bool sendDataSD()
   sd_card_file_.print(collected_data_.generated_voltage, DEC);
   sd_card_file_.write(",\n");
   // FIXME: Remove
-  Serial.println("SD CARD written");
+  //Serial.println("SD CARD written");
 
   return true;
 }
@@ -330,13 +343,13 @@ bool sendDataSD()
 void OpenSDFile()
 {
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
-  Serial.println("SD FILE OPEN");
+  //Serial.println("SD FILE OPEN");
 }
 
 void CloseSDFile()
 {
   sd_card_file_.close();
-  Serial.println("SD FILE CLOSE");
+  //Serial.println("SD FILE CLOSE");
 }
 
 void updateSDFile()
@@ -345,12 +358,12 @@ void updateSDFile()
   file_index_++;
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
 
-  Serial.println(sd_card_dir_path_);
-  Serial.println(sd_card_file_path_);
+  //Serial.println(sd_card_dir_path_);
+  //Serial.println(sd_card_file_path_);
 
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
   sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
-  Serial.println("SD CARD FILE NEW ONE!");
+  //Serial.println("SD CARD FILE NEW ONE!");
 }
 
 // TODO: When motor is spinning, check all input and send error if condition is met
