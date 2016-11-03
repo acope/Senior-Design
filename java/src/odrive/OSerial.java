@@ -3,18 +3,27 @@ package odrive;
 //Ardulink imports
 import org.zu.ardulink.Link;
 
+/**
+ * Controls the transmitting and receiving from serial port
+ * @author Austin Copeman
+ */
 public class OSerial {
     private final Link link;
+    private String arduinoSerialData; //Data recieved from Arduino serially
     
+    /**
+     * Constructor, takes in link instance to communicate with serial
+     * @param linkName 
+     */
     public OSerial(String linkName){
         link = Link.getInstance(linkName);
     }
     
-        /**
-     * Sends motor RPM to serial
-     * @param rpm
-     * @return 
-     */
+    /**
+    * Sends motor RPM to serial
+    * @param rpm
+    * @return 
+    */
     public boolean sendMotorRPM(int rpm){      
         String str = Integer.toString(rpm);
         int[] motorRPMArray = new int[str.length()];
@@ -65,6 +74,16 @@ public class OSerial {
         link.writeSerial(str.length()-1, samplingRateArray);
         link.writeSerial("E");
         return true;
+    }
+    
+        /**
+     * Calls the file writing to store incoming serial data
+     * @param data 
+     */
+    public void recordIncomingSerialData(String data){
+        //Send to Dana
+        //#TODO
+        arduinoSerialData = data; //Dont need?
     }
     
     /**
