@@ -1,9 +1,9 @@
 package odrive;
 
-//Ardulink imports
-//https://github.com/marcomauro/Arduino-SerialRead-Java
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+//Ardulink imports
+//https://github.com/marcomauro/Arduino-SerialRead-Java
 import org.zu.ardulink.Link;
 
 /**
@@ -12,7 +12,7 @@ import org.zu.ardulink.Link;
  */
 public class OSerial {
     private final Link link;
-    private NumberFormat formatter = new DecimalFormat("0000");
+    private final NumberFormat formatter = new DecimalFormat("0000"); //For sending 4 digits to Arduino
     /**
      * Constructor, takes in link instance to communicate with serial
      * @param linkName 
@@ -27,20 +27,8 @@ public class OSerial {
     * @return 
     */
     public boolean sendMotorRPM(int rpm){      
-        /*
-        String str = Integer.toString(rpm);
-        int[] motorRPMArray = new int[str.length()];
-        
-        for(int i = 0; i < str.length(); i++){
-            motorRPMArray[i] = str.charAt(i)- '0';
-        }
-        
-        */
-        //str = String.format("%04d", rpm);
-        //System.out.println(formatter.format(rpm));
         link.writeSerial("M");
         link.writeSerial(formatter.format(rpm));
-        //link.writeSerial(str.length()-1, motorRPMArray);
         link.writeSerial("E");
         return true;
     }
@@ -50,18 +38,9 @@ public class OSerial {
      * @param amp
      * @return 
      */
-    public boolean sendAmplitude(int amp){
-        String str = Integer.toString(amp);
-        int[] ampArray = new int[str.length()];
-        
-        for(int i = 0; i < str.length(); i++){
-            ampArray[i] = str.charAt(i) - '0';
-        }
-        
-        
+    public boolean sendAmplitude(int amp){          
         link.writeSerial("D");
         link.writeSerial(formatter.format(amp));
-        //link.writeSerial(str.length()-1, ampArray);
         link.writeSerial("E");
         return true;
     }
@@ -71,17 +50,9 @@ public class OSerial {
      * @param samplingRate
      * @return 
      */
-    public boolean sendSamplingRate(int samplingRate){
-        String str = Integer.toString(samplingRate);
-        int[] samplingRateArray = new int[str.length()];
-        
-        for(int i = 0; i < str.length(); i++){
-            samplingRateArray[i] = str.charAt(i) - '0';
-        }
-        
+    public boolean sendSamplingRate(int samplingRate){    
         link.writeSerial("X");
         link.writeSerial(formatter.format(samplingRate));
-        //link.writeSerial(str.length()-1, samplingRateArray);
         link.writeSerial("E");
         return true;
     }
