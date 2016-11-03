@@ -33,7 +33,7 @@ public class OFile {
         // TODO code application logic here
         
         OFile excel = new OFile();
-        
+        CreateWBook();
          
         
         excel.ExcelWrite("1256,2500,10,10,40");   

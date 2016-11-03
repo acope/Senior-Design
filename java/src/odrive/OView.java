@@ -60,8 +60,8 @@ public class OView extends JFrame{
     
     protected GroupLayout gPanel;
     
-    private final Dimension buttonSize = new Dimension(250,50);
-    private final Font buttonFont = new Font("Dialog", Font.PLAIN, 30);
+    private final Dimension buttonSize = new Dimension(150,50);
+    private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
     public OView(){
         initGUI();

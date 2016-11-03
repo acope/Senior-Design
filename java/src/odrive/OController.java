@@ -17,13 +17,12 @@ import org.zu.ardulink.Link;
  * @author Austin Copeman
  */
 public final class OController{
-    private OView view;
-    private OSerial serial;
+    private final OView view;
+    private final OSerial serial;
     private final Link link = Link.getDefaultInstance();
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
-    private boolean startRecording = false; //Used to start file logging, true = log false = stop
     
     public OController(){
         view = new OView();
@@ -60,18 +59,17 @@ public final class OController{
                     boolean connected = link.connect(comPort, baudRate);
                     
                     //If connected start listening to COM port and enable/disable GUI
-                    if(connected) {                  
+                    if(connected) {
                         view.buttonConnect.setEnabled(false);
                         view.buttonDisconnect.setEnabled(true);
                         view.buttonStart.setEnabled(true);
-                        view.buttonStop.setEnabled(false); 
+                        view.buttonStop.setEnabled(false);
                         view.freqSlider.setEnabled(true);
                         view.sampRateSlider.setEnabled(true);
                         view.ampComboBox.setEnabled(true);
                     }
                 }
                 catch(Exception ex){
-                    ex.printStackTrace();
                     String message = ex.getMessage();
                     if(message == null || message.trim().equals(" ")){
                         message = "Generic Error on Connection!";
@@ -124,9 +122,6 @@ public final class OController{
             serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
             
-            //Start File Logging
-            setStartRecording(true);
-            
             //Enable/Disable GUI
             view.buttonStart.setEnabled(false);
             view.buttonStop.setEnabled(true);
@@ -148,7 +143,6 @@ public final class OController{
             //PC sends C for complete of testing
             link.writeSerial("C");
             //Stop file logging
-            setStartRecording(false);
             
             //Enable/Disable GUI
             view.buttonStart.setEnabled(true);
@@ -233,21 +227,5 @@ public final class OController{
      */
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
-    }
-    
-    /**
-     * Used to start data logging for java
-     * @return 
-     */
-    public boolean getStartRecording(){
-        return startRecording;
-    }
-    
-    /**
-     * Sets start recording boolean
-     * @param start 
-     */
-    public void setStartRecording(boolean start){
-        startRecording = start;
     }
 }
