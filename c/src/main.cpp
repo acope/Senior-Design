@@ -138,10 +138,10 @@ void serialEvent()
     if (inChar == 'M')
     {
       char data[5];
-      if (Serial.readBytesUntil('E', data, 5) == 2)
+      if (Serial.readBytesUntil('E', data, 5) == 4)
       {
-        unsigned int speed = *((unsigned int*)&data[0]);
-        new_input_condition_.frequency = __builtin_bswap16(speed);
+        unsigned int speed = atoi(data);
+        new_input_condition_.frequency = speed;
         f_motor_speed_request_ = true;
       }
       else
@@ -152,10 +152,10 @@ void serialEvent()
     if (inChar == 'D')
     {
       char data[5];
-      if (Serial.readBytesUntil('E', data, 5) == 2)
+      if (Serial.readBytesUntil('E', data, 5) == 4)
       {
-        unsigned int amplitude = *((unsigned int*)&data[0]);
-        new_input_condition_.amplitude = __builtin_bswap16(amplitude);
+        unsigned int amplitude = atoi(data);
+        new_input_condition_.amplitude = amplitude;
         f_amplitude_request_ = true;
       }
       else
@@ -166,10 +166,10 @@ void serialEvent()
     if (inChar == 'X')
     {
       char data[5];
-      if (Serial.readBytesUntil('E', data, 5) == 2)
+      if (Serial.readBytesUntil('E', data, 5) == 4)
       {
-        unsigned int rate = *((unsigned int*)&data[0]);
-        new_input_condition_.sampling_rate = __builtin_bswap16(rate);
+        unsigned int rate = atoi(data);
+        new_input_condition_.sampling_rate = rate;
         f_sampling_rate_request_ = true;
       }
       else
