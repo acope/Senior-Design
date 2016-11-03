@@ -153,6 +153,7 @@ public final class OController{
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
             upTime.stop();
+            view.setStatusBarText("Data logging has been stopped");
             //#TODO close workbook here
             
             //PC sends C for complete of testing
