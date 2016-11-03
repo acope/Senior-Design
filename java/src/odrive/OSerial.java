@@ -1,6 +1,9 @@
 package odrive;
 
 //Ardulink imports
+//https://github.com/marcomauro/Arduino-SerialRead-Java
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import org.zu.ardulink.Link;
 
 /**
@@ -9,7 +12,7 @@ import org.zu.ardulink.Link;
  */
 public class OSerial {
     private final Link link;
-    
+    private NumberFormat formatter = new DecimalFormat("0000");
     /**
      * Constructor, takes in link instance to communicate with serial
      * @param linkName 
@@ -24,6 +27,7 @@ public class OSerial {
     * @return 
     */
     public boolean sendMotorRPM(int rpm){      
+        /*
         String str = Integer.toString(rpm);
         int[] motorRPMArray = new int[str.length()];
         
@@ -31,8 +35,12 @@ public class OSerial {
             motorRPMArray[i] = str.charAt(i)- '0';
         }
         
+        */
+        //str = String.format("%04d", rpm);
+        //System.out.println(formatter.format(rpm));
         link.writeSerial("M");
-        link.writeSerial(str.length()-1, motorRPMArray);
+        link.writeSerial(formatter.format(rpm));
+        //link.writeSerial(str.length()-1, motorRPMArray);
         link.writeSerial("E");
         return true;
     }
@@ -50,8 +58,10 @@ public class OSerial {
             ampArray[i] = str.charAt(i) - '0';
         }
         
+        
         link.writeSerial("D");
-        link.writeSerial(str.length()-1, ampArray);
+        link.writeSerial(formatter.format(amp));
+        //link.writeSerial(str.length()-1, ampArray);
         link.writeSerial("E");
         return true;
     }
@@ -70,7 +80,8 @@ public class OSerial {
         }
         
         link.writeSerial("X");
-        link.writeSerial(str.length()-1, samplingRateArray);
+        link.writeSerial(formatter.format(samplingRate));
+        //link.writeSerial(str.length()-1, samplingRateArray);
         link.writeSerial("E");
         return true;
     }
