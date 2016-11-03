@@ -82,6 +82,7 @@ public class OView extends JFrame{
      */
     private JPanel connectionPanel(){
         JPanel connectionPanel = new JPanel(new MigLayout("","","")); //"Layout","Column","Row"
+        connectionPanel.setBorder(BorderFactory.createEtchedBorder());
         buttonConnect = new JButton("Connect");
         buttonConnect.setPreferredSize(buttonSize);
         buttonConnect.setFont(buttonFont);
@@ -101,7 +102,7 @@ public class OView extends JFrame{
     
     private JPanel inputPanel(){
         JPanel inputPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
-        
+        inputPanel.setBorder(BorderFactory.createEtchedBorder());
         buttonStart = new JButton("Start");
         buttonStart.setPreferredSize(buttonSize);
         buttonStart.setFont(buttonFont);
@@ -156,7 +157,7 @@ public class OView extends JFrame{
     
     private JPanel statusPanel(){
         JPanel statusPanel = new JPanel(new MigLayout("insets 0 10 10 20","",""));//"Layout","Column","Row"
-        
+        statusPanel.setBorder(BorderFactory.createEtchedBorder());
         statusLabel = new JLabel("Status:");
         upTimeLabel = new JLabel("Up Time:");
         statusTextField = new JTextField();
