@@ -11,7 +11,11 @@ import javax.swing.event.ChangeEvent;
 import org.zu.ardulink.Link;
 
 
-
+/**
+ * The conductor of the program
+ * Initializes the GUI and controls the serial input and file logging
+ * @author Austin Copeman
+ */
 public final class OController{
     private OView view;
     private OSerial serial;
@@ -20,7 +24,6 @@ public final class OController{
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
     private boolean startRecording = false; //Used to start file logging, true = log false = stop
-    private String arduinoSerialData; //Data recieved from Arduino serially
     
     public OController(){
         view = new OView();
@@ -222,16 +225,6 @@ public final class OController{
      */
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
-    }
-    
-    /**
-     * Calls the file writing to store incoming serial data
-     * @param data 
-     */
-    public void recordIncomingSerialData(String data){
-        //Send to Dana
-        //#TODO
-        arduinoSerialData = data; //Dont need?
     }
     
     /**

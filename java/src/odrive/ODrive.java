@@ -6,8 +6,8 @@
 package odrive;
 
 /**
- *
- * @author mr_co_000
+ * Main class 
+ * @author Austin Copeman
  */
 public class ODrive {
 

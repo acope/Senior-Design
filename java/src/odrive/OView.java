@@ -8,7 +8,10 @@ import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 import org.zu.ardulink.gui.ConnectionStatus;
 
-
+/**
+ * Odrive GUI interface
+ * @author Austin Copeman
+ */
 public class OView extends JFrame{
     private final int MAIN_FRAME_HEIGHT = 768; //X
     private final int MAIN_FRAME_WIDTH = 1024; //Y
