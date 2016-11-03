@@ -1,5 +1,6 @@
 package odrive;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import javax.swing.*;
@@ -169,7 +170,7 @@ public class OView extends JFrame{
         mainPanel.add(statusLabel, "split 2");
         mainPanel.add(statusTextField, "width :400:, wrap");     
         mainPanel.add(upTimeLabel, "split 2");
-        mainPanel.add(upTimeTextField, "width :100:");
+        mainPanel.add(upTimeTextField, "width :400:");
         
 
         //Add panel to the frame
@@ -186,5 +187,20 @@ public class OView extends JFrame{
     
     public void errorJOptionPane(String errorString){
         JOptionPane.showMessageDialog(buttonConnect,errorString, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    public boolean setStatusBarText(String status){
+        statusTextField.setText(status);
+        return true;
+    }
+    
+    public boolean setStatusBarColor(Color color){
+        statusTextField.setBackground(Color.red);
+        return true;
+    }
+    
+    public boolean setUpTimeText(String time){
+        upTimeTextField.setText(time);
+        return true;
     }
 }
