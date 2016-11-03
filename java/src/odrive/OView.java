@@ -3,6 +3,7 @@ package odrive;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +13,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import net.miginfocom.swing.MigLayout;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 import org.zu.ardulink.gui.ConnectionStatus;
@@ -107,9 +106,9 @@ public class OView extends JFrame{
         serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
         connectionStatus = new ConnectionStatus();
         
-        connectionPanel.add(serialConnectionPanel, "split 2");
+        connectionPanel.add(serialConnectionPanel, "split 2, align center");
         connectionPanel.add(connectionStatus, "wrap");
-        connectionPanel.add(buttonConnect, "split 2");
+        connectionPanel.add(buttonConnect, "split 2, align center");
         connectionPanel.add(buttonDisconnect, "wrap");
         
         return connectionPanel;
@@ -132,7 +131,7 @@ public class OView extends JFrame{
         freqLabel = new JLabel("Frequency:");
         sampRateLabel = new JLabel("Sampling Rate:");
         freqUnitLabel = new JLabel("Hz");
-        sampUnitLabel = new JLabel("Seconds");
+        sampUnitLabel = new JLabel("Sec");
         
         freqTextField = new JTextField(Integer.toString(FREQ_INIT));
         freqTextField.setEditable(false);
@@ -156,19 +155,19 @@ public class OView extends JFrame{
         inputPanel.add(ampLabel, "split 2");
         inputPanel.add(ampComboBox, "wrap");
         
-        inputPanel.add(freqLabel, "split 3");
+        inputPanel.add(freqLabel, "split 4");
         inputPanel.add(freqSlider, "grow");
-        inputPanel.add(freqTextField, "");
-        inputPanel.add(freqUnitLabel, "wrap");
+        inputPanel.add(freqTextField, "grow");
+        inputPanel.add(freqUnitLabel, "grow,wrap");
         
         
-        inputPanel.add(sampRateLabel, "split 3");
+        inputPanel.add(sampRateLabel, "split 4");
         inputPanel.add(sampRateSlider, "grow");
-        inputPanel.add(sampRateTextField, "");
-        inputPanel.add(sampUnitLabel, "wrap");
+        inputPanel.add(sampRateTextField, "grow");
+        inputPanel.add(sampUnitLabel, "grow, wrap");
         
-        inputPanel.add(buttonStart, "split 2");
-        inputPanel.add(buttonStop, "wrap");
+        inputPanel.add(buttonStart, "split 2,align center,grow");
+        inputPanel.add(buttonStop, "grow,wrap");
         
         return inputPanel;
     }
@@ -191,9 +190,9 @@ public class OView extends JFrame{
         statusTextField.setEditable(false);
         upTimeTextField.setEditable(false);
         
-        statusPanel.add(statusLabel, "split 2");
-        statusPanel.add(statusTextField, "width :400:, wrap");     
-        statusPanel.add(upTimeLabel, "split 2");
+        statusPanel.add(statusLabel, "split 2, align right");
+        statusPanel.add(statusTextField, "width :400:,wrap");     
+        statusPanel.add(upTimeLabel, "split 2, align right");
         statusPanel.add(upTimeTextField, "width :400:");
         
         return statusPanel;
@@ -202,11 +201,12 @@ public class OView extends JFrame{
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
         try {
-            wwwLogo = ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/logo-wave-water-works-white.png"));
+            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/src/res/img/logo-wave-water-works-white.png"));
+            
             label = new JLabel(new ImageIcon(wwwLogo));
-            imageLogoPanel.add(label);
+            imageLogoPanel.add(label,"grow,align center");
         } catch (IOException ex) {
-            Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OView.class.getName()).log(Level.WARNING, "Image not found", ex);
         }
         
         
