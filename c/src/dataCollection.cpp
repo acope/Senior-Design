@@ -280,10 +280,6 @@ bool sendDataSerial()
   Serial.print(",");
   Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
-  Serial.println(input_condition_.amplitude);
-  Serial.println(input_condition_.frequency);
-  Serial.println(input_condition_.sampling_rate);
-
   Serial.write(255);
 
   return true;
