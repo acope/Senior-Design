@@ -100,10 +100,15 @@ public class OView extends JFrame{
      * @return JPanel
      */
     private JPanel connectionPanel(){
-        JPanel connectionPanel = new JPanel(new MigLayout("insets 10 10 10 10","","")); //"Layout","Column","Row"
+        JPanel connectionPanel = new JPanel(); //"Layout","Column","Row"
+        JPanel buttonPanel = new JPanel(new MigLayout());
+        JPanel serialPanel = new JPanel(new MigLayout());
+        connectionPanel.setLayout(new BoxLayout(connectionPanel, BoxLayout.PAGE_AXIS));
+        
         BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
         EmptyBorder empty = new EmptyBorder(2, 10, 5, 10);
         connectionPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
+        
         buttonConnect = new JButton("Connect");
         buttonConnect.setPreferredSize(buttonSize);
         buttonConnect.setFont(buttonFont);
@@ -113,10 +118,12 @@ public class OView extends JFrame{
         serialConnectionPanel = new SerialConnectionPanel(); //Ardulink Panel
         connectionStatus = new ConnectionStatus();
         
-        connectionPanel.add(serialConnectionPanel, "split 2, align center");
-        connectionPanel.add(connectionStatus, "wrap");
-        connectionPanel.add(buttonConnect, "split 2, align center");
-        connectionPanel.add(buttonDisconnect, "wrap");
+        serialPanel.add(serialConnectionPanel, "split 2, align center");
+        serialPanel.add(connectionStatus, "wrap");
+        buttonPanel.add(buttonConnect, "split 2, align center");
+        buttonPanel.add(buttonDisconnect, "wrap");
+        connectionPanel.add(serialPanel);
+        connectionPanel.add(buttonPanel);
         
         return connectionPanel;
     }
@@ -176,8 +183,8 @@ public class OView extends JFrame{
         valuePanel.add(sampRateTextField, "grow");
         valuePanel.add(sampUnitLabel, "grow, wrap");
         
-        buttonPanel.add(buttonStart, "");
-        buttonPanel.add(buttonStop, "wrap");
+        buttonPanel.add(buttonStart, "align center");
+        buttonPanel.add(buttonStop, "align center,wrap");
         
         inputPanel.add(valuePanel);
         inputPanel.add(buttonPanel);
@@ -186,7 +193,7 @@ public class OView extends JFrame{
     }
     
     private JPanel statusPanel(){
-        JPanel statusPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));//"Layout","Column","Row"
+        JPanel statusPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
         
         //Create border
         BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
