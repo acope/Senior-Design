@@ -3,7 +3,6 @@ package odrive;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -50,7 +49,7 @@ public class OView extends JFrame{
     private JTextField upTimeTextField;
     private JTextField sampRateTextField;
     
-    protected JComboBox ampComboBox;
+    protected JComboBox<String> ampComboBox;
     
     private SerialConnectionPanel serialConnectionPanel;
     
@@ -63,7 +62,7 @@ public class OView extends JFrame{
     private JLabel label;
     private ImageIcon icon;
     
-    private final Dimension buttonSize = new Dimension(150,50);
+    private final Dimension buttonSize = new Dimension(225,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
     public OView(){
@@ -78,7 +77,8 @@ public class OView extends JFrame{
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
         try {
-            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/src/res/img/wwwImageIcon.png")));
+            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/res/img/wwwImageIcon.png")));
+            //mainFrame.setIconImage(ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/wwwImageIcon.png")));
         } catch (IOException ex) {
             Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -145,7 +145,7 @@ public class OView extends JFrame{
         sampRateTextField = new JTextField(Integer.toString(SAMPRATE_INIT));
         sampRateTextField.setEditable(false);
         
-        ampComboBox = new JComboBox(ampString);
+        ampComboBox = new JComboBox<>(ampString);
         
         freqSlider = new JSlider(JSlider.HORIZONTAL,FREQ_MIN,FREQ_MAX,FREQ_INIT);
         freqSlider.setMajorTickSpacing(FREQ_MAX/5);
@@ -205,11 +205,14 @@ public class OView extends JFrame{
         return statusPanel;
     }
     
+    
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
         imageLogoPanel.setBackground(Color.DARK_GRAY);
         try {
-            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/src/res/img/logo-wave-water-works-white.png"));
+            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/res/img/logo-wave-water-works-white.png"));
+            //wwwLogo = ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/logo-wave-water-works-white.png"));
+            
             
             label = new JLabel(new ImageIcon(wwwLogo));
             imageLogoPanel.add(label,"grow,align center");
@@ -226,6 +229,9 @@ public class OView extends JFrame{
         buttonDisconnect.setEnabled(false);
         buttonStart.setEnabled(false);
         buttonStop.setEnabled(false);
+        freqSlider.setEnabled(false);
+        sampRateSlider.setEnabled(false);
+        ampComboBox.setEnabled(false);
     }
     
     public void errorJOptionPane(String errorString){
