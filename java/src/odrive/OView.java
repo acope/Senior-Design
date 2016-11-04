@@ -122,7 +122,10 @@ public class OView extends JFrame{
     }
     
     private JPanel inputPanel(){
-        JPanel inputPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));//"Layout","Column","Row"
+        JPanel inputPanel = new JPanel();
+        inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
+        JPanel buttonPanel = new JPanel(new MigLayout("debug"));
+        JPanel valuePanel = new JPanel(new MigLayout("debug"));
         BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
         EmptyBorder empty = new EmptyBorder(5, 10, 5, 10);
         inputPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
@@ -159,22 +162,25 @@ public class OView extends JFrame{
         sampRateSlider.setPaintTicks(true);
         sampRateSlider.setPaintLabels(true);
         
-        inputPanel.add(ampLabel, "split 2");
-        inputPanel.add(ampComboBox, "wrap");
+        valuePanel.add(ampLabel, "align right");
+        valuePanel.add(ampComboBox, "wrap");
         
-        inputPanel.add(freqLabel, "split 4");
-        inputPanel.add(freqSlider, "grow");
-        inputPanel.add(freqTextField, "grow");
-        inputPanel.add(freqUnitLabel, "grow,wrap");
+        valuePanel.add(freqLabel, "align right");
+        valuePanel.add(freqSlider, "grow, width :300:");
+        valuePanel.add(freqTextField, "grow");
+        valuePanel.add(freqUnitLabel, "grow,wrap");
         
         
-        inputPanel.add(sampRateLabel, "split 4");
-        inputPanel.add(sampRateSlider, "grow");
-        inputPanel.add(sampRateTextField, "grow");
-        inputPanel.add(sampUnitLabel, "grow, wrap");
+        valuePanel.add(sampRateLabel, "align right");
+        valuePanel.add(sampRateSlider, "grow");
+        valuePanel.add(sampRateTextField, "grow");
+        valuePanel.add(sampUnitLabel, "grow, wrap");
         
-        inputPanel.add(buttonStart, "split 2,align center,grow");
-        inputPanel.add(buttonStop, "grow,wrap");
+        buttonPanel.add(buttonStart, "");
+        buttonPanel.add(buttonStop, "wrap");
+        
+        inputPanel.add(valuePanel);
+        inputPanel.add(buttonPanel);
         
         return inputPanel;
     }
