@@ -61,6 +61,7 @@ public class OView extends JFrame{
     
     private BufferedImage wwwLogo;
     private JLabel label;
+    private ImageIcon icon;
     
     private final Dimension buttonSize = new Dimension(150,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
@@ -76,6 +77,12 @@ public class OView extends JFrame{
         JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
+        try {
+            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/src/res/img/wwwImageIcon.png")));
+        } catch (IOException ex) {
+            Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         JPanel interfacePanel = new JPanel();
         interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));
         
@@ -128,7 +135,7 @@ public class OView extends JFrame{
         buttonStop.setFont(buttonFont);
         
         ampLabel = new JLabel("Amplitude:");
-        freqLabel = new JLabel("Frequency:");
+        freqLabel = new JLabel("Motor Frequency:");
         sampRateLabel = new JLabel("Sampling Rate:");
         freqUnitLabel = new JLabel("Hz");
         sampUnitLabel = new JLabel("Sec");
@@ -200,6 +207,7 @@ public class OView extends JFrame{
     
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
+        imageLogoPanel.setBackground(Color.DARK_GRAY);
         try {
             wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/src/res/img/logo-wave-water-works-white.png"));
             
