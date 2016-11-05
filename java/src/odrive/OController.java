@@ -161,6 +161,7 @@ public final class OController implements Observer{
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
+            file.closeWorkBook();
             upTime.stop();
             view.setStatusBarText("Data logging has been stopped");
             //#TODO close workbook here

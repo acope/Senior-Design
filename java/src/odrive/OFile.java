@@ -27,6 +27,7 @@ public class OFile {
     private String wkName;  
     private NPOIFSFileSystem fis;
     private HSSFWorkbook hssf;
+    private HSSFWorkbook workbook;
     private FileOutputStream newBook;
     private HSSFWorkbook wb; 
     private FileOutputStream out;
@@ -109,12 +110,16 @@ public class OFile {
         
     } 
 
-
+        /**
+         * Creates a new workbook
+         * @param filename
+         * @return workbook name
+         */
 	public HSSFWorkbook readFile(String filename){
 	     
         try {
             fis = new NPOIFSFileSystem(new File(filename));
-            hssf = new HSSFWorkbook(fis);
+           hssf = new HSSFWorkbook(fis);
         } catch (IOException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }finally{
@@ -147,7 +152,7 @@ public class OFile {
         } catch (FileNotFoundException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }
-        HSSFWorkbook workbook = new HSSFWorkbook(); 
+        workbook = new HSSFWorkbook(); 
         Sheet sheet = workbook.createSheet("Data Logging"); 
         
         Row headerRow = sheet.createRow(0);  
@@ -174,5 +179,21 @@ public class OFile {
         } catch (IOException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }        
+    }
+    
+    /**
+     * Closes all instances used in workbook creation for editing
+     */
+    public void closeWorkBook(){
+        try {
+            newBook.close();
+            hssf.close();
+            workbook.close();
+            fis.close();
+            wb.close();
+            out.close();
+        } catch (IOException ex) {
+            Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
