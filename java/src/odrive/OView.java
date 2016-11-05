@@ -131,8 +131,8 @@ public class OView extends JFrame{
     private JPanel inputPanel(){
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
-        JPanel buttonPanel = new JPanel(new MigLayout("debug"));
-        JPanel valuePanel = new JPanel(new MigLayout("debug"));
+        JPanel buttonPanel = new JPanel(new MigLayout(""));
+        JPanel valuePanel = new JPanel(new MigLayout(""));
         BevelBorder bevel = new BevelBorder(BevelBorder.LOWERED);
         EmptyBorder empty = new EmptyBorder(5, 10, 5, 10);
         inputPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));

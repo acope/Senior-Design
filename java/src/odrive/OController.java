@@ -3,9 +3,11 @@ package odrive;
 import helper.UpTimeCounter;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
+import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
+import java.util.Observer;
 
 import javax.swing.event.ChangeEvent;
 
@@ -15,24 +17,29 @@ import org.zu.ardulink.Link;
 
 /**
  * The conductor of the program
+ * Built using Model/View/Controller Achitecture
  * Initializes the GUI and controls the serial input and file logging
  * @author Austin Copeman
  */
-public final class OController{
+public final class OController implements Observer{
     private final OView view;
     private final OSerial serial;
     private final Link link = Link.getDefaultInstance();
     private final UpTimeCounter upTime;
+    private final OFile file;
     private Timer t;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
     
+    
     public OController(){
         view = new OView();
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
-        
+        file = new OFile();
+                
+        serial.addObserver(OController.this);
         //Add action listeners     
         connectButtonActionListener();
         disconnectButtonActionListener();
@@ -118,6 +125,8 @@ public final class OController{
     private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
             try {
+                //Create a new Excel workbook for data logging
+                file.CreateWBook();
                 //Allows Arduino to get ready
                 view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 Thread.sleep(2000);
@@ -253,6 +262,21 @@ public final class OController{
      */
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
+    }
+    
+    public void rawArduinoData(String rawData){
+        file.ExcelWrite(rawData);
+        //System.out.println("Observer: " + rawData);
+    }
+
+    /**
+     * Observer for incoming Arduino rawData
+     * @param o
+     * @param arg 
+     */
+    @Override
+    public void update(Observable o, Object arg) {
+        rawArduinoData((String)arg);
     }
 
 }

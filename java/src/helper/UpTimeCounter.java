@@ -11,6 +11,10 @@ import java.util.concurrent.TimeUnit;
 public class UpTimeCounter implements Runnable{
     private long startTime = System.currentTimeMillis();
     private long currentTime = startTime;
+    private long days;
+    private long hours;
+    private long minutes;
+    private long seconds;
     private String upTime;
     private boolean run = false; //True = start False = stop
     Thread t;;
@@ -46,6 +50,22 @@ public class UpTimeCounter implements Runnable{
         }
         return upTime;
     }     
+
+    public long getDays() {
+        return days;
+    }
+
+    public long getHours() {
+        return hours;
+    }
+
+    public long getMinutes() {
+        return minutes;
+    }
+
+    public long getSeconds() {
+        return seconds;
+    }
     
        /**
      * Convert a millisecond duration to a string format
@@ -59,13 +79,13 @@ public class UpTimeCounter implements Runnable{
             throw new IllegalArgumentException("Duration must be greater than zero!");
         }
 
-        long days = TimeUnit.MILLISECONDS.toDays(millis);
+        days = TimeUnit.MILLISECONDS.toDays(millis);
         millis -= TimeUnit.DAYS.toMillis(days);
-        long hours = TimeUnit.MILLISECONDS.toHours(millis);
+        hours = TimeUnit.MILLISECONDS.toHours(millis);
         millis -= TimeUnit.HOURS.toMillis(hours);
-        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
         millis -= TimeUnit.MINUTES.toMillis(minutes);
-        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
+        seconds = TimeUnit.MILLISECONDS.toSeconds(millis);
 
         StringBuilder sb = new StringBuilder(64);
         sb.append(days);

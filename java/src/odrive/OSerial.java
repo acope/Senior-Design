@@ -2,6 +2,7 @@ package odrive;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.Observable;
 //Ardulink imports
 //https://github.com/marcomauro/Arduino-SerialRead-Java
 import org.zu.ardulink.Link;
@@ -10,7 +11,8 @@ import org.zu.ardulink.Link;
  * Controls the transmitting and receiving from serial port
  * @author Austin Copeman
  */
-public class OSerial {
+//Need to find a better way than to extend to Controller for passing data back
+public class OSerial extends Observable{
     private final Link link;
     private final NumberFormat formatter = new DecimalFormat("0000"); //For sending 4 digits to Arduino
     /**
@@ -101,33 +103,37 @@ public class OSerial {
                 StringBuilder build = new StringBuilder(str.length()+1);
                 //Convert the string back into bytes and removes start and end char
                 for(int i=1; i<str.length()-1; i++){
-                    char c = str.charAt(i);
-                    build.append(c);
-                   // build.append(Integer.parseInt(Character.toString(c)));
-                }
-                String arduinoData = build.toString();
-                //Send to ExcelWrite in OFile
-                //System.out.println(arduinoData);
-                break;
-                
-            //Error state
-            case 'Z':
-                //add in code for error state handling
-                /*
-                    MC shall send "Z" to PC to indicate ERROR state.
-                    MC shall send error message to PC in ASC2 string format.
-                    MC shall send "E" to indicate end of message.
-                    PC shall perform TBD
-                */
-                break;
-                
-            //Indicate normal state
-            case 'N':
-                link.writeSerial("A");
-                break;
-            
-            default:
-                break;
+                        char c = str.charAt(i);
+                        build.append(c);
+                       // build.append(Integer.parseInt(Character.toString(c)));
+                    }
+                    String arduinoData = build.toString();
+                    System.out.println("Raw: " + arduinoData);
+                    //Flag for oberserver notifying that there was a change
+                    setChanged();
+                    //Tells that there was a change
+                    notifyObservers(arduinoData);
+                    //rawArduinoData(arduinoData); 
+                    break;
+
+                //Error state
+                case 'Z':
+                    //add in code for error state handling
+                    /*
+                        MC shall send "Z" to PC to indicate ERROR state.
+                        MC shall send error message to PC in ASC2 string format.
+                        MC shall send "E" to indicate end of message.
+                        PC shall perform TBD
+                    */
+                    break;
+
+                //Indicate normal state
+                case 'N':
+                    link.writeSerial("A");
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
-}
