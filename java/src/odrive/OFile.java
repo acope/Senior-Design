@@ -1,9 +1,12 @@
 package odrive;
 
+import helper.DataConversion;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,28 +27,30 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  */
 public class OFile {
 
-    private String wkName;  
+    private String workBookName;  
     private NPOIFSFileSystem fis;
     private HSSFWorkbook hssf;
     private HSSFWorkbook workbook;
+    private HSSFSheet HSSFSheet;
     private FileOutputStream newBook;
     private HSSFWorkbook wb; 
     private FileOutputStream out;
+    private final DataConversion convert;
     
+    private String timestamp;
+    private String motorRPM;
+    private String inputRPM;
+    private String outputRPM;
+    private String voltage;
+    private final int VOLTAGE_DIVIDER_RESISTANCE = 1500000;
     
-    private String timestamp;  
-    private String motor, input, output, voltage;
     private String[] separated; 
-    private String[] redData = new String[7]; 
-    private int date;
-    private String time;
-    private String timeDelim;
-    private String[] separatedTime;
-    private String namePt;
+    private final String[] readData = new String[10]; 
     /**
      * Default Constructor
      */
     public OFile(){
+        convert = new DataConversion();
     }
     
     /**
@@ -53,7 +58,7 @@ public class OFile {
      * @return 
      */
     public String GetFileName(){
-        return wkName; 
+        return workBookName; 
     }
     
     /**
@@ -63,59 +68,71 @@ public class OFile {
      * @param rawdata 
      */
     public void ExcelWrite(String rawdata){
-        
-      //Timestamp from Java 
-      Calendar calendar = Calendar.getInstance();
-      java.util.Date now = calendar.getTime(); 
-      java.sql.Timestamp currentTimestamp = new java.sql.Timestamp(now.getTime()); 
-      timestamp = currentTimestamp.toString(); 
-      String timedelimit = "[ ]+"; 
-      String[] datetime = timestamp.split(timedelimit); 
-      redData[0] = datetime[0];
-      redData[1] = datetime[1]; 
-      
-      //Separate raw data by commas
-      String rawdelimit = "[,]+"; 
-      separated = rawdata.split(rawdelimit); 
-       
+        DecimalFormat df = new DecimalFormat("##.##E0");
+        //Timestamp from Java 
+        String date = getDate();
+        String time = getTime();
+        readData[0] = date;
+        readData[1] = time;
+        //Separate raw data by commas
+        String rawdelimit = "[,]+"; 
+        separated = rawdata.split(rawdelimit); 
         //copy separated data, with Java date and time first, into array
-        System.arraycopy(separated, 0, redData, 2, separated.length);  
-      
-       
-        wb = readFile(wkName);
-        HSSFSheet sheet = wb.getSheetAt(0); 
-        int writtenRows = sheet.getPhysicalNumberOfRows();
-        int newRowNum = writtenRows+1;
-        Row newRow = sheet.createRow(newRowNum);
+       // System.arraycopy(separated, 0, readData, 2, separated.length);
+        for (int i=0; i<separated.length; i++){
+          readData[i+2] = separated[i];
+          if(i==0){
+              timestamp = separated[i];
+          }
+          if(i==1){
+              motorRPM = separated[i];
+          }
+          if(i==2){
+              inputRPM = separated[i];
+          }
+          if(i==3){
+              outputRPM = separated[i];
+          }
+          if(i==4){
+              voltage = separated[i];
+          }
+        }
+        readData[7] = df.format(convert.calculateCurrent(Integer.parseInt(voltage), VOLTAGE_DIVIDER_RESISTANCE)); //Current
+        readData[8] = df.format(convert.calculatePower(Integer.parseInt(voltage), VOLTAGE_DIVIDER_RESISTANCE)); //Power
+        readData[9] = "-";//Need to calcualte efficiency
+        wb = readFile(workBookName);
+        HSSFSheet = wb.getSheetAt(0); 
+        Row newRow = HSSFSheet.createRow(HSSFSheet.getPhysicalNumberOfRows());
  
-        for(int i=0; i<redData.length; i++){
+        for(int i=0; i<readData.length-1; i++){   
             Cell c = newRow.createCell(i); 
-            c.setCellValue(redData[i]);
-            CellStyle style = sheet.getWorkbook().createCellStyle();
-            style.setAlignment(HorizontalAlignment.CENTER);
-            style.setVerticalAlignment(VerticalAlignment.CENTER);
-            c.setCellStyle(style);
+            c.setCellValue(readData[i]);
+            //Need to figure out why they start out center justified then go left justified
+//            CellStyle style = HSSFSheet.getWorkbook().createCellStyle();
+//            style.setAlignment(HorizontalAlignment.CENTER);
+//            style.setVerticalAlignment(VerticalAlignment.CENTER);
+//            c.setCellStyle(style);
         } 
         
         try { 
-            out = new FileOutputStream(wkName);
+            out = new FileOutputStream(workBookName);
             wb.write(out);
+            //Close output stream
+            out.close();
             wb.close(); 
         } catch (FileNotFoundException ex) {
-            Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, "File not found", ex);
         } catch (IOException ex){
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
+        }  
     } 
 
-        /**
-         * Creates a new workbook
-         * @param filename
-         * @return workbook name
-         */
-	public HSSFWorkbook readFile(String filename){
+    /**
+    * Creates a new workbook
+    * @param filename
+    * @return workbook name
+    */
+    public HSSFWorkbook readFile(String filename){
 	     
         try {
             fis = new NPOIFSFileSystem(new File(filename));
@@ -131,24 +148,22 @@ public class OFile {
         }        
         
         return hssf;
-	} 
+    } 
         
         /**
          * Creates Excel workbook
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino timestamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage"}; 
+        String[] labels = {"Date", "Time", "Arduino timestamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Calc. Current", "Calc. Power", "Calc. Efficiency"}; 
         
-        date = Calendar.getInstance().get(Calendar.DAY_OF_YEAR); 
-        time = Calendar.getInstance().getTime().toString(); 
-        timeDelim = "[ :]+"; 
-        separatedTime = time.split(timeDelim);
-        namePt = date + separatedTime[3] + separatedTime[4];         
-        wkName = ("WaveWaterWorks_" + namePt + ".xls"); //Create new excel file with name and date stamp 
+        String date = getDateNumOnly();
+        String time = getTimeNumOnly();         
+        
+        workBookName = ("WaveWaterWorks_" + date + time + ".xls"); //Create new excel file with name and date stamp 
         
         try {
-            newBook = new FileOutputStream(wkName);
+            newBook = new FileOutputStream(workBookName);
         } catch (FileNotFoundException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -157,17 +172,20 @@ public class OFile {
         
         Row headerRow = sheet.createRow(0);  
         
-        for(int l=0; l<labels.length; l++){
-            Cell c = headerRow.createCell(l); 
-            c.setCellValue(labels[l]);
+        for(int i=0; i<labels.length; i++){
+            Cell c = headerRow.createCell(i); 
+            c.setCellValue(labels[i]);
             CellStyle labelStyle = sheet.getWorkbook().createCellStyle(); 
+            
             Font font = sheet.getWorkbook().createFont(); 
             font.setBold(true); 
             font.setFontHeightInPoints((short)14);
+            
             labelStyle.setFont(font); 
             labelStyle.setAlignment(HorizontalAlignment.CENTER);
             labelStyle.setVerticalAlignment(VerticalAlignment.CENTER);    
             c.setCellStyle(labelStyle);
+            
             sheet.setDefaultColumnWidth(30);
             sheet.createFreezePane(0, 1);
         }
@@ -175,25 +193,39 @@ public class OFile {
         
         try {
             workbook.write(newBook);
+            newBook.close();
             workbook.close();
+            
         } catch (IOException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }        
     }
+
+    /**
+     * Gets time from system
+     * @return HH:mm:ss
+     */
+    public String getTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+    
+    public String getTimeNumOnly(){
+        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
+        return sdf.format(Calendar.getInstance().getTime());
+    }
     
     /**
-     * Closes all instances used in workbook creation for editing
+     * Get date 
+     * @return MM/dd/yyyy
      */
-    public void closeWorkBook(){
-        try {
-            newBook.close();
-            hssf.close();
-            workbook.close();
-            fis.close();
-            wb.close();
-            out.close();
-        } catch (IOException ex) {
-            Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public String getDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+    
+    public String getDateNumOnly(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        return sdf.format(Calendar.getInstance().getTime());
     }
 }
