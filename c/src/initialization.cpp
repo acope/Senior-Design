@@ -66,12 +66,14 @@ bool initializeBoard()
     Serial.write('Z');
     Serial.println(error_msg_);
     Serial.write('E');
+    Serial.write(255);
   }
   else
   {
   // Ready
   state_ = ready;
   Serial.write('G');
+  Serial.write(255);
   }
 
   return isInitialized;
@@ -88,6 +90,7 @@ bool initializeSerial(unsigned long speed)
   while (true)
   {
     Serial.write('T');
+    Serial.write(255);
 
     if (Serial.available() > 0)
     {
@@ -153,7 +156,7 @@ bool initializeSD()
       break;
   }
 
-  Serial.println(dirname);
+  //Serial.println(dirname);
 
   if (!SD.mkdir(dirname))
   {
@@ -161,17 +164,10 @@ bool initializeSD()
     return false;
   }
   sprintf(sd_card_dir_path_, "/%s", dirname);
-  // @FIXME: Remove
-  printDirectory(root, 0);
 
   file_index_ = 1;
-  Serial.println(sd_card_dir_path_);
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
   sprintf(sd_card_input_path_, "%s/INPUT.csv", sd_card_dir_path_);
-
-  Serial.println(sd_card_file_path_);
-  Serial.println(sd_card_input_path_);
-  Serial.println(sd_card_dir_path_);
 
   // write header to file
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
@@ -191,4 +187,5 @@ void handleError()
   Serial.write('Z');
   Serial.print("Please check equipment and restart experiment...");
   Serial.write('E');
+  Serial.write(255);
 }
