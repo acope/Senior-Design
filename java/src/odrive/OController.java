@@ -161,7 +161,6 @@ public final class OController implements Observer{
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
-            file.closeWorkBook();
             upTime.stop();
             view.setStatusBarText("Data logging has been stopped");
             //#TODO close workbook here
@@ -267,7 +266,7 @@ public final class OController implements Observer{
     
     public void rawArduinoData(String rawData){
         file.ExcelWrite(rawData);
-        //System.out.println("Observer: " + rawData);
+        System.out.println("Observer: " + rawData);
     }
 
     /**

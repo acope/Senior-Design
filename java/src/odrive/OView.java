@@ -77,7 +77,7 @@ public class OView extends JFrame{
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
         try {
-            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/res/img/wwwImageIcon.png")));
+            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/src/odrive/res/img/wwwImageIcon.png")));
             //mainFrame.setIconImage(ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/wwwImageIcon.png")));
         } catch (IOException ex) {
             Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,9 +223,7 @@ public class OView extends JFrame{
         JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
         imageLogoPanel.setBackground(Color.DARK_GRAY);
         try {
-            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/res/img/logo-wave-water-works-white.png"));
-            //wwwLogo = ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/logo-wave-water-works-white.png"));
-            
+            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/src/odrive/res/img/logo-wave-water-works-white.png"));
             
             label = new JLabel(new ImageIcon(wwwLogo));
             imageLogoPanel.add(label,"grow,align center");

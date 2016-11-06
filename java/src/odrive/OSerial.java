@@ -108,7 +108,6 @@ public class OSerial extends Observable{
                        // build.append(Integer.parseInt(Character.toString(c)));
                     }
                     String arduinoData = build.toString();
-                    System.out.println("Raw: " + arduinoData);
                     //Flag for oberserver notifying that there was a change
                     setChanged();
                     //Tells that there was a change
