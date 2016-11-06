@@ -69,13 +69,13 @@ void checkTimerTasks()
   if (f_motor_control_)
   {
     f_motor_control_ = false;
-    //motorSpeedControlPID();
+    motorSpeedControlPID();
   }
 
   if (f_error_check_)
   {
     f_error_check_ = false;
-    //errorCheck();
+    errorCheck();
   }
 }
 
@@ -304,15 +304,12 @@ bool sendInputSD()
   sd_card_input_.print(input_condition_.sampling_rate, DEC);
   sd_card_input_.println(",\n");
   sd_card_input_.close();
-  // FIXME: Remove
-  //Serial.println("INPUT TO SD CARD");
   return true;
 }
 
 bool sendDataSD()
 {
   sd_card_new_file_count_++;
-  // FIXME: Back the number
   if (sd_card_new_file_count_ == SD_CARD_RECORD_PER_FILE)
   {
    sd_card_new_file_count_ = 0;
@@ -329,23 +326,18 @@ bool sendDataSD()
   sd_card_file_.write(",");
   sd_card_file_.print(collected_data_.generated_voltage, DEC);
   sd_card_file_.write(",\n");
-  // FIXME: Remove
-  //Serial.println("SD CARD written");
 
   return true;
 }
 
-// FIXME: All Serial from following functions.
 void OpenSDFile()
 {
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
-  //Serial.println("SD FILE OPEN");
 }
 
 void CloseSDFile()
 {
   sd_card_file_.close();
-  //Serial.println("SD FILE CLOSE");
 }
 
 void updateSDFile()
@@ -354,12 +346,8 @@ void updateSDFile()
   file_index_++;
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
 
-  //Serial.println(sd_card_dir_path_);
-  //Serial.println(sd_card_file_path_);
-
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
   sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
-  //Serial.println("SD CARD FILE NEW ONE!");
 }
 
 // TODO: When motor is spinning, check all input and send error if condition is met

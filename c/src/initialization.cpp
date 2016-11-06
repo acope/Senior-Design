@@ -164,17 +164,10 @@ bool initializeSD()
     return false;
   }
   sprintf(sd_card_dir_path_, "/%s", dirname);
-  // @FIXME: Remove
-  //printDirectory(root, 0);
 
   file_index_ = 1;
-  //Serial.println(sd_card_dir_path_);
   sprintf(sd_card_file_path_, "%s/RUN%04d.csv", sd_card_dir_path_, file_index_);
   sprintf(sd_card_input_path_, "%s/INPUT.csv", sd_card_dir_path_);
-
-  //Serial.println(sd_card_file_path_);
-  //Serial.println(sd_card_input_path_);
-  //Serial.println(sd_card_dir_path_);
 
   // write header to file
   sd_card_file_ = SD.open(sd_card_file_path_, FILE_WRITE);
