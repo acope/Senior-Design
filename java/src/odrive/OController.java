@@ -74,13 +74,7 @@ public final class OController implements Observer{
                     //If connected start listening to COM port and enable/disable GUI
                     if(connected) {
                         view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
-                        view.buttonConnect.setEnabled(false);
-                        view.buttonDisconnect.setEnabled(true);
-                        view.buttonStart.setEnabled(true);
-                        view.buttonStop.setEnabled(false);
-                        view.freqSlider.setEnabled(true);
-                        view.sampRateSlider.setEnabled(true);
-                        view.ampComboBox.setEnabled(true);
+                        view.connectionPanelEnabled(true);
                     }
                 }
                 catch(Exception ex){
@@ -105,13 +99,7 @@ public final class OController implements Observer{
             boolean disconnected = link.disconnect();
             if (disconnected) {
                 view.setStatusBarText("Disconnected from Arduino");
-                view.buttonConnect.setEnabled(true);
-                view.buttonDisconnect.setEnabled(false);
-                view.buttonStart.setEnabled(false);
-                view.buttonStop.setEnabled(false);
-                view.freqSlider.setEnabled(false);
-                view.sampRateSlider.setEnabled(false);
-                view.ampComboBox.setEnabled(false);
+                view.connectionPanelEnabled(false);
             }
         });
     }
@@ -146,11 +134,7 @@ public final class OController implements Observer{
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
             
             //Enable/Disable GUI
-            view.buttonStart.setEnabled(false);
-            view.buttonStop.setEnabled(true);
-            view.freqSlider.setEnabled(false);
-            view.sampRateSlider.setEnabled(false);
-            view.ampComboBox.setEnabled(false);
+            view.inputPanelEnabled(true);
         });
     }
     
@@ -170,11 +154,7 @@ public final class OController implements Observer{
             //Stop file logging
             
             //Enable/Disable GUI
-            view.buttonStart.setEnabled(true);
-            view.buttonStop.setEnabled(false);
-            view.freqSlider.setEnabled(true);
-            view.sampRateSlider.setEnabled(true);
-            view.ampComboBox.setEnabled(true);
+            view.inputPanelEnabled(false);
         }); 
     }
     
@@ -271,12 +251,58 @@ public final class OController implements Observer{
 
     /**
      * Observer for incoming Arduino rawData
+     * Handles Arduino conditions
      * @param o
      * @param arg 
      */
     @Override
     public void update(Observable o, Object arg) {
-        rawArduinoData((String)arg);
+        String str = (String)arg;
+        //String builder for recieved data
+        StringBuilder build = new StringBuilder(str.length()+1);
+        //Retrieve first character from sting
+        //First char is always event notification
+        char event = str.charAt(0);
+
+        switch (event){
+            //Acknowledge
+            case 'A':
+                break;               
+            //Fail
+            case 'F':
+                break;                
+            //Connection Test
+            case 'T':
+                break;                
+            //Read to collect data
+            case 'G':
+                break;           
+            //Sending recorded data(raw data recieved from Arduino)
+            case 'S':               
+                //Retrieve information and remove start and end char
+                for(int i=1; i<str.length()-1; i++){
+                    char c = str.charAt(i);
+                    build.append(c);
+                }
+                rawArduinoData(build.toString());
+                break;
+            //Error state
+            case 'Z':
+                //Retrieve information and remove start and end char
+                for(int i=1; i<str.length()-1; i++){
+                    char c = str.charAt(i);
+                    build.append(c);
+                }
+                view.setStatusBarText(build.toString());
+                link.writeSerial("C"); //Stop logging if error
+                break;
+                //Indicate normal state
+            case 'N':
+                break;
+            //Recieve random unknown data, do nothing
+            default:
+                break;
+            }
     }
 
 }

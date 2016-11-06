@@ -277,4 +277,32 @@ public class OView extends JFrame{
         return serialConnectionPanel.getBaudRate();
     }
     
+    /**
+     * Enables/Disables logging buttons and inputs for input panel
+     * When enable is true -> start button, frequency slider, sample rate slider, amp combo bBox = disabled and stop button = enabled
+     * When enable is false -> start button, frequency slider, sample rate slider, amp combo bBox = enabled and stop button = disabled
+     * @param enable 
+     */
+    public void inputPanelEnabled(boolean enable){
+            buttonStart.setEnabled(!enable);
+            buttonStop.setEnabled(enable);
+            freqSlider.setEnabled(!enable);
+            sampRateSlider.setEnabled(!enable);
+            ampComboBox.setEnabled(!enable);
+    }
+    /**
+     * Enables/Disables connection buttons and connection panel
+     * When enable is true -> disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = enabled and connect button = disabled
+     * When enable is false -> disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = disabled and connect button = enabled
+     * @param enable 
+     */
+    public void connectionPanelEnabled(boolean enable){
+                buttonConnect.setEnabled(!enable);
+                buttonDisconnect.setEnabled(enable);
+                buttonStart.setEnabled(enable);
+                buttonStop.setEnabled(enable);
+                freqSlider.setEnabled(enable);
+                sampRateSlider.setEnabled(enable);
+                ampComboBox.setEnabled(enable);
+    }
 }

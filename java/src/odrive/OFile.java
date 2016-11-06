@@ -37,7 +37,7 @@ public class OFile {
     private FileOutputStream out;
     private final DataConversion convert;
     
-    private String timestamp;
+    private String datastamp;
     private String motorRPM;
     private String inputRPM;
     private String outputRPM;
@@ -82,7 +82,7 @@ public class OFile {
         for (int i=0; i<separated.length; i++){
           readData[i+2] = separated[i];
           if(i==0){
-              timestamp = separated[i];
+              datastamp = separated[i];
           }
           if(i==1){
               motorRPM = separated[i];
@@ -155,7 +155,7 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino timestamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Calc. Current", "Calc. Power", "Calc. Efficiency"}; 
+        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Calc. Current", "Calc. Power", "Calc. Efficiency"}; 
         
         String date = getDateNumOnly();
         String time = getTimeNumOnly();         
