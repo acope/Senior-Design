@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
  * https://www.mkyong.com/java/java-time-elapsed-in-days-hours-minutes-seconds/
  * @author mkyong
  * @author modified by Austin Copeman
+ * @version 1.1
  */
 public class UpTimeCounter implements Runnable{
     private long startTime = System.currentTimeMillis();
@@ -22,8 +23,7 @@ public class UpTimeCounter implements Runnable{
     public UpTimeCounter(){
         this.t = new Thread(this);
         run = false;
-        t.start();
-        
+        startThread(); //Bad implementation to start thread in constructor need to fix
     }
     
     @Override
@@ -32,6 +32,10 @@ public class UpTimeCounter implements Runnable{
             currentTime = System.currentTimeMillis();
             getDurationBreakdown(currentTime - startTime);
         }
+    }
+    
+    private void startThread(){
+        t.start();
     }
     
     public void start(){

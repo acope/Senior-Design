@@ -3,9 +3,11 @@ package odrive;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -20,6 +22,7 @@ import org.zu.ardulink.gui.ConnectionStatus;
 /**
  * Odrive GUI interface
  * @author Austin Copeman
+ * @version 1.1
  */
 public class OView extends JFrame{
     private final int FREQ_MIN = 0; //Minimun motor frequency 
@@ -76,12 +79,7 @@ public class OView extends JFrame{
         JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
-        try {
-            mainFrame.setIconImage(ImageIO.read(new File(System.getProperty("user.dir") + "/src/odrive/res/img/wwwImageIcon.png")));
-            //mainFrame.setIconImage(ImageIO.read(new File("C:/Users/mr_co_000/Documents/NetBeansProjects/ODrive/src/res/img/wwwImageIcon.png")));
-        } catch (IOException ex) {
-            Logger.getLogger(OView.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/img/wwwImageIcon.png")));
         
         JPanel interfacePanel = new JPanel();
         interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));
@@ -222,16 +220,9 @@ public class OView extends JFrame{
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
         imageLogoPanel.setBackground(Color.DARK_GRAY);
-        try {
-            wwwLogo = ImageIO.read(new File(System.getProperty("user.dir") + "/src/odrive/res/img/logo-wave-water-works-white.png"));
-            
-            label = new JLabel(new ImageIcon(wwwLogo));
-            imageLogoPanel.add(label,"grow,align center");
-        } catch (IOException ex) {
-            Logger.getLogger(OView.class.getName()).log(Level.WARNING, "Image not found", ex);
-        }
-        
-        
+        label = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/img/logo-wave-water-works-white.png"))));
+        imageLogoPanel.add(label,"grow,align center");
+  
         return imageLogoPanel;
     }
     

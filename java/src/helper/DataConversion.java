@@ -1,10 +1,9 @@
 package helper;
 
-import java.text.DecimalFormat;
-
 /**
  * Conversions for data
  * @author Austin Copeman
+ * @version 1.1
  */
 public class DataConversion {
 

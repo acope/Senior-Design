@@ -9,6 +9,7 @@ import org.jfree.ui.ApplicationFrame;
 /**
  *
  * @author Austin Copeman
+ * @version 1.1
  */
 public class OGraph{
 
