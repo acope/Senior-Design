@@ -292,6 +292,7 @@ bool sendInputSD()
 
   if (first_time)
   {
+    first_time = false;
     sd_card_input_.write("TIMESTAMP, FREQUENCY, AMPLITUDE, SAMPLE_RATE,\n");
   }
 
