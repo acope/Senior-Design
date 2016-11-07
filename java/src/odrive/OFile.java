@@ -45,7 +45,6 @@ public class OFile {
     private String voltage;
     private final int VOLTAGE_DIVIDER_RESISTANCE = 1500000;
     
-    private String[] separated; 
     private final String[] readData = new String[10]; 
     /**
      * Default Constructor
@@ -77,7 +76,7 @@ public class OFile {
         readData[1] = time;
         //Separate raw data by commas
         String rawdelimit = "[,]+"; 
-        separated = rawdata.split(rawdelimit); 
+        String[] separated = rawdata.split(rawdelimit); 
         //copy separated data, with Java date and time first, into array
        // System.arraycopy(separated, 0, readData, 2, separated.length);
         for (int i=0; i<separated.length; i++){
@@ -211,6 +210,10 @@ public class OFile {
         return sdf.format(Calendar.getInstance().getTime());
     }
     
+    /**
+     * Get time number only
+     * @return HHmmss
+     */
     public String getTimeNumOnly(){
         SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
         return sdf.format(Calendar.getInstance().getTime());
@@ -225,8 +228,21 @@ public class OFile {
         return sdf.format(Calendar.getInstance().getTime());
     }
     
+    /**
+     * Get date numbers only
+     * @return yyyyMMdd
+     */
     public String getDateNumOnly(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+    
+    /**
+     * Get date and time
+     * @return MM/dd/yyyy HH:mm:ss
+     */
+    public String getDateAndTime(){
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         return sdf.format(Calendar.getInstance().getTime());
     }
 }
