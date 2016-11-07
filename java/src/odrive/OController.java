@@ -114,10 +114,10 @@ public final class OController implements Observer{
     private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
             try {
+                view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 //Create a new Excel workbook for data logging
                 file.CreateWBook();
                 //Allows Arduino to get ready
-                view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 Thread.sleep(2000);
                 view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
                 //Start up time counter
@@ -247,7 +247,6 @@ public final class OController implements Observer{
     
     public void rawArduinoData(String rawData){
         file.ExcelWrite(rawData);
-        System.out.println("Observer: " + rawData);
     }
 
     /**
@@ -268,12 +267,15 @@ public final class OController implements Observer{
         switch (event){
             //Acknowledge
             case 'A':
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Acknowledge Serial Event", arg);
                 break;               
             //Fail
             case 'F':
+                Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Failed Serial Event", arg);
                 break;                
             //Connection Test
             case 'T':
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Arduino ready to transmit", arg);
                 break;                
             //Read to collect data
             case 'G':
@@ -285,6 +287,9 @@ public final class OController implements Observer{
                     char c = str.charAt(i);
                     build.append(c);
                 }
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
+                String[] separated = build.toString().split("[,]+"); 
+                view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 rawArduinoData(build.toString());
                 break;
             //Error state
@@ -294,11 +299,13 @@ public final class OController implements Observer{
                     char c = str.charAt(i);
                     build.append(c);
                 }
+                Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Error on Arduino: " + build.toString(), arg);
                 view.setStatusBarText(build.toString());
                 link.writeSerial("C"); //Stop logging if error
                 break;
                 //Indicate normal state
             case 'N':
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Arduino in normal state", arg);
                 break;
             //Recieve random unknown data, do nothing
             default:
