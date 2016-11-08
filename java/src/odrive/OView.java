@@ -1,21 +1,18 @@
 package odrive;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.plaf.basic.BasicSplitPaneUI;
 import net.miginfocom.swing.MigLayout;
+import org.jfree.ui.RefineryUtilities;
 import org.zu.ardulink.gui.SerialConnectionPanel;
 import org.zu.ardulink.gui.ConnectionStatus;
 
@@ -60,6 +57,7 @@ public class OView extends JFrame{
     
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
+    private OGraph graph;
     
     private BufferedImage wwwLogo;
     private JLabel label;
@@ -76,21 +74,31 @@ public class OView extends JFrame{
     }
     
     private void initGUI(){
-        JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top
+        JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top        
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
         mainFrame.setResizable(false);
         mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/img/wwwImageIcon.png")));
         
         JPanel interfacePanel = new JPanel();
-        interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));
+        JPanel graphPanel = new JPanel();
+        
+        mainFrame.setLayout(new BorderLayout());
+        interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));  
         
         interfacePanel.add(imageLogoPanel());
         interfacePanel.add(connectionPanel());
         interfacePanel.add(inputPanel());
         interfacePanel.add(statusPanel());
-        mainFrame.add(interfacePanel);
+        graphPanel.add(graphPanel());
+        
+        
+        mainFrame.add(interfacePanel, BorderLayout.WEST);
+        mainFrame.add(graphPanel, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
+
+        //Centers on center of screen
+        RefineryUtilities.centerFrameOnScreen(mainFrame);
     }
     
     /**
@@ -198,8 +206,6 @@ public class OView extends JFrame{
         EmptyBorder empty = new EmptyBorder(5, 10, 10, 10);
         statusPanel.setBorder(BorderFactory.createCompoundBorder(empty, bevel));
 
-        //statusPanel.setBorder(BorderFactory.createEmptyBorder(100, 100, 100, 100));
-        //statusPanel.setBorder(BorderFactory.createBevelBorder(BevelBorder.LOWERED));
         statusLabel = new JLabel("Status:");
         upTimeLabel = new JLabel("Up Time:");
         statusTextField = new JTextField();
@@ -218,12 +224,20 @@ public class OView extends JFrame{
     
     
     private JPanel imageLogoPanel(){
-        JPanel imageLogoPanel = new JPanel(new MigLayout("insets 10 10 10 10","",""));
+        JPanel imageLogoPanel = new JPanel(new MigLayout("","",""));
         imageLogoPanel.setBackground(Color.DARK_GRAY);
         label = new JLabel(new ImageIcon(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/img/logo-wave-water-works-white.png"))));
         imageLogoPanel.add(label,"grow,align center");
   
         return imageLogoPanel;
+    }
+    
+    private JPanel graphPanel(){
+        JPanel graphPanel;
+        OGraph ograph = new OGraph();
+        graphPanel = ograph.createGraphPanel("Time test", "x Axis", "y Axis", 1000, 500);
+
+        return graphPanel;
     }
     
     private void guiDefaults(){
