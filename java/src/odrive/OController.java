@@ -29,6 +29,7 @@ public final class OController implements Observer{
     private final UpTimeCounter upTime;
     private final OFile file;
     private Timer t;
+    private final OGraph graph;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -39,6 +40,7 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
+        graph = new OGraph();
                 
         serial.addObserver(OController.this);
         //Add action listeners     
@@ -245,6 +247,12 @@ public final class OController implements Observer{
         return view.sampRateSlider.getValue();
     }
     
+    public void updateGraph(String rawData){
+       String[] separated = rawData.split("[,]+"); 
+        graph.addTimeItem(Integer.parseInt(separated[4]));
+
+    }
+    
     public void rawArduinoData(String rawData){
         file.ExcelWrite(rawData);
     }
@@ -290,7 +298,10 @@ public final class OController implements Observer{
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
+                
+                //updateGraph(build.toString());
                 rawArduinoData(build.toString());
+
                 break;
             //Error state
             case 'Z':

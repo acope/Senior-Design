@@ -5,6 +5,7 @@ import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.data.time.Minute;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -33,6 +34,7 @@ public class OGraph{
         dataset.setDomainIsPointsInTime(true);
         
         timeSeries = new TimeSeries(seriesName);
+
         dataset.addSeries(timeSeries);
         return dataset;
     }
@@ -84,7 +86,14 @@ public class OGraph{
      */
     public void addTimeItem(double data){
         dt = new DateTime();
-        timeSeries.addOrUpdate(new Second(dt.getSecond(), dt.getMinute(), dt.getHour(), dt.getDay(), dt.getMonth(), dt.getYear()), data);
+        int seconds = dt.getSecond();
+        int minutes = dt.getMinute();
+        int hours = dt.getHour();
+        int day = dt.getDay();
+        int month = dt.getMonth();
+        int year = dt.getYear();
+                        
+        timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
     }
     
     
