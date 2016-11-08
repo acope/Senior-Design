@@ -1,13 +1,12 @@
 package odrive;
 
 import helper.DataConversion;
+import helper.DateTime;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -37,6 +36,7 @@ public class OFile {
     private HSSFWorkbook wb; 
     private FileOutputStream out;
     private final DataConversion convert;
+    private DateTime dt;
     
     private String datastamp;
     private String motorRPM;
@@ -51,6 +51,7 @@ public class OFile {
      */
     public OFile(){
         convert = new DataConversion();
+        dt = new DateTime();
     }
     
     /**
@@ -70,8 +71,8 @@ public class OFile {
     public void ExcelWrite(String rawdata){
         DecimalFormat df = new DecimalFormat("##.##E0");
         //Timestamp from Java 
-        String date = getDate();
-        String time = getTime();
+        String date = dt.getDate();
+        String time = dt.getTime();
         readData[0] = date;
         readData[1] = time;
         //Separate raw data by commas
@@ -157,8 +158,8 @@ public class OFile {
     public void CreateWBook(){
         String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Calc. Current", "Calc. Power", "Calc. Efficiency"}; 
         
-        String date = getDateNumOnly();
-        String time = getTimeNumOnly();         
+        String date = dt.getDateNumOnly();
+        String time = dt.getTimeNumOnly();         
         
         workBookName = ("WaveWaterWorks_" + date + time + ".xls"); //Create new excel file with name and date stamp 
         
@@ -199,50 +200,5 @@ public class OFile {
         } catch (IOException ex) {
             Logger.getLogger(OFile.class.getName()).log(Level.SEVERE, null, ex);
         }        
-    }
-
-    /**
-     * Gets time from system
-     * @return HH:mm:ss
-     */
-    public String getTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        return sdf.format(Calendar.getInstance().getTime());
-    }
-    
-    /**
-     * Get time number only
-     * @return HHmmss
-     */
-    public String getTimeNumOnly(){
-        SimpleDateFormat sdf = new SimpleDateFormat("HHmmss");
-        return sdf.format(Calendar.getInstance().getTime());
-    }
-    
-    /**
-     * Get date 
-     * @return MM/dd/yyyy
-     */
-    public String getDate(){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        return sdf.format(Calendar.getInstance().getTime());
-    }
-    
-    /**
-     * Get date numbers only
-     * @return yyyyMMdd
-     */
-    public String getDateNumOnly(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        return sdf.format(Calendar.getInstance().getTime());
-    }
-    
-    /**
-     * Get date and time
-     * @return MM/dd/yyyy HH:mm:ss
-     */
-    public String getDateAndTime(){
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-        return sdf.format(Calendar.getInstance().getTime());
     }
 }
