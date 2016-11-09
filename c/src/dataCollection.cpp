@@ -198,9 +198,11 @@ void motorSpeedControlPID()
   static const float kp = 1;
   static const float ki = 1;
   static const float kd = 0.1;
-  static const char out_min = 0;
-  static const char out_max = 255;
+  static const float out_min = 40.0;
+  static const float out_max = 210.0;
+  static const float max_rpm = 3000.0;
   static float prev_feedback = 0;
+  float output;
   char output_cmd;
 
   // sample rate is 200ms, so multiply by 5 then divide by tooth
@@ -223,13 +225,13 @@ void motorSpeedControlPID()
     {
       motor_speed += motor_speed_unit;
     }
-    // TODO: Scale for Motor rpm to voltage
+    output = (float)motor_speed;
   }
   else // recording (PID Control)
   {
     // static Variables
     static float i_error = 0;
-    static float d_error = 0; prev_feedback;
+    static float d_error = 0;
 
     float error = (float)input_condition_.frequency - feedback;
     i_error += (ki * error);
@@ -246,22 +248,22 @@ void motorSpeedControlPID()
     d_error = (feedback - prev_feedback);
 
     // compute output
-    output_cmd = (char)(kp * error + i_error - kd * d_error);
+    output = (kp * error + i_error - kd * d_error);
   }
+  // Scale
+  output = (out_max - out_min) / max_rpm * output + out_min;
 
-  if (output_cmd > out_max)
+  // check with limit
+  if (output > out_max)
   {
-    output_cmd = out_max;
+    output = out_max;
   }
-  else if (output_cmd < out_min)
+  else if (output < out_min)
   {
-    output_cmd = out_min;
+    output = out_min;
   }
-  else
-  {
-    // TODO: Scale
-
-  }
+  // convert type
+  output_cmd = (char)output;
   // set output
   analogWrite(PWM_PIN, output_cmd);
 }
