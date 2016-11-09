@@ -42,7 +42,7 @@ void timerCallback()
   if (motor_control_count >= p_motor_control_)
   {
     motor_control_count = 0;
-    f_motor_control_ = true;
+    //f_motor_control_ = true;
     r_motor_feedback_rpm_ = r_motor_feedback_count_;
     r_motor_feedback_count_ = 0;
   }
@@ -50,7 +50,7 @@ void timerCallback()
   if (error_check_count >= p_error_check_)
   {
     error_check_count = 0;
-    f_error_check_ = true;
+    //f_error_check_ = true;
   }
 }
 
@@ -138,6 +138,9 @@ void checkSerialInterrupt()
       Serial.write('A');
       Serial.write(255);
       input_condition_.frequency = new_input_condition_.frequency;
+      analogWrite(PWM_PIN, input_condition_.frequency);
+      Serial.print("Current Command is ");
+      Serial.println(input_condition_.frequency);
       sendInputSD();
     }
     else

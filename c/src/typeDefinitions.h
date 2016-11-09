@@ -70,13 +70,13 @@ typedef struct {
 #define SD_CARD_RECORD_PER_FILE 50000
 
 // Default Input TODO: ASK default input
-#define DEF_FREQUENCY 1600
+#define DEF_FREQUENCY 40
 #define DEF_AMPLITUDE 90
 #define DEF_SAMPLE_RATE 10
 
 // Input Restriction
-#define MAX_FREQUENCY   3000
-#define MIN_FREQUENCY   0
+#define MAX_FREQUENCY   210
+#define MIN_FREQUENCY   40
 #define MAX_AMPLITUDE   120
 #define MIN_AMPLITUDE   90
 #define MAX_SAMPLE_RATE 600
