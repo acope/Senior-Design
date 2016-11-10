@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 import java.util.Observer;
+import javax.swing.SwingUtilities;
 
 import javax.swing.event.ChangeEvent;
 
@@ -41,6 +42,7 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
+        //graph = new OGraph();
         //Thread 5 nullpointerexception need to fix
         /*
         EventQueue.invokeLater(new Runnable() {
@@ -116,7 +118,11 @@ public final class OController implements Observer{
      */
     private void disconnectButtonActionListener(){
         view.buttonDisconnect.addActionListener((ActionEvent e) -> {
-            disconnectButton();
+                    boolean disconnected = link.disconnect();
+        if (disconnected) {
+            view.setStatusBarText("Disconnected from Arduino");
+            view.connectionPanelEnabled(false);
+        }
         });
     }
     
@@ -279,7 +285,9 @@ public final class OController implements Observer{
     
     public void updateGraph(String rawData){
        String[] separated = rawData.split("[,]+"); 
-        graph.addTimeItem(Integer.parseInt(separated[4]));
+       double dbl = Double.parseDouble(separated[4]);
+       
+        graph.addTimeItem(dbl);
 
     }
     
@@ -329,6 +337,15 @@ public final class OController implements Observer{
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 
+                //Fixed Thread-5 NullPointerException
+                //New Error AWT-EventQueue-0 NullPointerException
+                //Allows data to be written to Excel exception keeps gettting thrown
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateGraph(build.toString());
+                     }
+                 });
                 //updateGraph(build.toString());
                 rawArduinoData(build.toString());
 

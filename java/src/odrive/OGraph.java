@@ -27,12 +27,11 @@ public class OGraph{
      * @param name
      */
     public OGraph() {       
-        //super(name);
+
     }
     
     private XYDataset createDataset(String seriesName){
         final TimeSeriesCollection dataset = new TimeSeriesCollection();
-        //dataset.setDomainIsPointsInTime(true); //Depreciated!
         
         timeSeries = new TimeSeries(seriesName);
 
@@ -93,7 +92,7 @@ public class OGraph{
         int day = dt.getDay();
         int month = dt.getMonth();
         int year = dt.getYear();
-                        
+
         timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
     }
     
