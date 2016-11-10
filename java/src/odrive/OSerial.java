@@ -24,6 +24,7 @@ public class OSerial extends Observable{
         link = Link.getInstance(linkName);
     }
     
+    
     /**
     * Sends motor RPM to serial
     * @param rpm

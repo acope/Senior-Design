@@ -1,6 +1,7 @@
 package odrive;
 
 import helper.DateTime;
+import java.awt.Dimension;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -31,7 +32,7 @@ public class OGraph{
     
     private XYDataset createDataset(String seriesName){
         final TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.setDomainIsPointsInTime(true);
+        //dataset.setDomainIsPointsInTime(true); //Depreciated!
         
         timeSeries = new TimeSeries(seriesName);
 
@@ -53,7 +54,7 @@ public class OGraph{
                 timeAxisLabel, 
                 valueAxisLabel, 
                 dataset, 
-                true, //include a legend 
+                false, //include a legend 
                 true, //include tooltips 
                 false //urls
         ); 

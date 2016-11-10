@@ -234,9 +234,8 @@ public class OView extends JFrame{
     
     private JPanel graphPanel(){
         JPanel graphPanel;
-        OGraph ograph = new OGraph();
-        graphPanel = ograph.createGraphPanel("Time test", "x Axis", "y Axis", 1000, 500);
-
+        OGraph ograph = new OGraph();      
+        graphPanel = ograph.createGraphPanel("ODrive Real Time Data", "Time", "Range", 950, 550);
         return graphPanel;
     }
     
@@ -305,7 +304,7 @@ public class OView extends JFrame{
                 buttonConnect.setEnabled(!enable);
                 buttonDisconnect.setEnabled(enable);
                 buttonStart.setEnabled(enable);
-                buttonStop.setEnabled(enable);
+                buttonStop.setEnabled(!enable);
                 freqSlider.setEnabled(enable);
                 sampRateSlider.setEnabled(enable);
                 ampComboBox.setEnabled(enable);

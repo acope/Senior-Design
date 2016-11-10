@@ -156,7 +156,7 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Calc. Current", "Calc. Power", "Calc. Efficiency"}; 
+        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Current", "Power"}; 
         
         String date = dt.getDateNumOnly();
         String time = dt.getTimeNumOnly();         
@@ -171,10 +171,9 @@ public class OFile {
         workbook = new HSSFWorkbook(); 
         Sheet sheet = workbook.createSheet("Data Logging"); 
         
-        Row headerRow = sheet.createRow(0);  
-        
+        Row labelRow = sheet.createRow(0);  
         for(int i=0; i<labels.length; i++){
-            Cell c = headerRow.createCell(i); 
+            Cell c = labelRow.createCell(i); 
             c.setCellValue(labels[i]);
             CellStyle labelStyle = sheet.getWorkbook().createCellStyle(); 
             

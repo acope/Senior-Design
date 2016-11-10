@@ -2,6 +2,7 @@ package odrive;
 
 import helper.UpTimeCounter;
 import java.awt.Color;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
 import java.util.logging.Level;
@@ -29,7 +30,7 @@ public final class OController implements Observer{
     private final UpTimeCounter upTime;
     private final OFile file;
     private Timer t;
-    private final OGraph graph;
+    private OGraph graph;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -40,7 +41,13 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
-        graph = new OGraph();
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                graph = new OGraph();
+            }
+        });
+        
                 
         serial.addObserver(OController.this);
         //Add action listeners     
@@ -61,72 +68,93 @@ public final class OController implements Observer{
      */
     private void connectButtonActionListener(){
         view.buttonConnect.addActionListener((ActionEvent e) -> {
-            String comPort = view.getConnectionPort();
-            String baudRateS = view.getBaudRate();
-            
-            if(comPort == null || "".equals(comPort)){
-                view.errorJOptionPane("No COM port found");
-            } else if (baudRateS == null || "".equals(baudRateS)){
-                view.errorJOptionPane("Invalid baud rate set");
-            }else{
-                //Connect to Arduino board on com and baud
-                try{
-                    int baudRate = Integer.parseInt(baudRateS);
-                    boolean connected = link.connect(comPort, baudRate);
-                    
-                    //If connected start listening to COM port and enable/disable GUI
-                    if(connected) {
-                        view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
-                        view.connectionPanelEnabled(true);
-                    }
-                }
-                catch(Exception ex){
-                    String message = ex.getMessage();
-                    if(message == null || message.trim().equals(" ")){
-                        message = "Generic Error on Connection!";
-                    }
-                    view.setStatusBarText(message);
-                    view.setStatusBarColor(Color.red);
-                }
-            }
+            connectButton();
         });    
     }
     
     /**
+     * Connect button action when pressed
+     * Retrieves baud rate and com port and checks for null
+     * initializes serial connection 
+     * sets status bar status and enables/disables GUI
+     */
+    private void connectButton(){
+        String comPort = view.getConnectionPort();
+        String baudRateS = view.getBaudRate();
+            
+        if(comPort == null || "".equals(comPort)){
+            view.errorJOptionPane("No COM port found");
+        } else if (baudRateS == null || "".equals(baudRateS)){
+            view.errorJOptionPane("Invalid baud rate set");
+        }else{
+            //Connect to Arduino board on com and baud
+            try{
+                int baudRate = Integer.parseInt(baudRateS);
+                boolean connected = link.connect(comPort, baudRate);
+                 
+                //If connected start listening to COM port and enable/disable GUI
+                if(connected) {
+                    view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
+                    view.connectionPanelEnabled(true);
+                }
+            }
+            catch(Exception ex){
+                String message = ex.getMessage();
+                if(message == null || message.trim().equals(" ")){
+                    message = "Generic Error on Connection!";
+                }
+                view.setStatusBarText(message);
+                view.setStatusBarColor(Color.red);
+            }
+        }
+    }
+    
+    /**
      * Listener for disconnect button
-     * Calls link.disconnect which closes the serial port
-     * Enables/Disables GUI items
      */
     private void disconnectButtonActionListener(){
         view.buttonDisconnect.addActionListener((ActionEvent e) -> {
-            boolean disconnected = link.disconnect();
-            if (disconnected) {
-                view.setStatusBarText("Disconnected from Arduino");
-                view.connectionPanelEnabled(false);
-            }
+            disconnectButton();
         });
     }
     
     /**
-     * Listener for start button
-     * Writes a "R" to serial to start data logging on Arduino
-     * Sends Motor RPM, Amplitude and Sampling Rate to Arduino
+     * Calls link.disconnect which closes the serial port
      * Enables/Disables GUI items
+     */
+    private void disconnectButton(){
+        boolean disconnected = link.disconnect();
+        if (disconnected) {
+            view.setStatusBarText("Disconnected from Arduino");
+            view.connectionPanelEnabled(false);
+        }
+    }
+    
+    /**
+     * Listener for start button
      */
     private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
-            try {
+            startButton();
+        });
+    }
+    
+    /**Writes a "R" to serial to start data logging on Arduino
+     * Sends Motor RPM, Amplitude and Sampling Rate to Arduino
+     * Enables/Disables GUI items
+     */
+    public void startButton(){
+        try {
                 view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 //Create a new Excel workbook for data logging
                 file.CreateWBook();
-                //Allows Arduino to get ready
+                //Allows Arduino to get ready, figure out new way
                 Thread.sleep(2000);
                 view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
                 //Start up time counter
                 upTime.start();
                 //Start update up time timer
                 t.start();
-                //#TODO Create new workbook here, Dana
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -138,27 +166,27 @@ public final class OController implements Observer{
             
             //Enable/Disable GUI
             view.inputPanelEnabled(true);
-        });
     }
     
     /**
      * Listener for stop button
-     * Writes a "C" to serial for complete
-     * Enables/Disables GUI items
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
-            upTime.stop();
-            view.setStatusBarText("Data logging has been stopped");
-            //#TODO close workbook here
-            
-            //PC sends C for complete of testing
-            link.writeSerial("C");
-            //Stop file logging
-            
-            //Enable/Disable GUI
-            view.inputPanelEnabled(false);
+            stopButton();
         }); 
+    }
+    /**
+     * 5Writes a "C" to serial for complete
+     * Enables/Disables GUI items
+     */
+    public void stopButton(){
+        upTime.stop();
+        view.setStatusBarText("Data logging has been stopped");         
+        //PC sends C for complete of testing
+        link.writeSerial("C");
+        //Enable/Disable GUI
+        view.inputPanelEnabled(false);
     }
     
     /**
@@ -299,7 +327,7 @@ public final class OController implements Observer{
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 
-                //updateGraph(build.toString());
+                updateGraph(build.toString());
                 rawArduinoData(build.toString());
 
                 break;
