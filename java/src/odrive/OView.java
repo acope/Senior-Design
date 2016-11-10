@@ -93,7 +93,10 @@ public class OView extends JFrame{
         
         
         mainFrame.add(interfacePanel, BorderLayout.WEST);
-        mainFrame.add(graphPanel, BorderLayout.EAST);
+        //******************************************
+        //Removed Graph for Showing Purpose
+        //*******************************************
+       // mainFrame.add(graphPanel, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
 

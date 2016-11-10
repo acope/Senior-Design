@@ -41,13 +41,15 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
+        //Thread 5 nullpointerexception need to fix
+        /*
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 graph = new OGraph();
             }
         });
-        
+        */
                 
         serial.addObserver(OController.this);
         //Add action listeners     
@@ -327,7 +329,7 @@ public final class OController implements Observer{
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 
-                updateGraph(build.toString());
+                //updateGraph(build.toString());
                 rawArduinoData(build.toString());
 
                 break;
