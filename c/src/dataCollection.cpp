@@ -42,7 +42,7 @@ void timerCallback()
   if (motor_control_count >= p_motor_control_)
   {
     motor_control_count = 0;
-    //f_motor_control_ = true;
+    f_motor_control_ = true;
     r_motor_feedback_rpm_ = r_motor_feedback_count_;
     r_motor_feedback_count_ = 0;
   }
@@ -75,7 +75,7 @@ void checkTimerTasks()
   if (f_error_check_)
   {
     f_error_check_ = false;
-    errorCheck();
+    //errorCheck();
   }
 }
 
@@ -107,7 +107,6 @@ void checkSerialInterrupt()
     Serial.write(255);
     // FIXME: Put Back
     state_ = recording;
-    //state_ = prepare;
   }
 
   if (f_pause_request_)
@@ -139,9 +138,9 @@ void checkSerialInterrupt()
       Serial.write(255);
       input_condition_.frequency = new_input_condition_.frequency;
       analogWrite(PWM_PIN, input_condition_.frequency);
-      Serial.print("Current Command is ");
+      Serial.print("Current Command (in digital) is ");
       Serial.println(input_condition_.frequency);
-      sendInputSD();
+      //sendInputSD();
     }
     else
       Serial.write('F');
@@ -184,7 +183,7 @@ void checkSerialInterrupt()
 
 bool startMotor()
 {
-  analogWrite(PWM_PIN, input_condition_.frequency);
+  analogWrite(PWM_PIN, 40);
   return true;
 }
 
@@ -208,8 +207,11 @@ void motorSpeedControlPID()
   float output;
   char output_cmd;
 
-  // sample rate is 200ms, so multiply by 5 then divide by tooth
-  float feedback = (float)r_motor_feedback_rpm_ * 5.0 / MOTOR_ENCODER_TOOTH;
+  // sample rate is 200ms, so multiply by 5 * 60 then divide by tooth
+  // 5 * 60 / 15 = 20
+  float feedback = (float)r_motor_feedback_rpm_ * 20.0;
+  Serial.print("Feedback is ");
+  Serial.println(feedback);
 
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
@@ -253,6 +255,10 @@ void motorSpeedControlPID()
     // compute output
     output = (kp * error + i_error - kd * d_error);
   }
+
+  //Serial.print("Command RPM is ");
+  //Serial.println(output);
+
   // Scale
   output = (out_max - out_min) / max_rpm * output + out_min;
 
@@ -265,10 +271,15 @@ void motorSpeedControlPID()
   {
     output = out_min;
   }
+
   // convert type
   output_cmd = (char)output;
+
+  //Serial.print("Actual command is ");
+  //Serial.println(output_cmd);
+
   // set output
-  analogWrite(PWM_PIN, output_cmd);
+  //analogWrite(PWM_PIN, output_cmd);
 }
 
 
@@ -278,14 +289,14 @@ bool sendDataSerial()
   Serial.print(collected_data_.timestamp, DEC);
   Serial.print(",");
   Serial.print(collected_data_.motor_rpm, DEC);
-  Serial.print(",");
-  Serial.print(collected_data_.input_rpm, DEC);
-  Serial.print(",");
-  Serial.print(collected_data_.output_rpm, DEC);
-  Serial.print(",");
-  Serial.print(collected_data_.generated_voltage, DEC);
+  //Serial.print(",");
+  //Serial.print(collected_data_.input_rpm, DEC);
+  //Serial.print(",");
+  //Serial.print(collected_data_.output_rpm, DEC);
+  //Serial.print(",");
+  //Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
-  Serial.write(255);
+  //Serial.write(255);
 
   return true;
 }
