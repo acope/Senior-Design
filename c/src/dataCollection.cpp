@@ -34,9 +34,9 @@ void timerCallback()
     // FIXME: Put Back
     collected_data_.timestamp++;
     collected_data_.generated_voltage = analogRead(VOLTAGE_PIN);
-    collected_data_.motor_rpm = r_motor_rpm_;//(r_motor_rpm_ * multiply_factor_) / MOTOR_ENCODER_TOOTH;
-    collected_data_.input_rpm = r_input_rpm_;//(r_input_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
-    collected_data_.output_rpm = r_output_rpm_;//(r_output_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
+    collected_data_.motor_rpm = r_motor_rpm_ * 4;
+    collected_data_.input_rpm = (int)((float)(r_input_rpm_) * (60.0 / 360.0));
+    collected_data_.output_rpm = (int)((float)(r_output_rpm_) * (60.0 / 360.0));
   }
 
   if (motor_control_count >= p_motor_control_)
@@ -289,14 +289,14 @@ bool sendDataSerial()
   Serial.print(collected_data_.timestamp, DEC);
   Serial.print(",");
   Serial.print(collected_data_.motor_rpm, DEC);
-  //Serial.print(",");
-  //Serial.print(collected_data_.input_rpm, DEC);
-  //Serial.print(",");
-  //Serial.print(collected_data_.output_rpm, DEC);
-  //Serial.print(",");
-  //Serial.print(collected_data_.generated_voltage, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.input_rpm, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.output_rpm, DEC);
+  Serial.print(",");
+  Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
-  //Serial.write(255);
+  Serial.println(" ");
 
   return true;
 }
