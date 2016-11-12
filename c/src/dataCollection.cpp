@@ -137,8 +137,8 @@ void checkSerialInterrupt()
       Serial.write('A');
       Serial.write(255);
       input_condition_.frequency = new_input_condition_.frequency;
-      analogWrite(PWM_PIN, input_condition_.frequency);
-      Serial.print("Current Command (in digital) is ");
+      //analogWrite(PWM_PIN, input_condition_.frequency);
+      Serial.print("Got frequency is ");
       Serial.println(input_condition_.frequency);
       //sendInputSD();
     }
@@ -197,11 +197,11 @@ bool stopMotor()
 void motorSpeedControlPID()
 {
   // TODO: PID Coefficients
-  static const float kp = 1;
-  static const float ki = 1;
-  static const float kd = 0.1;
-  static const float out_min = 40.0;
-  static const float out_max = 210.0;
+  static const float kp = 0.5;
+  static const float ki = 1.0;
+  static const float kd = 0.0;
+  static const float out_min = 60.0;
+  static const float out_max = 165.0;
   static const float max_rpm = 3000.0;
   static float prev_feedback = 0;
   float output;
@@ -216,12 +216,13 @@ void motorSpeedControlPID()
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
   {
+    Serial.println("Prepare");
     // speed up motor slowly
-    static unsigned int motor_speed_unit = input_condition_.frequency / 10;
+    static unsigned int motor_speed_unit = input_condition_.frequency / 2;
     static unsigned int motor_speed = motor_speed_unit;
 
     // if motor is near target, move to pid
-    if (abs(input_condition_.frequency - feedback) <= 300)
+    if (abs(input_condition_.frequency - feedback) <= 200)
     {
       f_start_pid_ = true;
     }
@@ -253,19 +254,23 @@ void motorSpeedControlPID()
     d_error = (feedback - prev_feedback);
 
     // compute output
-    output = (kp * error + i_error - kd * d_error);
+    output = (kp * error + i_error - kd * d_error) + (float)input_condition_.frequency;
   }
 
-  //Serial.print("Command RPM is ");
-  //Serial.println(output);
+  Serial.print("Command RPM is ");
+  Serial.println(output);
 
   // Scale
-  output = (out_max - out_min) / max_rpm * output + out_min;
+  //output = (out_max - out_min) / max_rpm * output + out_min;
+  output = (170.0 - 60.0) / 3000.0 * output + 60.0;
+
+  Serial.print("Command DIGITAL is ");
+  Serial.println(output);
 
   // check with limit
-  if (output > out_max)
+  if (output > 160) //out_max
   {
-    output = out_max;
+    output = 160;//out_max;
   }
   else if (output < out_min)
   {
@@ -275,11 +280,11 @@ void motorSpeedControlPID()
   // convert type
   output_cmd = (char)output;
 
-  //Serial.print("Actual command is ");
-  //Serial.println(output_cmd);
+  Serial.print("Actual command is ");
+  Serial.println(output_cmd);
 
   // set output
-  //analogWrite(PWM_PIN, output_cmd);
+  analogWrite(PWM_PIN, output_cmd);
 }
 
 
