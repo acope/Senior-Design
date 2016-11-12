@@ -199,7 +199,7 @@ void motorSpeedControlPID()
   // TODO: PID Coefficients
   static const float kp = 0.5;
   static const float ki = 1.0;
-  static const float kd = 0.0;
+  static const float kd = 0.1;
   static const float out_min = 60.0;
   static const float out_max = 165.0;
   static const float max_rpm = 3000.0;
