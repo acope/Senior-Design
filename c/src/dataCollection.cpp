@@ -106,7 +106,7 @@ void checkSerialInterrupt()
     Serial.write('A');
     Serial.write(255);
     // FIXME: Put Back
-    state_ = recording;
+    state_ = prepare;
   }
 
   if (f_pause_request_)
@@ -198,7 +198,7 @@ void motorSpeedControlPID()
 {
   // TODO: PID Coefficients
   static const float kp = 0.5;
-  static const float ki = 1.0;
+  static const float ki = 1.2;
   static const float kd = 0.1;
   static const float out_min = 60.0;
   static const float out_max = 165.0;
@@ -212,22 +212,35 @@ void motorSpeedControlPID()
   float feedback = (float)r_motor_feedback_rpm_ * 20.0;
   Serial.print("Feedback is ");
   Serial.println(feedback);
+  static bool clear_PID = false;
 
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
   {
     Serial.println("Prepare");
     // speed up motor slowly
-    static unsigned int motor_speed_unit = input_condition_.frequency / 2;
-    static unsigned int motor_speed = motor_speed_unit;
+    static unsigned int motor_speed_unit = 200;
+    static unsigned int motor_speed = 300;
+
+    if (restart_)
+    {
+      prev_feedback = 0;
+      motor_speed = 300;
+      restart_ = false;
+      clear_PID = true;
+    }
+
+    // if more than 500 RPM, start with 500.
+    // increment by 500 untill it reaches target
+
 
     // if motor is near target, move to pid
-    if (abs(input_condition_.frequency - feedback) <= 200)
+    if (abs(input_condition_.frequency - feedback) <= 100)
     {
       f_start_pid_ = true;
     }
     // if motor is near temp target, move to next temp target
-    else if (abs(motor_speed - feedback) <= 200)
+    else if (abs(motor_speed - feedback) <= 100)
     {
       motor_speed += motor_speed_unit;
     }
@@ -238,6 +251,13 @@ void motorSpeedControlPID()
     // static Variables
     static float i_error = 0;
     static float d_error = 0;
+
+    if (clear_PID)
+    {
+      i_error = 0;
+      d_error = 0;
+      restart_ = false;
+    }
 
     float error = (float)input_condition_.frequency - feedback;
     i_error += (ki * error);
