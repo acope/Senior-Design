@@ -42,7 +42,7 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
-        //graph = new OGraph();
+        graph = new OGraph();
         //Thread 5 nullpointerexception need to fix
         /*
         EventQueue.invokeLater(new Runnable() {
@@ -51,8 +51,9 @@ public final class OController implements Observer{
                 graph = new OGraph();
             }
         });
-        */
-                
+*/
+        
+        //Add observer for serial data        
         serial.addObserver(OController.this);
         //Add action listeners     
         connectButtonActionListener();
@@ -332,11 +333,10 @@ public final class OController implements Observer{
                 for(int i=1; i<str.length()-1; i++){
                     char c = str.charAt(i);
                     build.append(c);
-                }
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
+                }                
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
-                
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data sample: " + separated[0], arg);
                 //Fixed Thread-5 NullPointerException
                 //New Error AWT-EventQueue-0 NullPointerException
                 //Allows data to be written to Excel exception keeps gettting thrown
@@ -367,6 +367,7 @@ public final class OController implements Observer{
                 break;
             //Recieve random unknown data, do nothing
             default:
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Unknown Arduino State", arg);
                 break;
             }
     }

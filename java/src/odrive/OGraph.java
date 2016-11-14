@@ -1,12 +1,17 @@
 package odrive;
 
 import helper.DateTime;
-import java.awt.Dimension;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Date;
+import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.data.time.Minute;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -20,7 +25,6 @@ import org.jfree.data.xy.XYDataset;
  */
 public class OGraph{
     private TimeSeries timeSeries;
-    private DateTime dt;
   
     /**
      *
@@ -85,15 +89,22 @@ public class OGraph{
      * @param data
      */
     public void addTimeItem(double data){
-        dt = new DateTime();
+        DateTime dt = new DateTime();
+        Date time = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         int seconds = dt.getSecond();
         int minutes = dt.getMinute();
-        int hours = dt.getHour();
+        int hours = dt.getHour(); 
         int day = dt.getDay();
         int month = dt.getMonth();
         int year = dt.getYear();
-
-        timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
+        
+        try {
+            //timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
+            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate())), data);
+        } catch (ParseException ex) {
+            Logger.getLogger(OGraph.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     
