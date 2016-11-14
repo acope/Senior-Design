@@ -49,7 +49,7 @@ bool initializeBoard()
   input_condition_.amplitude = DEF_AMPLITUDE;
   input_condition_.frequency = DEF_FREQUENCY;
   input_condition_.sampling_rate = DEF_SAMPLE_RATE;
-  multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
+  encoder_time_scale_ = 600.0 / (float)DEF_SAMPLE_RATE;
   collected_data_.timestamp = 0;
 
   // Timer setup
@@ -130,7 +130,7 @@ void printDirectory(File dir, int numTabs) {
 // NOTE: SD card will create new file every 50,000 records
 bool initializeSD()
 {
-  if (!restart_)
+  if (!restart_init_)
   {
     // Setup connection
     if (!SD.begin(SD_CS_PIN))
@@ -138,6 +138,10 @@ bool initializeSD()
       error_msg_ = "SD card initialization failed.";
       return false;
     }
+  }
+  else
+  {
+    restart_init_ = false;
   }
   // Create new test folder
   unsigned int count = 1;
@@ -176,10 +180,9 @@ bool initializeSD()
 
   return true;
 }
-// TODO: Consider error handle method
+
 void handleError()
 {
-  // stop motor, close SD card, then wait for restart_
   analogWrite(PWM_PIN, 0);
   sd_card_file_.close();
   sd_card_input_.close();

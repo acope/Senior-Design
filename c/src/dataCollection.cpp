@@ -15,10 +15,12 @@ void timerCallback()
   static unsigned int motor_control_count = 0;
   static unsigned int error_check_count = 0;
 
+  // increment counters
   data_collection_count++;
   motor_control_count++;
   error_check_count++;
 
+  // time to check measurements
   if (data_collection_count >= input_condition_.sampling_rate)
   {
     data_collection_count = 0;
@@ -31,14 +33,14 @@ void timerCallback()
     r_output_rpm_ = r_output_rpm_count_;
     r_output_rpm_count_ = 0;
 
-    // FIXME: Put Back
     collected_data_.timestamp++;
     collected_data_.generated_voltage = analogRead(VOLTAGE_PIN);
-    collected_data_.motor_rpm = r_motor_rpm_;//(r_motor_rpm_ * multiply_factor_) / MOTOR_ENCODER_TOOTH;
-    collected_data_.input_rpm = r_input_rpm_;//(r_input_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
-    collected_data_.output_rpm = r_output_rpm_;//(r_output_rpm_ * multiply_factor_) / ODRIVE_ENCODER_TOOTH;
+    collected_data_.motor_rpm = (int)((float)(r_motor_rpm_) * (encoder_time_scale_ / motor_encoder_tooth_));
+    collected_data_.input_rpm = (int)((float)(r_input_rpm_) * (encoder_time_scale_ / odrive_encoder_tooth_));
+    collected_data_.output_rpm = (int)((float)(r_output_rpm_) * (encoder_time_scale_ / odrive_encoder_tooth_));
   }
 
+  // time to check motor control
   if (motor_control_count >= p_motor_control_)
   {
     motor_control_count = 0;
@@ -47,7 +49,8 @@ void timerCallback()
     r_motor_feedback_count_ = 0;
   }
 
-  if (error_check_count >= p_error_check_)
+  // time to check error
+  if (error_check_count >= (p_error_check_ * input_condition_.sampling_rate) )
   {
     error_check_count = 0;
     f_error_check_ = true;
@@ -101,13 +104,15 @@ void checkSerialInterrupt()
   {
     f_record_request_ = false;
     startMotor();
+    if (restart_init_)
+    {
+      initializeSD();
+    }
     sendInputSD();
     OpenSDFile();
     Serial.write('A');
     Serial.write(255);
-    // FIXME: Put Back
-    state_ = recording;
-    //state_ = prepare;
+    state_ = prepare;
   }
 
   if (f_pause_request_)
@@ -125,7 +130,10 @@ void checkSerialInterrupt()
     CloseSDFile();
     Serial.write('A');
     Serial.write(255);
-    restart_ = true;
+    restart_pid_ = true;
+    restart_sd_ = true;
+    restart_init_ = true;
+    sd_card_new_file_count_ = 0;
     state_ = done;
   }
 
@@ -170,7 +178,7 @@ void checkSerialInterrupt()
       Serial.write('A');
       Serial.write(255);
       input_condition_.sampling_rate = new_input_condition_.sampling_rate;
-      multiply_factor_ = MAX_SAMPLE_RATE - input_condition_.sampling_rate;
+      encoder_time_scale_ = 600.0 / (float)input_condition_.sampling_rate;
       sendInputSD();
     }
     Serial.write('A');
@@ -181,7 +189,9 @@ void checkSerialInterrupt()
 
 bool startMotor()
 {
-  analogWrite(PWM_PIN, input_condition_.frequency);
+  // no motor control here. Let PID control motor speed
+  // for safety.
+  analogWrite(PWM_PIN, 0);
   return true;
 }
 
@@ -191,37 +201,54 @@ bool stopMotor()
   return true;
 }
 
-/// TODO: 5. Motor Control Implementation
 void motorSpeedControlPID()
 {
-  // TODO: PID Coefficients
-  static const float kp = 1;
-  static const float ki = 1;
+  // TODO: Increase max if system can handle
+  static const float kp = 0.5;
+  static const float ki = 1.2;
   static const float kd = 0.1;
-  static const float out_min = 40.0;
-  static const float out_max = 210.0;
+  static const float out_min = 60.0;
+  static const float out_max = 170.0;
   static const float max_rpm = 3000.0;
   static float prev_feedback = 0;
   float output;
   char output_cmd;
+  static bool clear_PID = false;
 
-  // sample rate is 200ms, so multiply by 5 then divide by tooth
-  float feedback = (float)r_motor_feedback_rpm_ * 5.0 / MOTOR_ENCODER_TOOTH;
+  // sample rate is 200ms, so multiply by 5 * 60 then divide by tooth
+  // 5 * 60 / 15 = 20
+  float feedback = (float)r_motor_feedback_rpm_ * 20.0;
+  // FIXME: Debug msg
+  Serial.print("Feedback is ");
+  Serial.println(feedback);
 
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
   {
+    // FIXME: Debug msg
+    Serial.println("Prepare");
+
     // speed up motor slowly
-    static unsigned int motor_speed_unit = input_condition_.frequency / 10;
-    static unsigned int motor_speed = motor_speed_unit;
+    static unsigned int motor_speed_unit = 200;
+    static unsigned int motor_speed = 300;
+
+    // when restarting, clear static variables
+    if (restart_pid_)
+    {
+      prev_feedback = 0;
+      motor_speed = 300;
+      restart_pid_ = false;
+      f_start_pid_ = false;
+      clear_PID = true;
+    }
 
     // if motor is near target, move to pid
-    if (abs(input_condition_.frequency - feedback) <= 300)
+    if (abs(input_condition_.frequency - feedback) <= 100)
     {
       f_start_pid_ = true;
     }
     // if motor is near temp target, move to next temp target
-    else if (abs(motor_speed - feedback) <= 200)
+    else if (abs(motor_speed - feedback) <= 100)
     {
       motor_speed += motor_speed_unit;
     }
@@ -232,6 +259,13 @@ void motorSpeedControlPID()
     // static Variables
     static float i_error = 0;
     static float d_error = 0;
+
+    if (clear_PID)
+    {
+      i_error = 0;
+      d_error = 0;
+      clear_PID = false;
+    }
 
     float error = (float)input_condition_.frequency - feedback;
     i_error += (ki * error);
@@ -248,10 +282,19 @@ void motorSpeedControlPID()
     d_error = (feedback - prev_feedback);
 
     // compute output
-    output = (kp * error + i_error - kd * d_error);
+    output = (kp * error + i_error - kd * d_error) + (float)input_condition_.frequency;
   }
+  // FIXME: Debug msg
+  Serial.print("Command RPM is ");
+  Serial.println(output);
+
   // Scale
+  //output = (out_max - out_min) / max_rpm * output + out_min;
   output = (out_max - out_min) / max_rpm * output + out_min;
+
+  // FIXME: Debug msg
+  Serial.print("Command DIGITAL is ");
+  Serial.println(output);
 
   // check with limit
   if (output > out_max)
@@ -262,8 +305,14 @@ void motorSpeedControlPID()
   {
     output = out_min;
   }
+
   // convert type
   output_cmd = (char)output;
+
+  // FIXME: Debug msg
+  Serial.print("Actual command is ");
+  Serial.println(output_cmd);
+
   // set output
   analogWrite(PWM_PIN, output_cmd);
 }
@@ -283,6 +332,8 @@ bool sendDataSerial()
   Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
   Serial.write(255);
+  // FIXME: For Debugging
+  Serial.println(" ");
 
   return true;
 }
@@ -292,9 +343,10 @@ bool sendInputSD()
   static bool first_time = true;
   sd_card_input_ = SD.open(sd_card_input_path_, FILE_WRITE);
 
-  if (first_time)
+  if (first_time || restart_sd_)
   {
     first_time = false;
+    restart_sd_ = false;
     sd_card_input_.write("TIMESTAMP, FREQUENCY, AMPLITUDE, SAMPLE_RATE,\n");
   }
 
@@ -353,34 +405,88 @@ void updateSDFile()
   sd_card_file_.write("TIMESTAMP, MOTOR_RPM, INPUT_RPM, OUTPUT_RPM, VOLTAGE,\n");
 }
 
-// TODO: When motor is spinning, check all input and send error if condition is met
+// When motor is spinning, and recording is not collected for error_max consecutive
+// times, then send error message.
 bool errorCheck()
 {
-  if (state_ == recording)
+  const int error_max = 10;
+  static int motor_err_count = 0;
+  static int input_err_count = 0;
+  static int output_err_count = 0;
+  static int voltage_err_count = 0;
+
+  if (state_ == recording && input_condition_.frequency >= 300)
   {
+    // motor encoder
     if (collected_data_.motor_rpm == 0)
     {
+      motor_err_count++;
+      if (motor_err_count >= error_max)
+      {
       state_ = error;
       Serial.write('Z');
       Serial.print("motor is not spinning...");
       Serial.write('E');
       return false;
+      }
     }
-    else if (collected_data_.input_rpm == 0 || collected_data_.output_rpm == 0)
+    else
     {
+      motor_err_count = 0;
+    }
+
+    // input odrive
+    if (collected_data_.input_rpm == 0)
+    {
+      input_err_count++;
+      if (input_err_count >= error_max)
+      {
       state_ = error;
       Serial.write('Z');
-      Serial.print("oscillo drive not spinnig...");
+      Serial.print("input oscillo drive not spinnig...");
       Serial.write('E');
       return false;
+      }
     }
-    else if (collected_data_.generated_voltage == 0)
+    else
     {
+      input_err_count = 0;
+    }
+
+    // output odrive
+    if (collected_data_.output_rpm == 0)
+    {
+      output_err_count++;
+      if (output_err_count >= error_max)
+      {
+      state_ = error;
+      Serial.write('Z');
+      Serial.print("input oscillo drive not spinnig...");
+      Serial.write('E');
+      return false;
+      }
+    }
+    else
+    {
+      output_err_count = 0;
+    }
+
+    // voltage
+    if (collected_data_.generated_voltage == 0)
+    {
+      voltage_err_count++;
+      if (voltage_err_count == error_max)
+      {
       state_ = error;
       Serial.write('Z');
       Serial.print("voltage not generated...");
       Serial.write('E');
       return false;
+      }
+    }
+    else
+    {
+      voltage_err_count = 0;
     }
   }
   return true;
