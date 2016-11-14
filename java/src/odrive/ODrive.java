@@ -4,12 +4,12 @@ import helper.DllLoader;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import sun.awt.OSInfo;
 
 /**
  * Main class 
+ * Checks for Java 32bit or 64bit version for Windows
  * @author Austin Copeman
- * @version 1.1
+ * @version 1.2
  */
 public class ODrive {
     private static final String RXTX_SERIAL_DLL = "rxtxSerial.dll";

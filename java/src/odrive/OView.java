@@ -10,7 +10,6 @@ import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.plaf.basic.BasicSplitPaneUI;
 import net.miginfocom.swing.MigLayout;
 import org.jfree.ui.RefineryUtilities;
 import org.zu.ardulink.gui.SerialConnectionPanel;
