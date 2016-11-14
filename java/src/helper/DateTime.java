@@ -41,6 +41,15 @@ public class DateTime {
     }
     
     /**
+     * Get a custom date
+     * @return custom date
+     */
+    public String getCustomDate(String customDate){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(Calendar.getInstance().getTime());
+    }
+    
+    /**
      * Get date numbers only
      * @return yyyyMMdd
      */
