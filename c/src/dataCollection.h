@@ -15,6 +15,7 @@
 #include <SD.h>
 #include <TimerOne.h>
 #include "typeDefinitions.h"
+#include "initialization.h"
 
 /**
  * @file dataCollection.h

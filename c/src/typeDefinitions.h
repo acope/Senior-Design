@@ -62,14 +62,10 @@ typedef struct {
 // sd card pin
 #define SD_CS_PIN 4
 
-// Encoder tooth number @TODO: 3. Add tooth of other encoder
-#define MOTOR_ENCODER_TOOTH 15
-#define ODRIVE_ENCODER_TOOTH 360
-
 #define ERROR_LENGTH 100
 #define SD_CARD_RECORD_PER_FILE 50000
 
-// Default Input TODO: ASK default input
+// Default Input
 #define DEF_FREQUENCY 0
 #define DEF_AMPLITUDE 90
 #define DEF_SAMPLE_RATE 10
@@ -108,6 +104,7 @@ extern volatile unsigned long r_input_rpm_count_;       //!< total # of pulse by
 extern volatile unsigned long r_input_rpm_;             //!< plase to store pulse reading for input rpm
 extern volatile unsigned long r_output_rpm_count_;      //!< total # of pulse by ISR for output rpm
 extern volatile unsigned long r_output_rpm_;            //!< plase to store pulse reading for output rpm
+extern volatile float encoder_time_scale_;              //!< encoder sample time multiplier
 
 // Timer related variables
 extern volatile unsigned int p_motor_control_;     //!< motor control period in 100ms
@@ -116,7 +113,7 @@ extern volatile bool f_motor_control_;             //!< motor control task flag
 extern volatile bool f_start_pid_;                 //!< indicates to start using PID controller
 
 // Error Checking
-extern volatile unsigned int p_error_check_;      //!< error check period in 1s
+extern volatile unsigned int p_error_check_;      //!< error check is sample * error_factor
 extern volatile bool f_error_check_;              //!< error check task flag
 
 // SD Card
@@ -126,8 +123,13 @@ extern volatile unsigned int file_index_;             //!< index of file number
 extern File sd_card_file_;                            //!< File object
 extern char sd_card_input_path_[FILE_PATH_LENGTH];    //!< Path to Input File
 extern File sd_card_input_;                           //!< File object
-extern volatile bool restart_;                        //!< Indicates that that is restarted
 
+extern volatile bool restart_pid_;                    //!< restart pid
+extern volatile bool restart_sd_;                     //!< restart sd card
+extern volatile bool restart_init_;                   //!< restart initialization
+
+extern const float motor_encoder_tooth_;  //!< motor encoder tooth number
+extern const float odrive_encoder_tooth_; //!< odrive encoder tooth number
 
 // Flags
 extern volatile bool f_record_request_;         ///< record request task flag
