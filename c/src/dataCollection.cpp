@@ -427,6 +427,7 @@ bool errorCheck()
       Serial.write('Z');
       Serial.print("motor is not spinning...");
       Serial.write('E');
+      Serial.write(255);
       return false;
       }
     }
@@ -445,6 +446,7 @@ bool errorCheck()
       Serial.write('Z');
       Serial.print("input oscillo drive not spinnig...");
       Serial.write('E');
+      Serial.write(255);
       return false;
       }
     }
@@ -463,6 +465,7 @@ bool errorCheck()
       Serial.write('Z');
       Serial.print("input oscillo drive not spinnig...");
       Serial.write('E');
+      Serial.write(255);
       return false;
       }
     }
@@ -481,6 +484,7 @@ bool errorCheck()
       Serial.write('Z');
       Serial.print("voltage not generated...");
       Serial.write('E');
+      Serial.write(255);
       return false;
       }
     }

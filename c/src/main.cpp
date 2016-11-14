@@ -158,7 +158,10 @@ void serialEvent()
         f_motor_speed_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
     // amplitude change request
@@ -172,7 +175,10 @@ void serialEvent()
         f_amplitude_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
     // sample rate change request
@@ -186,7 +192,10 @@ void serialEvent()
         f_sampling_rate_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
   }
