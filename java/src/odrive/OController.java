@@ -31,7 +31,6 @@ public final class OController implements Observer{
     private final UpTimeCounter upTime;
     private final OFile file;
     private Timer t;
-    private OGraph graph;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -42,16 +41,6 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
-        //graph = new OGraph();
-        //Thread 5 nullpointerexception need to fix
-        /*
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                graph = new OGraph();
-            }
-        });
-*/
         
         //Add observer for serial data        
         serial.addObserver(OController.this);
@@ -215,15 +204,6 @@ public final class OController implements Observer{
     }
     
     /**
-     * Listener for amplitude combo box
-     */
-    private void ampComboBoxActionListener(){
-        view.ampComboBox.addActionListener((ActionEvent e) -> {
-            //Add code
-        });
-    }
-    
-    /**
      * Listens for data on serial port and sends to serialArduinoEvent
      */
     public void rawDataListener(){
@@ -280,13 +260,7 @@ public final class OController implements Observer{
         return view.sampRateSlider.getValue();
     }
     
-    public void updateGraph(String rawData){
-       String[] separated = rawData.split("[,]+"); 
-       double dbl = Double.parseDouble(separated[4]);
-       
-        graph.addTimeItem(dbl);
 
-    }
     
     public void rawArduinoData(String rawData){
         file.ExcelWrite(rawData);
@@ -332,20 +306,18 @@ public final class OController implements Observer{
                 }                
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
-                //Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data sample: " + separated[0], arg);
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
                 //Fixed Thread-5 NullPointerException
                 //New Error AWT-EventQueue-0 NullPointerException
                 //Allows data to be written to Excel exception keeps gettting thrown
-                /*
+                
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
-                        updateGraph(build.toString());
+                        view.updateGraph(build.toString());
                      }
                  });
-                //updateGraph(build.toString());
-                */
+                
                 rawArduinoData(build.toString());
 
                 break;
@@ -358,7 +330,8 @@ public final class OController implements Observer{
                 }
                 Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Error on Arduino: " + build.toString(), arg);
                 view.setStatusBarText(build.toString());
-                link.writeSerial("C"); //Stop logging if error
+                //Stop Motor
+                stopButton();
                 break;
                 //Indicate normal state
             case 'N':
@@ -367,6 +340,8 @@ public final class OController implements Observer{
             //Recieve random unknown data, do nothing
             default:
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Unknown Arduino State", arg);
+                //Stop motor 
+                stopButton();
                 break;
             }
     }

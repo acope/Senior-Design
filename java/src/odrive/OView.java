@@ -3,6 +3,7 @@ package odrive;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -65,8 +66,17 @@ public class OView extends JFrame{
     private final Dimension buttonSize = new Dimension(225,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
+    
     public OView(){
-        //initGUI();
+        /*
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                        graph = new OGraph();
+            }
+        });
+        */
+        this.graph = new OGraph();
         initGUI();
         //initallize objects to their starting values
         guiDefaults();
@@ -88,13 +98,10 @@ public class OView extends JFrame{
         interfacePanel.add(connectionPanel());
         interfacePanel.add(inputPanel());
         interfacePanel.add(statusPanel());
-        //graphPanel.add(graphPanel());
+        graphPanel.add(graphPanel());
         
         
         mainFrame.add(interfacePanel, BorderLayout.WEST);
-        //******************************************
-        //Removed Graph for Showing Purpose
-        //*******************************************
         mainFrame.add(graphPanel, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
@@ -310,5 +317,13 @@ public class OView extends JFrame{
                 freqSlider.setEnabled(enable);
                 sampRateSlider.setEnabled(enable);
                 ampComboBox.setEnabled(enable);
+    }
+    
+    public void updateGraph(String rawData){
+       String[] separated = rawData.split("[,]+"); 
+       double dbl = Double.parseDouble(separated[4]);
+       
+        graph.addTimeItem(dbl);
+
     }
 }
