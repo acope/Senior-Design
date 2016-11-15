@@ -2,14 +2,12 @@ package odrive;
 
 import helper.UpTimeCounter;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Timer;
 import java.util.Observer;
-import javax.swing.SwingUtilities;
 
 import javax.swing.event.ChangeEvent;
 
@@ -49,7 +47,6 @@ public final class OController implements Observer{
         disconnectButtonActionListener();
         startButtonActionListener();
         stopButtonActionListener();
-        ampComboBoxActionListener();
         freqSliderActionListener();
         sampRateSliderActionListener();
         rawDataListener();
@@ -129,19 +126,23 @@ public final class OController implements Observer{
      */
     private void startButtonActionListener(){
         view.buttonStart.addActionListener((ActionEvent e) -> {
-            startButton();
+            startDataLogging();
         });
     }
     
-    /**Writes a "R" to serial to start data logging on Arduino
+    /**
+     * Starts data serial logging
+     * Writes a "R" to serial to start data logging on Arduino
      * Sends Motor RPM, Amplitude and Sampling Rate to Arduino
      * Enables/Disables GUI items
      */
-    public void startButton(){
+    private void startDataLogging(){
         try {
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Start button selected");
                 view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 //Create a new Excel workbook for data logging
                 file.CreateWBook();
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "New Excel workbook created");
                 //Allows Arduino to get ready, figure out new way
                 Thread.sleep(2000);
                 view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
@@ -149,14 +150,18 @@ public final class OController implements Observer{
                 upTime.start();
                 //Start update up time timer
                 t.start();
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Up time counter started");
             } catch (InterruptedException ex) {
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             
             serial.sendMotorRPM(getSetMotorRPM()); //Send motor speed
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor RPM sent to Arduino");
             serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude 
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor amplitude sent to Arduino");
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Sampling rate sent to Arduino");
             link.writeSerial("R"); //Send initiate recording
             //Enable/Disable GUI
             view.inputPanelEnabled(true);
@@ -167,15 +172,17 @@ public final class OController implements Observer{
      */   
     private void stopButtonActionListener(){
         view.buttonStop.addActionListener((ActionEvent e) -> {
-            stopButton();
+            stopDataLogging();
         }); 
     }
     /**
-     * 5Writes a "C" to serial for complete
+     * Stop data serial logging
+     * Writes a "C" to serial for complete
      * Enables/Disables GUI items
      */
-    public void stopButton(){
+    private void stopDataLogging(){
         upTime.stop();
+        Logger.getLogger(OController.class.getName()).log(Level.INFO, "Stop button selected");
         view.setStatusBarText("Data logging has been stopped");         
         //PC sends C for complete of testing
         link.writeSerial("C");
@@ -233,7 +240,7 @@ public final class OController implements Observer{
     /**
      * Returns the set motor RPM
      * 1RPM = 1/60Hz
-     * @return 
+     * @return Motor PRM
      */
     public int getSetMotorRPM(){
         return getMotorFreqSlider()*60;
@@ -241,28 +248,30 @@ public final class OController implements Observer{
     
     /**
      * Retrieves Amplitude from combo box and removes degree symbol
-     * @return 
+     * @return Amplitude
      */
     public String getAmplitudeComboBox(){
         String amp = view.ampComboBox.getSelectedItem().toString();
         int l = amp.length();     
         //Trim off degree symbol
         String newAmp = amp.substring(0, l-1);
-        
         return newAmp;
     }
     
     /**
      * Retrieves the sample rate from GUI slider
-     * @return 
+     * @return Sampling Rate
      */
     public int getSampleRateSlider(){
         return view.sampRateSlider.getValue();
     }
     
 
-    
-    public void rawArduinoData(String rawData){
+    /**
+     * Sends raw serial data from Arduino to Excel file
+     * @param rawData 
+     */
+    public void writeToExcel(String rawData){
         file.ExcelWrite(rawData);
     }
 
@@ -307,19 +316,8 @@ public final class OController implements Observer{
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
-                //Fixed Thread-5 NullPointerException
-                //New Error AWT-EventQueue-0 NullPointerException
-                //Allows data to be written to Excel exception keeps gettting thrown
                 
-                SwingUtilities.invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        view.updateGraph(build.toString());
-                     }
-                 });
-                
-                rawArduinoData(build.toString());
-
+                writeToExcel(build.toString());
                 break;
             //Error state
             case 'Z':
@@ -331,7 +329,7 @@ public final class OController implements Observer{
                 Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Error on Arduino: " + build.toString(), arg);
                 view.setStatusBarText(build.toString());
                 //Stop Motor
-                stopButton();
+                stopDataLogging();
                 break;
                 //Indicate normal state
             case 'N':
@@ -341,7 +339,7 @@ public final class OController implements Observer{
             default:
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Unknown Arduino State", arg);
                 //Stop motor 
-                stopButton();
+                stopDataLogging();
                 break;
             }
     }
