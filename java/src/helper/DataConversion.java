@@ -16,8 +16,8 @@ public class DataConversion {
      * @param resistance in ohm
      * @return current in Amp
      */
-    public double calculateCurrent(int voltage, int resistance){      
-        return (double)voltage/resistance;
+    public double calculateCurrent(double voltage, int resistance){      
+        return voltage/resistance;
     }
     
     /**
@@ -26,7 +26,7 @@ public class DataConversion {
      * @param resistance
      * @return Power in watts
      */
-    public double calculatePower(int voltage, int resistance){
-        return (double)(voltage*voltage)/resistance;
+    public double calculatePower(double voltage, int resistance){
+        return (voltage*voltage)/resistance;
     } 
 }
