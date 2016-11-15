@@ -53,7 +53,8 @@ void timerCallback()
   if (error_check_count >= (p_error_check_ * input_condition_.sampling_rate) )
   {
     error_check_count = 0;
-    f_error_check_ = true;
+    // FIXME: Test once all connected
+    //f_error_check_ = true;
   }
 }
 
@@ -204,8 +205,8 @@ bool stopMotor()
 void motorSpeedControlPID()
 {
   // TODO: Increase max if system can handle
-  static const float kp = 0.5;
-  static const float ki = 1.2;
+  static const float kp = 1.5;
+  static const float ki = 1.8;
   static const float kd = 0.1;
   static const float out_min = 60.0;
   static const float out_max = 170.0;
@@ -218,16 +219,10 @@ void motorSpeedControlPID()
   // sample rate is 200ms, so multiply by 5 * 60 then divide by tooth
   // 5 * 60 / 15 = 20
   float feedback = (float)r_motor_feedback_rpm_ * 20.0;
-  // FIXME: Debug msg
-  Serial.print("Feedback is ");
-  Serial.println(feedback);
 
   // slow start up of motor untill reach near speed
   if (state_ == prepare)
   {
-    // FIXME: Debug msg
-    Serial.println("Prepare");
-
     // speed up motor slowly
     static unsigned int motor_speed_unit = 200;
     static unsigned int motor_speed = 300;
@@ -243,12 +238,12 @@ void motorSpeedControlPID()
     }
 
     // if motor is near target, move to pid
-    if (abs(input_condition_.frequency - feedback) <= 100)
+    if (abs(input_condition_.frequency - feedback) <= 150)
     {
       f_start_pid_ = true;
     }
     // if motor is near temp target, move to next temp target
-    else if (abs(motor_speed - feedback) <= 100)
+    else if (abs(motor_speed - feedback) <= 150)
     {
       motor_speed += motor_speed_unit;
     }
@@ -284,17 +279,10 @@ void motorSpeedControlPID()
     // compute output
     output = (kp * error + i_error - kd * d_error) + (float)input_condition_.frequency;
   }
-  // FIXME: Debug msg
-  Serial.print("Command RPM is ");
-  Serial.println(output);
 
   // Scale
-  //output = (out_max - out_min) / max_rpm * output + out_min;
-  output = (out_max - out_min) / max_rpm * output + out_min;
-
-  // FIXME: Debug msg
-  Serial.print("Command DIGITAL is ");
-  Serial.println(output);
+  //output = (out_max - out_min) / max_rpm * output + out_min + offset;
+  output = (out_max - out_min) / max_rpm * output + out_min + 3;
 
   // check with limit
   if (output > out_max)
@@ -308,10 +296,6 @@ void motorSpeedControlPID()
 
   // convert type
   output_cmd = (char)output;
-
-  // FIXME: Debug msg
-  Serial.print("Actual command is ");
-  Serial.println(output_cmd);
 
   // set output
   analogWrite(PWM_PIN, output_cmd);
@@ -332,8 +316,6 @@ bool sendDataSerial()
   Serial.print(collected_data_.generated_voltage, DEC);
   Serial.write('E');
   Serial.write(255);
-  // FIXME: For Debugging
-  Serial.println(" ");
 
   return true;
 }
