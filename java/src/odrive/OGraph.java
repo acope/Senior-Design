@@ -1,17 +1,12 @@
 package odrive;
 
 import helper.DateTime;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.jfree.chart.axis.ValueAxis;
 import javax.swing.JPanel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Second;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
@@ -19,12 +14,18 @@ import org.jfree.data.xy.XYDataset;
 
 
 /**
- *
+ * WARNING!!! Causes Thread error, unable to diagnose.
+ * Possible fix: SwingWorker
+ * What is working: Creation of graph
+ * 
+ * How to use: Add as a panel in GUI Frame call createGraphPanel which will create the panel
  * @author Austin Copeman
  * @version 1.1
  */
 public class OGraph{
-    private TimeSeries timeSeries;
+    
+    private TimeSeries series;//TimeSeries data
+    private TimeSeriesCollection tsc;
   
     /**
      *
@@ -34,13 +35,32 @@ public class OGraph{
 
     }
     
-    private XYDataset createDataset(String seriesName){
-        final TimeSeriesCollection dataset = new TimeSeriesCollection();
+     /**
+     * Creates the graph panel
+     * @param chartTitle Title of the chart
+     * @param xAxisTitle Title of the X axis
+     * @param yAxisTitle Title of the Y axis
+     * @param width Width of the chart
+     * @param height Height of the chart
+     * @return a panel
+     */
+    public JPanel createGraphPanel(String chartTitle, String xAxisTitle, String yAxisTitle, int width, int height){
+        final JFreeChart chart = createChart(createDataset(yAxisTitle),chartTitle,xAxisTitle,yAxisTitle);
+        final ChartPanel chartPanel = new ChartPanel(chart);
+        chartPanel.setPreferredSize(new java.awt.Dimension(width, height));
+        chartPanel.setMouseZoomable(true, false);
         
-        timeSeries = new TimeSeries(seriesName);
+        return chartPanel;
+    }
+    
+    private XYDataset createDataset(String seriesName){
+        series = new TimeSeries(seriesName); //Line of the series
 
-        dataset.addSeries(timeSeries);
-        return dataset;
+        addTimeItem(0);
+
+        tsc = new TimeSeriesCollection(series);
+        tsc.addSeries(series);
+        return tsc;
     }
     
     /**
@@ -62,26 +82,14 @@ public class OGraph{
                 false //urls
         ); 
         
-        return chart;
-    }
-    
-    /**
-     * Creates the graph 
-     * @param chartTitle Title of the chart
-     * @param xAxisTitle Title of the X axis
-     * @param yAxisTitle Title of the Y axis
-     * @param width Width of the chart
-     * @param height Height of the chart
-     * @return a panel
-     */
-    public JPanel createGraphPanel(String chartTitle, String xAxisTitle, String yAxisTitle, int width, int height){
-        final XYDataset dataset = createDataset(yAxisTitle);
-        final JFreeChart chart = createChart(dataset,chartTitle,xAxisTitle,yAxisTitle);
-        final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(width, height));
-        chartPanel.setMouseZoomable(true, false);
+        final XYPlot plot = chart.getXYPlot();
+        ValueAxis axis = plot.getDomainAxis();
+        axis.setAutoRange(true);
+        //axis.setFixedAutoRange(60000.0);  // 60 seconds
+        axis = plot.getRangeAxis();
+        axis.setRange(0.0, 100.0); 
         
-        return chartPanel;
+        return chart;
     }
     
     /**
@@ -90,24 +98,13 @@ public class OGraph{
      */
     public void addTimeItem(double data){
         DateTime dt = new DateTime();
-        Date time = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-        int seconds = dt.getSecond();
-        int minutes = dt.getMinute();
-        int hours = dt.getHour(); 
-        int day = dt.getDay();
-        int month = dt.getMonth();
-        int year = dt.getYear();
         
-        timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
+        series.addOrUpdate(new Second(dt.getSecond(), dt.getMinute(), dt.getHour(), dt.getDay(), dt.getMonth(), dt.getYear()), data);
         
-//        try {
-//            
-//            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate("HH:mm:ss"))), data);
-//        } catch (ParseException ex) {
-//            Logger.getLogger(OGraph.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
+
+    
+
     
     
 }

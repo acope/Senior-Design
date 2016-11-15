@@ -57,7 +57,6 @@ public class OView extends JFrame{
     
     protected JSlider freqSlider;
     protected JSlider sampRateSlider;
-    private OGraph graph;
     
     private BufferedImage wwwLogo;
     private JLabel label;
@@ -68,15 +67,6 @@ public class OView extends JFrame{
     
     
     public OView(){
-        /*
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                        graph = new OGraph();
-            }
-        });
-        */
-        this.graph = new OGraph();
         initGUI();
         //initallize objects to their starting values
         guiDefaults();
@@ -89,7 +79,6 @@ public class OView extends JFrame{
         mainFrame.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/res/img/wwwImageIcon.png")));
         
         JPanel interfacePanel = new JPanel();
-        JPanel graphPanel = new JPanel();
         
         mainFrame.setLayout(new BorderLayout());
         interfacePanel.setLayout(new BoxLayout(interfacePanel, BoxLayout.PAGE_AXIS));  
@@ -98,11 +87,9 @@ public class OView extends JFrame{
         interfacePanel.add(connectionPanel());
         interfacePanel.add(inputPanel());
         interfacePanel.add(statusPanel());
-        graphPanel.add(graphPanel());
         
         
         mainFrame.add(interfacePanel, BorderLayout.WEST);
-        mainFrame.add(graphPanel, BorderLayout.EAST);
         mainFrame.pack();
         mainFrame.setVisible(true);
 
@@ -241,13 +228,6 @@ public class OView extends JFrame{
         return imageLogoPanel;
     }
     
-    private JPanel graphPanel(){
-        JPanel graphPanel;
-        OGraph ograph = new OGraph();      
-        graphPanel = ograph.createGraphPanel("ODrive Real Time Data", "Time", "Range", 950, 550);
-        return graphPanel;
-    }
-    
     private void guiDefaults(){
         buttonConnect.setEnabled(true);
         buttonDisconnect.setEnabled(false);
@@ -317,13 +297,5 @@ public class OView extends JFrame{
                 freqSlider.setEnabled(enable);
                 sampRateSlider.setEnabled(enable);
                 ampComboBox.setEnabled(enable);
-    }
-    
-    public void updateGraph(String rawData){
-       String[] separated = rawData.split("[,]+"); 
-       double dbl = Double.parseDouble(separated[4]);
-       
-        graph.addTimeItem(dbl);
-
     }
 }
