@@ -88,7 +88,7 @@ public class OView extends JFrame{
         interfacePanel.add(connectionPanel());
         interfacePanel.add(inputPanel());
         interfacePanel.add(statusPanel());
-        graphPanel.add(graphPanel());
+        //graphPanel.add(graphPanel());
         
         
         mainFrame.add(interfacePanel, BorderLayout.WEST);

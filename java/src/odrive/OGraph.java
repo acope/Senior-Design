@@ -91,7 +91,7 @@ public class OGraph{
     public void addTimeItem(double data){
         DateTime dt = new DateTime();
         Date time = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
         int seconds = dt.getSecond();
         int minutes = dt.getMinute();
         int hours = dt.getHour(); 
@@ -101,7 +101,7 @@ public class OGraph{
         
         try {
             //timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
-            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate())), data);
+            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate("HH:mm:ss"))), data);
         } catch (ParseException ex) {
             Logger.getLogger(OGraph.class.getName()).log(Level.SEVERE, null, ex);
         }
