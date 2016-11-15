@@ -99,12 +99,14 @@ public class OGraph{
         int month = dt.getMonth();
         int year = dt.getYear();
         
-        try {
-            //timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
-            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate("HH:mm:ss"))), data);
-        } catch (ParseException ex) {
-            Logger.getLogger(OGraph.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        timeSeries.addOrUpdate(new Second(seconds, minutes, hours, day, month, year), data);
+        
+//        try {
+//            
+//            timeSeries.addOrUpdate(new Second(sdf.parse(dt.getCustomDate("HH:mm:ss"))), data);
+//        } catch (ParseException ex) {
+//            Logger.getLogger(OGraph.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
     
     
