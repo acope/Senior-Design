@@ -42,7 +42,7 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
-        graph = new OGraph();
+        //graph = new OGraph();
         //Thread 5 nullpointerexception need to fix
         /*
         EventQueue.invokeLater(new Runnable() {
@@ -119,11 +119,7 @@ public final class OController implements Observer{
      */
     private void disconnectButtonActionListener(){
         view.buttonDisconnect.addActionListener((ActionEvent e) -> {
-                    boolean disconnected = link.disconnect();
-        if (disconnected) {
-            view.setStatusBarText("Disconnected from Arduino");
-            view.connectionPanelEnabled(false);
-        }
+            disconnectButton();      
         });
     }
     
@@ -168,11 +164,11 @@ public final class OController implements Observer{
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            link.writeSerial("R"); //Send initiate recording
+            
             serial.sendMotorRPM(getSetMotorRPM()); //Send motor speed
             serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude 
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
-            
+            link.writeSerial("R"); //Send initiate recording
             //Enable/Disable GUI
             view.inputPanelEnabled(true);
     }
@@ -336,10 +332,12 @@ public final class OController implements Observer{
                 }                
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data sample: " + separated[0], arg);
+                //Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data sample: " + separated[0], arg);
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
                 //Fixed Thread-5 NullPointerException
                 //New Error AWT-EventQueue-0 NullPointerException
                 //Allows data to be written to Excel exception keeps gettting thrown
+                /*
                 SwingUtilities.invokeLater(new Runnable() {
                     @Override
                     public void run() {
@@ -347,6 +345,7 @@ public final class OController implements Observer{
                      }
                  });
                 //updateGraph(build.toString());
+                */
                 rawArduinoData(build.toString());
 
                 break;

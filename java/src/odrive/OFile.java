@@ -38,11 +38,11 @@ public class OFile {
     private final DataConversion convert;
     private DateTime dt;
     
-    private String datastamp;
-    private String motorRPM;
-    private String inputRPM;
-    private String outputRPM;
-    private String voltage;
+    private int datastamp;
+    private int motorRPM;
+    private int inputRPM;
+    private int outputRPM;
+    private int voltage;
     private final int VOLTAGE_DIVIDER_RESISTANCE = 1500000;
     
     private final String[] readData = new String[10]; 
@@ -83,23 +83,24 @@ public class OFile {
         for (int i=0; i<separated.length; i++){
           readData[i+2] = separated[i];
           if(i==0){
-              datastamp = separated[i];
+              datastamp = Integer.parseInt(separated[i]);
           }
           if(i==1){
-              motorRPM = separated[i];
+              motorRPM = Integer.parseInt(separated[i]);
           }
           if(i==2){
-              inputRPM = separated[i];
+              inputRPM = Integer.parseInt(separated[i]);
           }
           if(i==3){
-              outputRPM = separated[i];
+              outputRPM = Integer.parseInt(separated[i]);
           }
           if(i==4){
-              voltage = separated[i];
+              int rawVoltage = Integer.parseInt(separated[i]);
+              voltage = (int)((rawVoltage * 5 * 14.5)  / 1024); //255 = range, 5 = 0v to 5v 14.5 = voltage divider ratio
           }
         }
-        readData[7] = df.format(convert.calculateCurrent(Integer.parseInt(voltage), VOLTAGE_DIVIDER_RESISTANCE)); //Current
-        readData[8] = df.format(convert.calculatePower(Integer.parseInt(voltage), VOLTAGE_DIVIDER_RESISTANCE)); //Power
+        readData[7] = df.format(convert.calculateCurrent(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Current
+        readData[8] = df.format(convert.calculatePower(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Power
         readData[9] = "-";//Need to calcualte efficiency
         wb = readFile(workBookName);
         HSSFSheet = wb.getSheetAt(0); 
