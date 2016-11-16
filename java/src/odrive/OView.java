@@ -25,10 +25,10 @@ import org.zu.ardulink.gui.ConnectionStatus;
 public class OView extends JFrame{
     private final int FREQ_MIN = 0; //Minimun motor frequency 
     private final int FREQ_MAX = 50; //Max motor frequency = 3000RPM * (1/60)Hz (1RPM = 1/60Hz)
-    private final int FREQ_INIT = 25; //Initial motor speed
+    private final int FREQ_INIT = 20; //Initial motor speed
     private final int SAMPRATE_MIN = 0; //Minimun samping rate in seconds
     private final int SAMPRATE_MAX = 60; //Max samping rate in seconds
-    private final int SAMPRATE_INIT = 60; //Initial samping rate
+    private final int SAMPRATE_INIT = 1; //Initial samping rate
     private final String DEGREE = "\u00B0"; //Degree symbol Unicode
     private final String[] ampString = {"90"+DEGREE, "105"+DEGREE, "120"+DEGREE}; //String for constant amplitudes
     
@@ -40,24 +40,24 @@ public class OView extends JFrame{
     private JLabel freqUnitLabel;
     private JLabel sampUnitLabel;
     
-    protected JButton buttonStop;
-    protected JButton buttonStart;
-    protected JButton buttonConnect;
-    protected JButton buttonDisconnect;
+    private JButton buttonStop;
+    private JButton buttonStart;
+    private JButton buttonConnect;
+    private JButton buttonDisconnect;
     
     private JTextField  freqTextField;
     private JTextField  statusTextField;
     private JTextField upTimeTextField;
     private JTextField sampRateTextField;
     
-    protected JComboBox<String> ampComboBox;
+    private JComboBox<String> ampComboBox;
     
     private SerialConnectionPanel serialConnectionPanel;
     
     private ConnectionStatus connectionStatus;
     
-    protected JSlider freqSlider;
-    protected JSlider sampRateSlider;
+    private JSlider freqSlider;
+    private JSlider sampRateSlider;
     
     private BufferedImage wwwLogo;
     private JLabel label;
@@ -66,13 +66,22 @@ public class OView extends JFrame{
     private final Dimension buttonSize = new Dimension(225,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);
     
-    
+    /**
+     * Constructor
+     * Creates the GUI for ODrive and sets the initial defaults
+     */
     public OView(){
         initGUI();
         //initallize objects to their starting values
         guiDefaults();
     }
     
+    /**
+     * Initiates the GUI
+     * Creates the main frame for panels to be set
+     * Panels are laid out in BoxLayout form for the main frame and allows for multiple panels to be added
+     * Inner panels are nested to allow multiple functionality
+     */
     private void initGUI(){
         JFrame mainFrame = new JFrame("ODrive Data Logger"); //Creates new Frame with name at top        
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //Need to change to disconnect from Arduino then close
@@ -131,6 +140,11 @@ public class OView extends JFrame{
         return connectionPanel;
     }
     
+    /**
+     * Creates input panel
+     * Input panel sends parameters to Arduino
+     * @return JPanel
+     */
     private JPanel inputPanel(){
         JPanel inputPanel = new JPanel();
         inputPanel.setLayout(new BoxLayout(inputPanel, BoxLayout.PAGE_AXIS));
@@ -195,6 +209,11 @@ public class OView extends JFrame{
         return inputPanel;
     }
     
+    /**
+     * Creates status panel
+     * Status panel shows the status of the Arduino and Program as well as the up time since start has been selected
+     * @return JPanel
+     */
     private JPanel statusPanel(){
         JPanel statusPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
         
@@ -219,7 +238,11 @@ public class OView extends JFrame{
         return statusPanel;
     }
     
-    
+    /**
+     * Creates the image logo panel
+     * Logo is of wave water works
+     * @return JPanel
+     */
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("","",""));
         imageLogoPanel.setBackground(Color.DARK_GRAY);
@@ -229,6 +252,9 @@ public class OView extends JFrame{
         return imageLogoPanel;
     }
     
+    /**
+     * initializes GUI defaults when applications starts
+     */
     private void guiDefaults(){
         buttonConnect.setEnabled(true);
         buttonDisconnect.setEnabled(false);
@@ -239,36 +265,131 @@ public class OView extends JFrame{
         ampComboBox.setEnabled(false);
     }
     
+    /**
+     * Creates a error pop up message to alert user
+     * @param errorString 
+     */
     public void errorJOptionPane(String errorString){
         JOptionPane.showMessageDialog(buttonConnect,errorString, "Error", JOptionPane.ERROR_MESSAGE);
     }
     
+    /**
+     * Sets the status of the status text field 
+     * @param status 
+     */
     public void setStatusBarText(String status){
         statusTextField.setText(status);
     }
     
+    /**
+     * Sets the color of the status text field
+     * @param color 
+     */
     public void setStatusBarColor(Color color){
         statusTextField.setBackground(Color.red);
     }
     
+    /**
+     * Sets the up time counter text of the up time text field
+     * @param time 
+     */
     public void setUpTimeText(String time){
         upTimeTextField.setText(time);
     }
     
+    /**
+     * Sets the frequency of the frequency text field
+     * @param frequency 
+     */
     public void setFrequencyTextField(String frequency){
         freqTextField.setText(frequency);
     }
     
+    /**
+     * Sets the sampling rate of the sampling rate text field
+     * @param rate 
+     */
     public void setSampleRate(String rate){
         sampRateTextField.setText(rate);
     }
     
+    /**
+     * Gets the connection port for connected Arduino
+     * @return connection port
+     */
     public String getConnectionPort(){
         return serialConnectionPanel.getConnectionPort();
     }
     
+    /**
+     * Gets the baud rate for connected Arduino
+     * @return baud rate
+     */
     public String getBaudRate(){
         return serialConnectionPanel.getBaudRate();
+    }
+    
+    /**
+     * Gets stop button JButton initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JButton
+     */
+    public JButton getStopButton(){
+        return buttonStop;
+    }
+    
+     /**
+     * Gets start button JButton initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JButton
+     */
+    public JButton getStartButton(){
+        return buttonStart;
+    }
+    
+    /**
+     * Gets connect button JButton initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JButton
+     */    
+    public JButton getConnectButton(){
+        return buttonConnect;
+    }
+    
+    /**
+     * Gets disconnect button JButton initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JButton
+     */    
+    public JButton getDisconnectButton(){
+        return buttonDisconnect;
+    }
+    
+    /**
+     * Gets amp combo box JComboBox initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JComboBox
+     */    
+    public JComboBox getAmpComboBox(){
+        return ampComboBox;
+    }
+    
+    /**
+     * Gets frequency slider JSlider initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JSlider
+     */    
+    public JSlider getFreqSlider(){
+        return freqSlider;
+    }
+    
+    /**
+     * Gets sample rate slider JSlider initialization
+     * WARNING! Not the best way of coding, need to figure out better way for getting to OController
+     * @return JSlider
+     */    
+    public JSlider getSampRateSlider(){
+        return sampRateSlider;
     }
     
     /**

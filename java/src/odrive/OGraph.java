@@ -21,6 +21,7 @@ import org.jfree.data.xy.XYDataset;
  * How to use: Add as a panel in GUI Frame call createGraphPanel which will create the panel
  * @author Austin Copeman
  * @version 1.1
+ * @deprecated Does not work thread error
  */
 public class OGraph{
     
@@ -28,8 +29,7 @@ public class OGraph{
     private TimeSeriesCollection tsc;
   
     /**
-     *
-     * @param name
+     * Main constructor
      */
     public OGraph() {       
 

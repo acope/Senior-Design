@@ -11,7 +11,7 @@ import java.util.Observer;
 
 import javax.swing.event.ChangeEvent;
 
-//Ardulink imports
+//Ardulink import v0.6.1 (Need to update to v2.0.1)
 import org.zu.ardulink.Link;
 
 
@@ -33,7 +33,11 @@ public final class OController implements Observer{
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
     
-    
+    /**
+     * Main constructor
+     * Creates all main constructors linked to OController
+     * Starts action listeners and observers
+     */
     public OController(){
         view = new OView();
         serial = new OSerial(link.getName());
@@ -58,7 +62,7 @@ public final class OController implements Observer{
      * Retrieves port and baud rate and establishes connection to Serial port
      */
     private void connectButtonActionListener(){
-        view.buttonConnect.addActionListener((ActionEvent e) -> {
+        view.getConnectButton().addActionListener((ActionEvent e) -> {
             connectButton();
         });    
     }
@@ -104,7 +108,7 @@ public final class OController implements Observer{
      * Listener for disconnect button
      */
     private void disconnectButtonActionListener(){
-        view.buttonDisconnect.addActionListener((ActionEvent e) -> {
+        view.getDisconnectButton().addActionListener((ActionEvent e) -> {
             disconnectButton();      
         });
     }
@@ -125,7 +129,7 @@ public final class OController implements Observer{
      * Listener for start button
      */
     private void startButtonActionListener(){
-        view.buttonStart.addActionListener((ActionEvent e) -> {
+        view.getStartButton().addActionListener((ActionEvent e) -> {
             startDataLogging();
         });
     }
@@ -171,7 +175,7 @@ public final class OController implements Observer{
      * Listener for stop button
      */   
     private void stopButtonActionListener(){
-        view.buttonStop.addActionListener((ActionEvent e) -> {
+        view.getStopButton().addActionListener((ActionEvent e) -> {
             stopDataLogging();
         }); 
     }
@@ -194,8 +198,8 @@ public final class OController implements Observer{
      * Listener for frequency slider
      */
     private void freqSliderActionListener(){
-        view.freqSlider.addChangeListener((ChangeEvent e) -> {
-            motorFreq = view.freqSlider.getValue();
+        view.getFreqSlider().addChangeListener((ChangeEvent e) -> {
+            motorFreq = view.getFreqSlider().getValue();
             view.setFrequencyTextField(Integer.toString(motorFreq));
         });
     }
@@ -204,8 +208,8 @@ public final class OController implements Observer{
      * Listener for sample rate slider
      */
     private void sampRateSliderActionListener(){
-        view.sampRateSlider.addChangeListener((ChangeEvent e) -> {
-            sampRate = view.sampRateSlider.getValue();
+        view.getSampRateSlider().addChangeListener((ChangeEvent e) -> {
+            sampRate = view.getSampRateSlider().getValue();
             view.setSampleRate(Integer.toString(sampRate));
         });
     }
@@ -233,8 +237,12 @@ public final class OController implements Observer{
         });
     }
     
+    /**
+     * Get the motor frequency from the slider
+     * @return Motor Frequency
+     */
     public int getMotorFreqSlider(){
-        return view.freqSlider.getValue();
+        return view.getFreqSlider().getValue();
     }
     
     /**
@@ -251,7 +259,7 @@ public final class OController implements Observer{
      * @return Amplitude
      */
     public String getAmplitudeComboBox(){
-        String amp = view.ampComboBox.getSelectedItem().toString();
+        String amp = view.getAmpComboBox().getSelectedItem().toString();
         int l = amp.length();     
         //Trim off degree symbol
         String newAmp = amp.substring(0, l-1);
@@ -263,7 +271,7 @@ public final class OController implements Observer{
      * @return Sampling Rate
      */
     public int getSampleRateSlider(){
-        return view.sampRateSlider.getValue();
+        return view.getSampRateSlider().getValue();
     }
     
 

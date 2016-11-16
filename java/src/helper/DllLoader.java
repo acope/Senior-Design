@@ -12,10 +12,21 @@ import java.io.InputStream;
  * @author Oneiros http://stackoverflow.com/questions/4775487/java-3d-hello-world-jar-freeze
  */
 public class DllLoader {
-
+    
+    /**
+     * Main constructor for the dynamically linked library loader
+     */
     public DllLoader() {
     }
-
+    
+    /**
+     * Extracts and loads the dll from specified file path
+     * Extracts from jar file at the specified file path e.g. /res/winDLLs/32bit/
+     * Copies the file to root location then loads the dll onto the system
+     * Must include full file path and file extension
+     * @param dll
+     * @throws IOException 
+     */
     public static void extractAndLoad(String dll) throws IOException {
         int aux = dll.lastIndexOf('/');
         if (aux == -1) {
@@ -32,7 +43,13 @@ public class DllLoader {
             }
         }
     }
-
+    
+    /**
+     * Copies the files
+     * @param pIn
+     * @param pOut
+     * @throws IOException 
+     */
     private static void copyFile(InputStream pIn, File pOut) throws IOException {
         if (!pOut.exists()) {
             pOut.createNewFile();

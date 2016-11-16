@@ -9,7 +9,10 @@ import java.util.Calendar;
  * @version 1.1
  */
 public class DateTime {
-
+    
+    /**
+     * Date time main constructor
+     */
     public DateTime() {
     }
     
@@ -68,31 +71,55 @@ public class DateTime {
         return sdf.format(Calendar.getInstance().getTime());
     }
     
+    /**
+     * Returns the seconds of current system time
+     * @return seconds
+     */
     public int getSecond(){
         SimpleDateFormat sdf = new SimpleDateFormat("ss");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
     }
     
+     /**
+     * Returns the minute of current system time
+     * @return minute
+     */
     public int getMinute(){
         SimpleDateFormat sdf = new SimpleDateFormat("mm");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
     }
-    
+
+    /**
+     * Returns the hour of current system time
+     * @return hour
+     */    
     public int getHour(){
         SimpleDateFormat sdf = new SimpleDateFormat("HH");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
     }
-    
+
+    /**
+     * Returns the day of current system time
+     * @return day
+     */    
     public int getDay(){
         SimpleDateFormat sdf = new SimpleDateFormat("dd");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
     }
-    
+
+    /**
+     * Returns the month of current system time
+     * @return month
+     */    
     public int getMonth(){
         SimpleDateFormat sdf = new SimpleDateFormat("MM");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));
     }
-    
+
+    /**
+     * Returns the year of current system time
+     * @return year
+     */    
     public int getYear(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
         return Integer.parseInt(sdf.format(Calendar.getInstance().getTime()));

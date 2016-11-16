@@ -20,6 +20,10 @@ public class UpTimeCounter implements Runnable{
     private boolean run = false; //True = start False = stop
     Thread t;;
     
+    /**
+     * Main constructor
+     * Creates a new thread and starts the thread
+     */
     public UpTimeCounter(){
         this.t = new Thread(this);
         run = false;
@@ -34,44 +38,74 @@ public class UpTimeCounter implements Runnable{
         }
     }
     
+    /**
+     * starts the thread
+     */
     private void startThread(){
         t.start();
     }
     
+    /**
+     * Starts the up time counter
+     * Retrieves current system time
+     */
     public void start(){
         run = true;
         startTime = System.currentTimeMillis();
         currentTime = startTime;
     }
     
+    /**
+     * Stops running of timer
+     */
     public void stop(){
         run = false;
     }
     
+    /**
+     * Get current up time
+     * @return 
+     */
     public String getUpTime(){
         if(run == true){
             run();
         }
         return upTime;
     }     
-
+    
+    /**
+     * Get the current amount of days
+     * @return 
+     */
     public long getDays() {
         return days;
     }
-
+    
+    /**
+     * Get the current amount of hours
+     * @return 
+     */
     public long getHours() {
         return hours;
     }
-
+    
+    /**
+     * Get the current amount of minutes
+     * @return 
+     */
     public long getMinutes() {
         return minutes;
     }
-
+    
+    /**
+     * get the current amount of seconds
+     * @return 
+     */
     public long getSeconds() {
         return seconds;
     }
     
-       /**
+    /**
      * Convert a millisecond duration to a string format
      * 
      * @param millis A duration to convert to a string form

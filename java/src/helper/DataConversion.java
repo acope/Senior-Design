@@ -6,7 +6,10 @@ package helper;
  * @version 1.1
  */
 public class DataConversion {
-
+    
+    /**
+     * Data conversion constructor 
+     */
     public DataConversion() {
     }
     
