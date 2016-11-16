@@ -3,7 +3,6 @@ package odrive;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
@@ -18,8 +17,10 @@ import org.zu.ardulink.gui.ConnectionStatus;
 
 /**
  * Odrive GUI interface
+ * Built with AWT and Swing components
+ * Future Updates: Design with JavaFX
  * @author Austin Copeman
- * @version 1.1
+ * @version 1.3
  */
 public class OView extends JFrame{
     private final int FREQ_MIN = 0; //Minimun motor frequency 
