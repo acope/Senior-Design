@@ -94,7 +94,7 @@ public class OGraph{
     
     /**
      * Adds a time item to the graph at system time and location
-     * @param data
+     * @param data data of double to add to graph
      */
     public void addTimeItem(double data){
         DateTime dt = new DateTime();

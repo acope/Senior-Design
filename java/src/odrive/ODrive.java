@@ -8,14 +8,11 @@ import java.util.logging.Logger;
 
 /**
  * ODrive Main class 
- * Designed for use for Wave Water Works in conjuction with Oakland University
- * Utilizes Arduolink to serially communicate with the Arduino platform
- * Serial connection is established with RXTX library and dll libraries
- * RXTX dll are automatically created for Windows system ONLY! To use with other systems dll must be installed manually.
- * Please see RXTX wiki for more support
- * @see rxtx.qbang.org
- * @see www.ardulink.org
- * @see https://github.com/Ardulink
+ * Designed for use for Wave Water Works in conjuction with Oakland University <br>
+ * Utilizes Arduolink to serially communicate with the Arduino platform www.ardulink.org and https://github.com/Ardulink<br>
+ * Serial connection is established with RXTX library and dll libraries<br>
+ * RXTX dll are automatically created for Windows system ONLY! To use with other systems dll must be installed manually.<br>
+ * Please see RXTX wiki for more support rxtx.qbang.org<br>
  * @author Austin Copeman
  * @version 1.3
  */
@@ -27,8 +24,8 @@ public class ODrive {
     /**
      * Main
      * Checks OS and JVM for dll
-     * @param args
-     * @throws IOException 
+     * @param args String array of arguments
+     * @throws IOException IOException
      */
     public static void main(String[] args) throws IOException {
         OSSystemCheck sc = new OSSystemCheck();

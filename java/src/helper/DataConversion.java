@@ -15,7 +15,7 @@ public class DataConversion {
     
     /**
      * v=ir
-     * @param voltage
+     * @param voltage in volts
      * @param resistance in ohm
      * @return current in Amp
      */
@@ -25,9 +25,9 @@ public class DataConversion {
     
     /**
      * P=V^2/r
-     * @param voltage
-     * @param resistance
-     * @return Power in watts
+     * @param voltage in volts
+     * @param resistance in ohm
+     * @return Power in watts in power
      */
     public double calculatePower(double voltage, int resistance){
         return (voltage*voltage)/resistance;

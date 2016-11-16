@@ -18,7 +18,7 @@ public class OSerial extends Observable{
     private final NumberFormat formatter = new DecimalFormat("0000"); //For sending 4 digits to Arduino
     /**
      * Constructor, takes in link instance to communicate with serial
-     * @param linkName 
+     * @param linkName name of link instance
      */
     public OSerial(String linkName){
         link = Link.getInstance(linkName);
@@ -27,8 +27,8 @@ public class OSerial extends Observable{
     
     /**
     * Sends motor RPM to serial
-    * @param rpm
-    * @return 
+    * @param rpm input motor rpm
+    * @return true
     */
     public boolean sendMotorRPM(int rpm){      
         link.writeSerial("M");
@@ -39,8 +39,8 @@ public class OSerial extends Observable{
      
     /**
      * Sends amplitude to serial
-     * @param amp
-     * @return 
+     * @param amp input amplitude
+     * @return true
      */
     public boolean sendAmplitude(int amp){          
         link.writeSerial("D");
@@ -51,8 +51,8 @@ public class OSerial extends Observable{
     
         /**
      * Sends sampling rate to serial
-     * @param samplingRate
-     * @return 
+     * @param samplingRate input sampling rate
+     * @return true
      */
     public boolean sendSamplingRate(int samplingRate){    
         link.writeSerial("X");
@@ -63,8 +63,7 @@ public class OSerial extends Observable{
     
     /**
      * Cases for received state from Arduino
-     * 
-     * @param str 
+     * @param str String of Arduino Event
      */
     public void serialArduinoEvent(String str){
         //Retrieve first character from sting

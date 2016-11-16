@@ -109,7 +109,7 @@ public class OView extends JFrame{
     
     /**
      * Creates connection panel
-     * @return JPanel
+     * @return a JPanel
      */
     private JPanel connectionPanel(){
         JPanel connectionPanel = new JPanel(); //"Layout","Column","Row"
@@ -143,7 +143,7 @@ public class OView extends JFrame{
     /**
      * Creates input panel
      * Input panel sends parameters to Arduino
-     * @return JPanel
+     * @return a JPanel
      */
     private JPanel inputPanel(){
         JPanel inputPanel = new JPanel();
@@ -212,7 +212,7 @@ public class OView extends JFrame{
     /**
      * Creates status panel
      * Status panel shows the status of the Arduino and Program as well as the up time since start has been selected
-     * @return JPanel
+     * @return a JPanel
      */
     private JPanel statusPanel(){
         JPanel statusPanel = new JPanel(new MigLayout("","",""));//"Layout","Column","Row"
@@ -241,7 +241,7 @@ public class OView extends JFrame{
     /**
      * Creates the image logo panel
      * Logo is of wave water works
-     * @return JPanel
+     * @return a JPanel
      */
     private JPanel imageLogoPanel(){
         JPanel imageLogoPanel = new JPanel(new MigLayout("","",""));
@@ -253,7 +253,7 @@ public class OView extends JFrame{
     }
     
     /**
-     * initializes GUI defaults when applications starts
+     * Initializes GUI defaults when applications starts
      */
     private void guiDefaults(){
         buttonConnect.setEnabled(true);
@@ -267,7 +267,7 @@ public class OView extends JFrame{
     
     /**
      * Creates a error pop up message to alert user
-     * @param errorString 
+     * @param errorString an error string to display n the message dialog
      */
     public void errorJOptionPane(String errorString){
         JOptionPane.showMessageDialog(buttonConnect,errorString, "Error", JOptionPane.ERROR_MESSAGE);
@@ -275,7 +275,7 @@ public class OView extends JFrame{
     
     /**
      * Sets the status of the status text field 
-     * @param status 
+     * @param status status to display in text field
      */
     public void setStatusBarText(String status){
         statusTextField.setText(status);
@@ -283,7 +283,7 @@ public class OView extends JFrame{
     
     /**
      * Sets the color of the status text field
-     * @param color 
+     * @param color color to show in text field
      */
     public void setStatusBarColor(Color color){
         statusTextField.setBackground(Color.red);
@@ -291,7 +291,7 @@ public class OView extends JFrame{
     
     /**
      * Sets the up time counter text of the up time text field
-     * @param time 
+     * @param time time to display in text field
      */
     public void setUpTimeText(String time){
         upTimeTextField.setText(time);
@@ -299,7 +299,7 @@ public class OView extends JFrame{
     
     /**
      * Sets the frequency of the frequency text field
-     * @param frequency 
+     * @param frequency frequency to display in text field
      */
     public void setFrequencyTextField(String frequency){
         freqTextField.setText(frequency);
@@ -307,7 +307,7 @@ public class OView extends JFrame{
     
     /**
      * Sets the sampling rate of the sampling rate text field
-     * @param rate 
+     * @param rate rate to display in text field
      */
     public void setSampleRate(String rate){
         sampRateTextField.setText(rate);
@@ -315,7 +315,7 @@ public class OView extends JFrame{
     
     /**
      * Gets the connection port for connected Arduino
-     * @return connection port
+     * @return the connection port selected
      */
     public String getConnectionPort(){
         return serialConnectionPanel.getConnectionPort();
@@ -323,80 +323,80 @@ public class OView extends JFrame{
     
     /**
      * Gets the baud rate for connected Arduino
-     * @return baud rate
+     * @return baud rate selected
      */
     public String getBaudRate(){
         return serialConnectionPanel.getBaudRate();
     }
     
     /**
-     * Gets stop button JButton initialization
+     * Gets stop button JButton initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JButton
+     * @return a JButton instance
      */
     public JButton getStopButton(){
         return buttonStop;
     }
     
      /**
-     * Gets start button JButton initialization
+     * Gets start button JButton initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JButton
+     * @return a JButton instance
      */
     public JButton getStartButton(){
         return buttonStart;
     }
     
     /**
-     * Gets connect button JButton initialization
+     * Gets connect button JButton initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JButton
+     * @return a JButton instance
      */    
     public JButton getConnectButton(){
         return buttonConnect;
     }
     
     /**
-     * Gets disconnect button JButton initialization
+     * Gets disconnect button JButton initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JButton
+     * @return a JButton instance
      */    
     public JButton getDisconnectButton(){
         return buttonDisconnect;
     }
     
     /**
-     * Gets amp combo box JComboBox initialization
+     * Gets amp combo box JComboBox initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JComboBox
+     * @return a JComboBox instance
      */    
     public JComboBox getAmpComboBox(){
         return ampComboBox;
     }
     
     /**
-     * Gets frequency slider JSlider initialization
+     * Gets frequency slider JSlider initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JSlider
+     * @return a JSlider instance
      */    
     public JSlider getFreqSlider(){
         return freqSlider;
     }
     
     /**
-     * Gets sample rate slider JSlider initialization
+     * Gets sample rate slider JSlider initialization<br>
      * WARNING! Not the best way of coding, need to figure out better way for getting to OController
-     * @return JSlider
+     * @return a JSlider instance
      */    
     public JSlider getSampRateSlider(){
         return sampRateSlider;
     }
     
     /**
-     * Enables/Disables logging buttons and inputs for input panel
-     * When enable is true -> start button, frequency slider, sample rate slider, amp combo bBox = disabled and stop button = enabled
-     * When enable is false -> start button, frequency slider, sample rate slider, amp combo bBox = enabled and stop button = disabled
-     * @param enable 
+     * Enables/Disables logging buttons and inputs for input panel<br>
+     * When enable is true: start button, frequency slider, sample rate slider, amp combo bBox = disabled and stop button = enabled<br>
+     * When enable is false: start button, frequency slider, sample rate slider, amp combo bBox = enabled and stop button = disabled<br>
+     * @param enable input panel items
      */
     public void inputPanelEnabled(boolean enable){
             buttonStart.setEnabled(!enable);
@@ -407,9 +407,9 @@ public class OView extends JFrame{
     }
     /**
      * Enables/Disables connection buttons and connection panel
-     * When enable is true -> disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = enabled and connect button = disabled
-     * When enable is false -> disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = disabled and connect button = enabled
-     * @param enable 
+     * When enable is true: disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = enabled and connect button = disabled
+     * When enable is false: disconnect button, button start, button stop, frequency slider, sample rate slider and amp combo box = disabled and connect button = enabled
+     * @param enable connection panel items
      */
     public void connectionPanelEnabled(boolean enable){
                 buttonConnect.setEnabled(!enable);

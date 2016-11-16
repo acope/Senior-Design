@@ -64,7 +64,7 @@ public class UpTimeCounter implements Runnable{
     
     /**
      * Get current up time
-     * @return 
+     * @return up time
      */
     public String getUpTime(){
         if(run == true){
@@ -75,7 +75,7 @@ public class UpTimeCounter implements Runnable{
     
     /**
      * Get the current amount of days
-     * @return 
+     * @return days
      */
     public long getDays() {
         return days;
@@ -83,7 +83,7 @@ public class UpTimeCounter implements Runnable{
     
     /**
      * Get the current amount of hours
-     * @return 
+     * @return hours
      */
     public long getHours() {
         return hours;
@@ -91,7 +91,7 @@ public class UpTimeCounter implements Runnable{
     
     /**
      * Get the current amount of minutes
-     * @return 
+     * @return minutes
      */
     public long getMinutes() {
         return minutes;
@@ -99,7 +99,7 @@ public class UpTimeCounter implements Runnable{
     
     /**
      * get the current amount of seconds
-     * @return 
+     * @return seconds
      */
     public long getSeconds() {
         return seconds;

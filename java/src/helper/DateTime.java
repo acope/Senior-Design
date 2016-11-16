@@ -45,7 +45,7 @@ public class DateTime {
     
     /**
      * Get a custom date
-     * @param customDate
+     * @param customDate String
      * @return formatted custom date
      */
     public String getCustomDate(String customDate){

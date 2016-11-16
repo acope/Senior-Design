@@ -24,8 +24,8 @@ public class DllLoader {
      * Extracts from jar file at the specified file path e.g. /res/winDLLs/32bit/
      * Copies the file to root location then loads the dll onto the system
      * Must include full file path and file extension
-     * @param dll
-     * @throws IOException 
+     * @param dll dll file
+     * @throws IOException IOException
      */
     public static void extractAndLoad(String dll) throws IOException {
         int aux = dll.lastIndexOf('/');

@@ -34,7 +34,7 @@ public final class OController implements Observer{
     private int sampRate;
     
     /**
-     * Main constructor
+     * Main constructor<br>
      * Creates all main constructors linked to OController
      * Starts action listeners and observers
      */
@@ -58,7 +58,7 @@ public final class OController implements Observer{
     }
     
     /**
-     * Listener for connect button
+     * Listener for connect button<br>
      * Retrieves port and baud rate and establishes connection to Serial port
      */
     private void connectButtonActionListener(){
@@ -68,10 +68,10 @@ public final class OController implements Observer{
     }
     
     /**
-     * Connect button action when pressed
-     * Retrieves baud rate and com port and checks for null
-     * initializes serial connection 
-     * sets status bar status and enables/disables GUI
+     * Connect button action when pressed<br>
+     * Retrieves baud rate and com port and checks for null<br>
+     * Initializes serial connection <br>
+     * Sets status bar status and enables/disables GUI<br>
      */
     private void connectButton(){
         String comPort = view.getConnectionPort();
@@ -135,9 +135,9 @@ public final class OController implements Observer{
     }
     
     /**
-     * Starts data serial logging
-     * Writes a "R" to serial to start data logging on Arduino
-     * Sends Motor RPM, Amplitude and Sampling Rate to Arduino
+     * Starts data serial logging<br>
+     * Writes a "R" to serial to start data logging on Arduino<br>
+     * Sends Motor RPM, Amplitude and Sampling Rate to Arduino<br>
      * Enables/Disables GUI items
      */
     private void startDataLogging(){
@@ -180,9 +180,9 @@ public final class OController implements Observer{
         }); 
     }
     /**
-     * Stop data serial logging
-     * Writes a "C" to serial for complete
-     * Enables/Disables GUI items
+     * Stop data serial logging<br>
+     * Writes a "C" to serial for complete<br>
+     * Enables/Disables GUI items<br>
      */
     private void stopDataLogging(){
         upTime.stop();
@@ -228,7 +228,7 @@ public final class OController implements Observer{
     }   
     
     /**
-     * Updates up time text field
+     * Updates up time text field<br>
      * Updates every half second
      */
     private void updateUpTime(){
@@ -277,17 +277,17 @@ public final class OController implements Observer{
 
     /**
      * Sends raw serial data from Arduino to Excel file
-     * @param rawData 
+     * @param rawData String of raw data
      */
     public void writeToExcel(String rawData){
         file.ExcelWrite(rawData);
     }
 
     /**
-     * Observer for incoming Arduino rawData
+     * Observer for incoming Arduino rawData<br>
      * Handles Arduino conditions
-     * @param o
-     * @param arg 
+     * @param o Observable
+     * @param arg Object
      */
     @Override
     public void update(Observable o, Object arg) {

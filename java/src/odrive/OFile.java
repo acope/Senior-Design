@@ -56,7 +56,7 @@ public class OFile {
     
     /**
      * Returns the file name of workbook
-     * @return 
+     * @return work book name
      */
     public String GetFileName(){
         return workBookName; 
@@ -66,7 +66,7 @@ public class OFile {
      * Takes in raw data from Arduino and writes to Excel sheet
      * rawdata is in form of Arduino Timestamp,MotorRPM,Input RPM, Output RPM, Voltage
      * Other calculations for Power, Current, ect are performed as well
-     * @param rawdata 
+     * @param rawdata string of raw data
      */
     public void ExcelWrite(String rawdata){
         DecimalFormat df = new DecimalFormat("##.##E0");
@@ -126,7 +126,7 @@ public class OFile {
 
     /**
     * Creates a new workbook
-    * @param filename
+    * @param filename file name string to read
     * @return workbook name
     */
     public HSSFWorkbook readFile(String filename){
