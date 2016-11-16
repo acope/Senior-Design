@@ -23,7 +23,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 /**
  *
  * @author Dana
- * @version 1.1
+ * @version 1.3
  */
 public class OFile {
 
@@ -43,7 +43,7 @@ public class OFile {
     private int inputRPM;
     private int outputRPM;
     private double voltage;
-    private final int VOLTAGE_DIVIDER_RESISTANCE = 1500000;
+    private final int VOLTAGE_DIVIDER_RESISTANCE = 16; //In OHMs
     
     private final String[] readData = new String[10]; 
     /**
@@ -152,12 +152,12 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage", "Current", "Power"}; 
+        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(I)", "Power(W)"}; 
         
         String date = dt.getDateNumOnly();
         String time = dt.getTimeNumOnly();         
         
-        workBookName = ("WaveWaterWorks_" + date + time + ".xls"); //Create new excel file with name and date stamp 
+        workBookName = ("WaveWaterWorks_" + date + "_" + time + ".xls"); //Create new excel file with name and date stamp 
         
         try {
             newBook = new FileOutputStream(workBookName);
