@@ -20,7 +20,7 @@ import org.zu.ardulink.Link;
  * Built using Model/View/Controller Achitecture
  * Initializes the GUI and controls the serial input and file logging
  * @author Austin Copeman
- * @version 1.1
+ * @version 1.3
  */
 public final class OController implements Observer{
     private final OView view;
@@ -157,11 +157,11 @@ public final class OController implements Observer{
 
             
             serial.sendMotorRPM(getSetMotorRPM()); //Send motor speed
-            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor RPM sent to Arduino");
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor RPM: {0}, sent to Arduino", getSetMotorRPM());
             serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude 
-            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor amplitude sent to Arduino");
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor amplitude: {0}, sent to Arduino", getAmplitudeComboBox());
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
-            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Sampling rate sent to Arduino");
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Sampling rate: {0}, sent to Arduino", getSampleRateSlider());
             link.writeSerial("R"); //Send initiate recording
             //Enable/Disable GUI
             view.inputPanelEnabled(true);
