@@ -278,9 +278,10 @@ public final class OController implements Observer{
     /**
      * Sends raw serial data from Arduino to Excel file
      * @param rawData String of raw data
+     * @param samplingRate sampling rate of Arduino
      */
-    public void writeToExcel(String rawData){
-        file.ExcelWrite(rawData);
+    public void writeToExcel(String rawData, String samplingRate){
+        file.ExcelWrite(samplingRate + "," + rawData);
     }
 
     /**
@@ -320,12 +321,13 @@ public final class OController implements Observer{
                 for(int i=1; i<str.length()-1; i++){
                     char c = str.charAt(i);
                     build.append(c);
-                }                
+                }
+
                 String[] separated = build.toString().split("[,]+"); 
                 view.setStatusBarText("Data sample " + separated[0] + " collected." + "Please do not disconnect the Arduino");
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data: " + build.toString(), arg);
                 
-                writeToExcel(build.toString());
+                writeToExcel(build.toString(),Integer.toString(getSampleRateSlider()));
                 break;
             //Error state
             case 'Z':

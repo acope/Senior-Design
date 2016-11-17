@@ -36,12 +36,13 @@ public class OFile {
     private HSSFWorkbook wb; 
     private FileOutputStream out;
     private final DataConversion convert;
-    private DateTime dt;
+    private final DateTime dt;
     
     private int datastamp;
+    private int samplingRate;
     private int motorRPM;
-    private int inputRPM;
-    private int outputRPM;
+    private double inputRPM;
+    private double outputRPM;
     private double voltage;
     private final int VOLTAGE_DIVIDER_RESISTANCE = 16; //In OHMs
     
@@ -69,39 +70,46 @@ public class OFile {
      * @param rawdata string of raw data
      */
     public void ExcelWrite(String rawdata){
-        DecimalFormat df = new DecimalFormat("##.##E0");
+        DecimalFormat df = new DecimalFormat("####.##");
         //Timestamp from Java 
         String date = dt.getDate();
         String time = dt.getTime();
-        readData[0] = date;
-        readData[1] = time;
         //Separate raw data by commas
         String rawdelimit = "[,]+"; 
         String[] separated = rawdata.split(rawdelimit); 
-        //copy separated data, with Java date and time first, into array
-       // System.arraycopy(separated, 0, readData, 2, separated.length);
+
         for (int i=0; i<separated.length; i++){
-          readData[i+2] = separated[i];
+          //readData[i+2] = separated[i];
           if(i==0){
-              datastamp = Integer.parseInt(separated[i]);
+              samplingRate = Integer.parseInt(separated[i]);
           }
           if(i==1){
-              motorRPM = Integer.parseInt(separated[i]);
+              datastamp = Integer.parseInt(separated[i]);
           }
           if(i==2){
-              inputRPM = Integer.parseInt(separated[i]);
+              motorRPM = Integer.parseInt(separated[i]);
           }
           if(i==3){
-              outputRPM = Integer.parseInt(separated[i]);
+              inputRPM = convert.convertRawRPM(Integer.parseInt(separated[i]), samplingRate);
           }
           if(i==4){
-              int rawVoltage = Integer.parseInt(separated[i]);
-              voltage = (((double)rawVoltage * 5 * 14.5)  / 1024); //255 = range, 5 = 0v to 5v 14.5 = voltage divider ratio
+              outputRPM = convert.convertRawRPM(Integer.parseInt(separated[i]), samplingRate);
+          }
+          if(i==5){
+              voltage = convert.convertRawVoltage(Integer.parseInt(separated[i]));
           }
         }
+        
+        readData[0] = date;
+        readData[1] = time;
+        readData[2] = Integer.toString(datastamp);
+        readData[3] = Integer.toString(motorRPM); //Read dc motor rpm
+        readData[4] = df.format(inputRPM); //input to odrive
+        readData[5] = df.format(outputRPM); //output of odrive
+        readData[6] = df.format(voltage);
         readData[7] = df.format(convert.calculateCurrent(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Current
         readData[8] = df.format(convert.calculatePower(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Power
-        readData[9] = "-";//Need to calculate efficiency
+        //readData[9] = "-";//Need to calculate efficiency
         wb = readFile(workBookName);
         HSSFSheet = wb.getSheetAt(0); 
         Row newRow = HSSFSheet.createRow(HSSFSheet.getPhysicalNumberOfRows());
@@ -152,7 +160,7 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(I)", "Power(W)"}; 
+        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(A)", "Power(W)"}; 
         
         String date = dt.getDateNumOnly();
         String time = dt.getTimeNumOnly();         
