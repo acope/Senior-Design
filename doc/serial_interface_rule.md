@@ -2,7 +2,7 @@
 
 This document defines the rules for serial communication between microcontroller and computer.
 
-Revision: 1.4
+Revision: 2.0
 
 ### Serial Communication Specification
 - Communication Speed: 115200 bps
@@ -31,6 +31,13 @@ Revision: 1.4
 	5. Measured voltage
 - MC shall send **"E"** to indicate end of data transmission.
 - PC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
+
+##### Data Format
+- Timestamp doesn't need any conversion
+- Motor RPM doesn't need any conversion (converted at Arduino)
+- Input RPM needs conversion: RPM = raw_data * (60 / sample_rate) / 360
+- Output RPM needs conversion: RPM = raw_data * (60 / sample_rate) / 360
+- Voltage needs conversion: Voltage = raw_reading * 5 * 14.5 / 1024
 
 #### Indicating ERROR State
 - MC shall send **"Z"** to PC to indicate ERROR state.
@@ -64,15 +71,20 @@ Revision: 1.4
 
 #### Change Motor Speed Request
 - PC shall send **"M"** to indicate motor change request.
-- PC shall send value in in **4 digit ASC2 string**.
+- PC shall send in value between 0 RPM and 3000 RPM in **4 digit ASC2 string**.
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
 
 #### Change Amplitude Request
 - PC shall send **"D"** to indicate motor change request.
-- PC shall send value in in **4 digit ASC2 string**.
+- PC shall send in value between 90 degree and 120 degree in **4 digit ASC2 string**.
 - PC shall send **"E"** to indicate end of transmission.
 - MC shall respond with **"A"** or **"F"** to indicate acknowledge or fail.
+
+#### Alive Checking Signal
+- PC shall send **"Q"** periodically to Arduino to inform that GUI is working.
+- MC shall monitor this message, and stop motor if MC doesn't receive signal for 5 consecutive times.
+- MC shall enter error state and sends error message to PC indicates the aliva signal check fail.
 
 ### Note
 - If additional definitions are needed, create a issue or email to discuss.
