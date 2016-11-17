@@ -54,7 +54,7 @@ typedef struct {
 #define OUTPUT_RPM_PIN 20
 
 // analog input pins
-#define VOLTAGE_PIN 4
+#define VOLTAGE_PIN 5
 
 // analog output pin
 #define PWM_PIN 7
