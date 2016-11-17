@@ -190,7 +190,7 @@ public class OFile {
             labelStyle.setVerticalAlignment(VerticalAlignment.CENTER);    
             c.setCellStyle(labelStyle);
             
-            sheet.setDefaultColumnWidth(30);
+            sheet.setDefaultColumnWidth(15);
             sheet.createFreezePane(0, 1);
         }
         
