@@ -70,7 +70,7 @@ public class OFile {
      * @param rawdata string of raw data
      */
     public void ExcelWrite(String rawdata){
-        DecimalFormat df = new DecimalFormat("####.##");
+        DecimalFormat df = new DecimalFormat("####.####");
         //Timestamp from Java 
         String date = dt.getDate();
         String time = dt.getTime();
