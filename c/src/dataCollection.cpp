@@ -35,9 +35,10 @@ void timerCallback()
 
     collected_data_.timestamp++;
     collected_data_.generated_voltage = analogRead(VOLTAGE_PIN);
+    // Send Raw Pulse Count instead of rpm for input/output rpm
     collected_data_.motor_rpm = (int)((float)(r_motor_rpm_) * (encoder_time_scale_ / motor_encoder_tooth_));
-    collected_data_.input_rpm = (int)((float)(r_input_rpm_) * (encoder_time_scale_ / odrive_encoder_tooth_));
-    collected_data_.output_rpm = (int)((float)(r_output_rpm_) * (encoder_time_scale_ / odrive_encoder_tooth_));
+    collected_data_.input_rpm = (unsigned int)r_input_rpm_;
+    collected_data_.output_rpm = (unsigned int)r_output_rpm_;
   }
 
   // time to check motor control
@@ -205,8 +206,8 @@ bool stopMotor()
 void motorSpeedControlPID()
 {
   // TODO: Increase max if system can handle
-  static const float kp = 1.5;
-  static const float ki = 1.8;
+  static const float kp = 0.5;
+  static const float ki = 1.2;
   static const float kd = 0.1;
   static const float out_min = 60.0;
   static const float out_max = 170.0;
