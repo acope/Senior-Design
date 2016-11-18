@@ -7,7 +7,7 @@ import javax.swing.Timer;
 import org.zu.ardulink.Link;
 
 /**
- *
+ * Used for safety purposes, sends a predetermined message to Arduino at a specified rate to acknowledge serial connection is still available
  * @author Austin Copeman
  */
 public class SafetyTimer implements ActionListener{
@@ -15,10 +15,19 @@ public class SafetyTimer implements ActionListener{
     private String message;
     private final Link link;
     private Timer t;
-    
+
+    /**
+     * Main constructor
+     * Sets link name and message sent is null
+     * @param link 
+     */
+    public SafetyTimer(String link) {
+        message = null;
+        this.link = Link.getInstance(link);
+    }
     
     /**
-     * Main constructor for safety timer
+     * Override constructor for safety timer
      * Default safety time is 100 milliseconds
      * @param link 
      * @param message 

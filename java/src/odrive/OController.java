@@ -1,6 +1,6 @@
 package odrive;
 
-import helper.UpTimeCounter;
+import helper.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
@@ -29,6 +29,7 @@ public final class OController implements Observer{
     private final UpTimeCounter upTime;
     private final OFile file;
     private Timer t;
+    private SafetyTimer safety;
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -43,7 +44,8 @@ public final class OController implements Observer{
         serial = new OSerial(link.getName());
         upTime = new UpTimeCounter();
         file = new OFile();
-        
+        //Create safety timer to send saefty to Arduino. 
+        safety = new SafetyTimer(link.getName(), "Q"); 
         //Add observer for serial data        
         serial.addObserver(OController.this);
         //Add action listeners     
@@ -91,6 +93,7 @@ public final class OController implements Observer{
                 if(connected) {
                     view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
                     view.connectionPanelEnabled(true);
+                    safety.start(); //Start safety message
                 }
             }
             catch(Exception ex){
@@ -122,6 +125,7 @@ public final class OController implements Observer{
         if (disconnected) {
             view.setStatusBarText("Disconnected from Arduino");
             view.connectionPanelEnabled(false);
+            safety.stop();
         }
     }
     
