@@ -18,7 +18,7 @@ public class UpTimeCounter implements Runnable{
     private long seconds;
     private String upTime;
     private boolean run = false; //True = start False = stop
-    Thread t;;
+    Thread t;
     
     /**
      * Main constructor

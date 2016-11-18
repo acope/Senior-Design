@@ -160,7 +160,7 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Arduino Datastamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(A)", "Power(W)"}; 
+        String[] labels = {"Date", "Time", "Data Stamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(A)", "Power(W)"}; 
         
         String date = dt.getDateNumOnly();
         String time = dt.getTimeNumOnly();         
