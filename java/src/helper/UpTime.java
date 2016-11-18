@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package helper;
 
 import java.awt.event.ActionEvent;
@@ -11,8 +6,8 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.Timer;
 
 /**
- *
- * @author mr_co_000
+ * Up time counter to determine how long the data collection has been running.
+ * @author Austin Copeman
  */
 public class UpTime implements ActionListener{
     
@@ -25,6 +20,9 @@ public class UpTime implements ActionListener{
     private String upTime;
     private Timer t;
     
+    /**
+     * Main constructor
+     */
     public UpTime() {
         init();
     }

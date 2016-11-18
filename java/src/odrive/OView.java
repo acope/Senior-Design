@@ -20,7 +20,6 @@ import org.zu.ardulink.gui.ConnectionStatus;
  * Built with AWT and Swing components
  * Future Updates: Design with JavaFX
  * @author Austin Copeman
- * @version 1.3
  */
 public class OView extends JFrame{
     private final int FREQ_MIN = 0; //Minimun motor frequency 

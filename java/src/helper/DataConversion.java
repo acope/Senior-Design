@@ -3,7 +3,6 @@ package helper;
 /**
  * Conversions for data
  * @author Austin Copeman
- * @version 1.1
  */
 public class DataConversion {
     

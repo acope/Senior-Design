@@ -10,7 +10,6 @@ import org.zu.ardulink.Link;
 /**
  * Controls the transmitting and receiving from serial port
  * @author Austin Copeman
- * @version 1.1
  */
 //Need to find a better way than to extend to Controller for passing data back
 public class OSerial extends Observable{

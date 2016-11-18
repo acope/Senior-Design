@@ -23,7 +23,6 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 /**
  *
  * @author Dana
- * @version 1.3
  */
 public class OFile {
 

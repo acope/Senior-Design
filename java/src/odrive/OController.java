@@ -20,7 +20,6 @@ import org.zu.ardulink.Link;
  * Built using Model/View/Controller Achitecture
  * Initializes the GUI and controls the serial input and file logging
  * @author Austin Copeman
- * @version 1.3
  */
 public final class OController implements Observer{
     private final OView view;
