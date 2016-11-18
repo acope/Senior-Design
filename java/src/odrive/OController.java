@@ -26,7 +26,7 @@ public final class OController implements Observer{
     private final OView view;
     private final OSerial serial;
     private final Link link = Link.getDefaultInstance();
-    private final UpTimeCounter upTime;
+    private final UpTime upTime;
     private final OFile file;
     private Timer t;
     private SafetyTimer safety;
@@ -42,7 +42,7 @@ public final class OController implements Observer{
     public OController(){
         view = new OView();
         serial = new OSerial(link.getName());
-        upTime = new UpTimeCounter();
+        upTime = new UpTime();
         file = new OFile();
         //Create safety timer to send saefty to Arduino. 
         safety = new SafetyTimer(link.getName(), "Q"); 

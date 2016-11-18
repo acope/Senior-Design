@@ -1,75 +1,67 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package helper;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.concurrent.TimeUnit;
+import javax.swing.Timer;
 
 /**
- * Modified from
- * https://www.mkyong.com/java/java-time-elapsed-in-days-hours-minutes-seconds/
- * @author mkyong
- * @author modified by Austin Copeman
- * @version 1.1
+ *
+ * @author mr_co_000
  */
-public class UpTimeCounter implements Runnable{
+public class UpTime implements ActionListener{
+    
+    private int COUNT_TIME = 1000;
     private long startTime = System.currentTimeMillis();
-    private long currentTime = startTime;
     private long days;
     private long hours;
     private long minutes;
     private long seconds;
     private String upTime;
-    private boolean run = false; //True = start False = stop
-    Thread t;
+    private Timer t;
     
-    /**
-     * Main constructor
-     * Creates a new thread and starts the thread
-     */
-    public UpTimeCounter(){
-        this.t = new Thread(this);
-        run = false;
-        startThread(); //Bad implementation to start thread in constructor need to fix
+    public UpTime() {
+        init();
     }
-    
+
     @Override
-    public void run(){
-        if (run = true){
-            currentTime = System.currentTimeMillis();
-            getDurationBreakdown(currentTime - startTime);
-        }
+    public void actionPerformed(ActionEvent e) {
+        getDurationBreakdown(System.currentTimeMillis()-startTime);
     }
     
     /**
-     * starts the thread
+     * Initialize the timer
      */
-    private void startThread(){
-        t.start();
+    private void init(){
+        t = new Timer(COUNT_TIME, this);
     }
     
-    /**
-     * Starts the up time counter
-     * Retrieves current system time
+     /**
+     * Starts the timer
      */
     public void start(){
-        run = true;
         startTime = System.currentTimeMillis();
-        currentTime = startTime;
+        t.start();
+        getDurationBreakdown(0); //Used to prevent null
     }
     
     /**
-     * Stops running of timer
+     * Stops the timer
      */
     public void stop(){
-        run = false;
+        t.stop();
     }
     
-    /**
+        /**
      * Get current up time
      * @return up time
      */
     public String getUpTime(){
-        if(run == true){
-            run();
-        }
         return upTime;
     }     
     
@@ -105,7 +97,7 @@ public class UpTimeCounter implements Runnable{
         return seconds;
     }
     
-    /**
+        /**
      * Convert a millisecond duration to a string format
      * 
      * @param millis A duration to convert to a string form
@@ -137,4 +129,7 @@ public class UpTimeCounter implements Runnable{
 
         upTime = sb.toString();
     }
+    
+    
+    
 }
