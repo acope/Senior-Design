@@ -190,6 +190,7 @@ public final class OController implements Observer{
         view.setStatusBarText("Data logging has been stopped");         
         //PC sends C for complete of testing
         link.writeSerial("C");
+        serial.sendMotorRPM(0); //Send motor speed to insure motor does not move. SAFTEY!
         //Enable/Disable GUI
         view.inputPanelEnabled(false);
     }
@@ -229,6 +230,7 @@ public final class OController implements Observer{
     
     /**
      * Updates up time text field<br>
+     * Runs on its own thread<br>
      * Updates every half second
      */
     private void updateUpTime(){
@@ -236,6 +238,7 @@ public final class OController implements Observer{
             view.setUpTimeText(upTime.getUpTime());
         });
     }
+    
     
     /**
      * Get the motor frequency from the slider
