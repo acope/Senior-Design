@@ -51,14 +51,20 @@ volatile unsigned long r_input_rpm_ = 0;
 volatile unsigned long r_output_rpm_count_ = 0;
 volatile unsigned long r_output_rpm_ = 0;
 
+// time scale for rpm calculation
+volatile float encoder_time_scale_ = 600.0 / (float)DEF_SAMPLE_RATE;
+
 // Timer related variables
 volatile unsigned int p_motor_control_ = 2;
 volatile bool f_data_collection_ = false;
 volatile bool f_motor_control_ = false;
 volatile bool f_start_pid_ = false;
 
+const float motor_encoder_tooth_ = 15.0;
+const float odrive_encoder_tooth_ = 360.0;
+
 // Error Checking
-volatile unsigned int p_error_check_ = 60;
+volatile unsigned int p_error_check_ = 5;
 volatile bool f_error_check_ = false;
 
 // SD Card
@@ -68,7 +74,10 @@ volatile unsigned int file_index_ = 1;
 File sd_card_file_;
 char sd_card_input_path_[FILE_PATH_LENGTH];
 File sd_card_input_;
-volatile bool restart_ = false;
+
+volatile bool restart_pid_ = false;
+volatile bool restart_sd_ = false;
+volatile bool restart_init_ = false;
 
 // Flags
 volatile bool f_record_request_ = false;
@@ -103,7 +112,7 @@ void loop()
   else if (state_ == prepare)
   {
     checkTimerTasks();
-
+    // motor speed is up, start recording.
     if (f_start_pid_)
     {
       collected_data_.timestamp = 0;
@@ -126,15 +135,19 @@ void serialEvent()
   {
     char inChar = (char)Serial.read();
 
+    // record request
     if (inChar == 'R')
       f_record_request_ = true;
 
+    // pause request
     if (inChar == 'P')
       f_pause_request_ = true;
 
+    // complete request
     if (inChar == 'C')
       f_complete_request_ = true;
 
+    // motor speed change request
     if (inChar == 'M')
     {
       char data[5];
@@ -145,10 +158,13 @@ void serialEvent()
         f_motor_speed_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
-    // amplitude change
+    // amplitude change request
     if (inChar == 'D')
     {
       char data[5];
@@ -159,10 +175,13 @@ void serialEvent()
         f_amplitude_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
-    // sample rate change
+    // sample rate change request
     if (inChar == 'X')
     {
       char data[5];
@@ -173,7 +192,10 @@ void serialEvent()
         f_sampling_rate_request_ = true;
       }
       else
+      {
         Serial.write('F');
+        Serial.write(255);
+      }
     }
 
   }
