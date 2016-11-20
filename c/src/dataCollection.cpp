@@ -21,17 +21,20 @@ void timerCallback()
   error_check_count++;
 
   // check alive state
-  if (reset_alive_count_down_)
+  if (state_ == recording)
   {
-    reset_alive_count_down_ = false;
-    alive_count_down_ = ALIVE_TIME;
-  }
-  else
-  {
-    // If I don't update for 500 ms, gui is dead
-    alive_count_down_--;
-    if (alive_count_down_ <= 0)
-      f_gui_dead_ = true;
+    if (reset_alive_count_down_)
+    {
+      reset_alive_count_down_ = false;
+      alive_count_down_ = ALIVE_TIME;
+    }
+    else
+    {
+      // If I don't update for 500 ms, gui is dead
+      alive_count_down_--;
+      if (alive_count_down_ <= 0);
+        f_gui_dead_ = true;
+    }
   }
 
   // time to check measurements
@@ -68,8 +71,7 @@ void timerCallback()
   if (error_check_count >= (p_error_check_ * input_condition_.sampling_rate) )
   {
     error_check_count = 0;
-    // FIXME: Test once all connected
-    //f_error_check_ = true;
+    f_error_check_ = true;
   }
 }
 
