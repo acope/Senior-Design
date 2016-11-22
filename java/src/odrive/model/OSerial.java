@@ -1,8 +1,10 @@
-package odrive;
+package odrive.model;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //Ardulink imports
 //https://github.com/marcomauro/Arduino-SerialRead-Java
 import org.zu.ardulink.Link;
@@ -72,16 +74,20 @@ public class OSerial extends Observable{
         switch (event){
             //Acknowledge
             case 'A':
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Acknowledge Serial Event", str);
                 break;               
             //Fail
             case 'F':
+                Logger.getLogger(OSerial.class.getName()).log(Level.WARNING, "Failed Serial Event", str);
                 break;            
             //Connection Test
             case 'T':
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino ready to transmit", str);
                 link.writeSerial("A");
                 break;              
             //Read to collect data
             case 'G':
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Case: G", str);
                 link.writeSerial("A");
                 break;          
             //Sending recorded data(raw data recieved from Arduino)
@@ -98,10 +104,12 @@ public class OSerial extends Observable{
                 break;
                 //Indicate normal state
             case 'N':
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino in normal state", str);
                 link.writeSerial("A");
                 break;
             //Recieve random unknown data, do nothing
             default:
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Unknown Arduino State", str);
                 break;
             }
         notifyObservers(str);

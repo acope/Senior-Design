@@ -1,4 +1,4 @@
-package odrive;
+package odrive.model;
 
 import helper.DataConversion;
 import helper.DateTime;

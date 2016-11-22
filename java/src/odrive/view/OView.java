@@ -1,11 +1,10 @@
-package odrive;
+package odrive.view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.JOptionPane;
 import javax.swing.border.BevelBorder;
@@ -52,15 +51,12 @@ public class OView extends JFrame{
     private JComboBox<String> ampComboBox;
     
     private SerialConnectionPanel serialConnectionPanel;
-    
     private ConnectionStatus connectionStatus;
     
     private JSlider freqSlider;
     private JSlider sampRateSlider;
     
-    private BufferedImage wwwLogo;
     private JLabel label;
-    private ImageIcon icon;
     
     private final Dimension buttonSize = new Dimension(225,50);
     private final Font buttonFont = new Font("Dialog", Font.PLAIN, 20);

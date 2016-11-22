@@ -1,4 +1,4 @@
-package odrive;
+package odrive.controller;
 
 import helper.*;
 import java.awt.Color;
@@ -10,6 +10,9 @@ import javax.swing.Timer;
 import java.util.Observer;
 
 import javax.swing.event.ChangeEvent;
+import odrive.model.OFile;
+import odrive.model.OSerial;
+import odrive.view.OView;
 
 //Ardulink import v0.6.1 (Need to update to v2.0.1)
 import org.zu.ardulink.Link;
@@ -92,7 +95,7 @@ public final class OController implements Observer{
                 if(connected) {
                     view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
                     view.connectionPanelEnabled(true);
-                    safety.start(); //Start safety message
+                    //safety.start(); //Start safety message
                 }
             }
             catch(Exception ex){
@@ -124,7 +127,7 @@ public final class OController implements Observer{
         if (disconnected) {
             view.setStatusBarText("Disconnected from Arduino");
             view.connectionPanelEnabled(false);
-            safety.stop();
+            //safety.stop();
         }
     }
     
@@ -308,15 +311,12 @@ public final class OController implements Observer{
         switch (event){
             //Acknowledge
             case 'A':
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Acknowledge Serial Event", arg);
                 break;               
             //Fail
             case 'F':
-                Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Failed Serial Event", arg);
                 break;                
             //Connection Test
             case 'T':
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Arduino ready to transmit", arg);
                 break;                
             //Read to collect data
             case 'G':
@@ -349,11 +349,9 @@ public final class OController implements Observer{
                 break;
                 //Indicate normal state
             case 'N':
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Arduino in normal state", arg);
                 break;
             //Recieve random unknown data, do nothing
             default:
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Unknown Arduino State", arg);
                 //Stop motor 
                 stopDataLogging();
                 break;

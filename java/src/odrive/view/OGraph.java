@@ -1,4 +1,4 @@
-package odrive;
+package odrive.view;
 
 import helper.DateTime;
 import org.jfree.chart.axis.ValueAxis;
