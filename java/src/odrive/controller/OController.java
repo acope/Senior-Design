@@ -1,6 +1,7 @@
 package odrive.controller;
 
-import helper.*;
+import helper.SafetyTimer;
+import helper.UpTime;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.util.Observable;
@@ -31,7 +32,7 @@ public final class OController implements Observer{
     private final UpTime upTime;
     private final OFile file;
     private Timer t;
-    private SafetyTimer safety;
+    private final SafetyTimer safety = new SafetyTimer(link.getName(), "Q", 50);
     
     private int motorFreq; //1RPM = 1/60Hz
     private int sampRate;
@@ -47,7 +48,7 @@ public final class OController implements Observer{
         upTime = new UpTime();
         file = new OFile();
         //Create safety timer to send saefty to Arduino. 
-        safety = new SafetyTimer(link.getName(), "Q"); 
+        
         //Add observer for serial data        
         serial.addObserver(OController.this);
         //Add action listeners     
@@ -95,7 +96,7 @@ public final class OController implements Observer{
                 if(connected) {
                     view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
                     view.connectionPanelEnabled(true);
-                    //safety.start(); //Start safety message
+                    
                 }
             }
             catch(Exception ex){
@@ -127,7 +128,6 @@ public final class OController implements Observer{
         if (disconnected) {
             view.setStatusBarText("Disconnected from Arduino");
             view.connectionPanelEnabled(false);
-            //safety.stop();
         }
     }
     
@@ -155,6 +155,7 @@ public final class OController implements Observer{
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "New Excel workbook created");
                 //Allows Arduino to get ready, figure out new way
                 Thread.sleep(2000);
+                
                 view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
                 //Start up time counter
                 upTime.start();
@@ -165,7 +166,7 @@ public final class OController implements Observer{
                 Logger.getLogger(OController.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            
+            safety.start(); //Start safety message
             serial.sendMotorRPM(getSetMotorRPM()); //Send motor speed
             Logger.getLogger(OController.class.getName()).log(Level.INFO, "Motor RPM: {0}, sent to Arduino", getSetMotorRPM());
             serial.sendAmplitude(Integer.parseInt(getAmplitudeComboBox())); //Send amplitude 
@@ -173,6 +174,7 @@ public final class OController implements Observer{
             serial.sendSamplingRate(getSampleRateSlider()*10); //Send Sampling Rate
             Logger.getLogger(OController.class.getName()).log(Level.INFO, "Sampling rate: {0}, sent to Arduino", getSampleRateSlider());
             link.writeSerial("R"); //Send initiate recording
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "'R' sent to Arduino");
             //Enable/Disable GUI
             view.inputPanelEnabled(true);
     }
@@ -191,6 +193,7 @@ public final class OController implements Observer{
      * Enables/Disables GUI items<br>
      */
     private void stopDataLogging(){
+        safety.stop();
         upTime.stop();
         Logger.getLogger(OController.class.getName()).log(Level.INFO, "Stop button selected");
         view.setStatusBarText("Data logging has been stopped");         

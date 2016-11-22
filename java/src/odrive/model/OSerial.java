@@ -74,21 +74,23 @@ public class OSerial extends Observable{
         switch (event){
             //Acknowledge
             case 'A':
-                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Acknowledge Serial Event", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Acknowledge event recieved from Arduino", str);
                 break;               
             //Fail
             case 'F':
-                Logger.getLogger(OSerial.class.getName()).log(Level.WARNING, "Failed Serial Event", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Fail event recieved from Arduino", str);
                 break;            
             //Connection Test
             case 'T':
-                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino ready to transmit", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Connection Test", str);
                 link.writeSerial("A");
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: 'A' sent to Arduino");
                 break;              
             //Read to collect data
             case 'G':
-                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Case: G", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Ready to collect data", str);
                 link.writeSerial("A");
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: 'A' sent to Arduino");
                 break;          
             //Sending recorded data(raw data recieved from Arduino)
             case 'S':               
@@ -104,12 +106,13 @@ public class OSerial extends Observable{
                 break;
                 //Indicate normal state
             case 'N':
-                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino in normal state", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Normal state event recieved from Arduino", str);
                 link.writeSerial("A");
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: 'A' sent to Arduino");
                 break;
             //Recieve random unknown data, do nothing
             default:
-                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Unknown Arduino State", str);
+                Logger.getLogger(OSerial.class.getName()).log(Level.INFO, "Arduino Serial Protocol: {0} -- Uknown event recieved from Arduino", str);
                 break;
             }
         notifyObservers(str);

@@ -2,6 +2,8 @@ package helper;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Timer;
 
 import org.zu.ardulink.Link;
@@ -24,6 +26,8 @@ public class SafetyTimer implements ActionListener{
     public SafetyTimer(String link) {
         message = null;
         this.link = Link.getInstance(link);
+        init();
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety timer constructor {0}", message + ", " + this.link.getName() + ", " + time);
     }
     
     /**
@@ -36,6 +40,7 @@ public class SafetyTimer implements ActionListener{
         this.link = Link.getInstance(link);
         this.message = message;
         init();
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety timer constructor {0}", message + ", " + this.link.getName() + ", " + time );
     }
     
     /**
@@ -49,6 +54,7 @@ public class SafetyTimer implements ActionListener{
         this.message = message;
         this.time = time;
         init();
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety timer constructor {0}", message + ", " + this.link.getName() + ", " + time );
     }
     
     /**
@@ -57,7 +63,10 @@ public class SafetyTimer implements ActionListener{
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        link.writeSerial(message);
+        boolean sent = link.writeSerial(message);
+        if (sent == false){
+            Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety not sent to Arduino");
+        }
     }
     
     /**
@@ -72,6 +81,7 @@ public class SafetyTimer implements ActionListener{
      */
     public void start(){
         t.start();
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety timer started");
     }
     
     /**
@@ -79,6 +89,7 @@ public class SafetyTimer implements ActionListener{
      */
     public void stop(){
         t.stop();
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety timer stopped");
     }
     
     /**
@@ -87,6 +98,7 @@ public class SafetyTimer implements ActionListener{
      */
     public void setSendTime(int time){
         this.time = time;
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "New safety time: {0}", this.time );
     }
     
     /**
@@ -94,6 +106,7 @@ public class SafetyTimer implements ActionListener{
      * @return time in milliseconds
      */
     public int getSendTime(){
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety time: {0}", this.time );
         return time;
     }
     
@@ -103,6 +116,7 @@ public class SafetyTimer implements ActionListener{
      */
     public void setMessage(String message){
         this.message = message;
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "New safety message: {0}", this.message );
     }
     
     /**
@@ -110,6 +124,7 @@ public class SafetyTimer implements ActionListener{
      * @return message
      */
     public String getMessage(){
+        Logger.getLogger(SafetyTimer.class.getName()).log(Level.INFO, "Safety message: {0}", this.message );
         return message;
     }
 }
