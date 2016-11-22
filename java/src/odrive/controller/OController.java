@@ -95,6 +95,7 @@ public final class OController implements Observer{
                 //If connected start listening to COM port and enable/disable GUI
                 if(connected) {
                     view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
+                    Thread.sleep(2000);
                     view.connectionPanelEnabled(true);
                     
                 }
