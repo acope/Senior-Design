@@ -84,6 +84,8 @@ typedef struct {
 #define DIR_PATH_LENGTH 10
 #define FILE_PATH_LENGTH 23
 
+#define ALIVE_TIME 5
+
 /* Global Variables */
 extern volatile DeviceState state_;  //!< microcontroller state
 extern String error_msg_;
@@ -138,5 +140,10 @@ extern volatile bool f_complete_request_;       ///< complete request task flag
 extern volatile bool f_motor_speed_request_;    ///< change motor speed request task flag
 extern volatile bool f_amplitude_request_;      ///< change amplitude request task flag
 extern volatile bool f_sampling_rate_request_;  ///< sampling rate change request task flag
+
+// Alive check
+extern volatile int alive_count_down_;         //!< keep track of alive count down
+extern volatile bool reset_alive_count_down_;  //!< reset count down when alive checked
+extern volatile bool f_gui_dead_;              //!< flag to indicate gui is dead
 
 #endif /* SRC_TYPEDEFINITIONS_H_ */

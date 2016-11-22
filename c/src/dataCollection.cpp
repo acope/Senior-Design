@@ -20,6 +20,23 @@ void timerCallback()
   motor_control_count++;
   error_check_count++;
 
+  // check alive state
+  if (state_ == recording)
+  {
+    if (reset_alive_count_down_)
+    {
+      reset_alive_count_down_ = false;
+      alive_count_down_ = ALIVE_TIME;
+    }
+    else
+    {
+      // If I don't update for 500 ms, gui is dead
+      alive_count_down_--;
+      if (alive_count_down_ <= 0);
+        f_gui_dead_ = true;
+    }
+  }
+
   // time to check measurements
   if (data_collection_count >= input_condition_.sampling_rate)
   {
@@ -54,13 +71,28 @@ void timerCallback()
   if (error_check_count >= (p_error_check_ * input_condition_.sampling_rate) )
   {
     error_check_count = 0;
-    // FIXME: Test once all connected
-    //f_error_check_ = true;
+    f_error_check_ = true;
   }
 }
 
 void checkTimerTasks()
 {
+  if (f_gui_dead_)
+  {
+    f_gui_dead_ = false;
+    // stop motor
+    stopMotor();
+    // close SD card
+    sd_card_file_.close();
+    sd_card_input_.close();
+    // Send error msg and go to error state
+    state_ = error;
+    Serial.write('Z');
+    Serial.print("GUI is dead... Restart Experiment");
+    Serial.write('E');
+    Serial.write(255);
+  }
+
   if (f_data_collection_)
   {
     f_data_collection_ = false;

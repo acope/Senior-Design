@@ -87,6 +87,11 @@ volatile bool f_motor_speed_request_ = false;
 volatile bool f_amplitude_request_ = false;
 volatile bool f_sampling_rate_request_ = false;
 
+// Alive check
+volatile int alive_count_down_ = ALIVE_TIME;
+volatile bool reset_alive_count_down_ = false;
+volatile bool f_gui_dead_ = false;
+
 /**
  * @brief Setup code that runs once Arduino powers on
  */
@@ -146,6 +151,10 @@ void serialEvent()
     // complete request
     if (inChar == 'C')
       f_complete_request_ = true;
+
+    // GUI alive check
+    if (inChar == 'Q')
+      reset_alive_count_down_ = true;
 
     // motor speed change request
     if (inChar == 'M')
