@@ -64,45 +64,15 @@ void loop() {
   {
     f_send_data = false;
     timestamp++;
-    //motor_rpm++;
-    //input_rpm++;
-    //output_rpm++;
-    //voltage++;
-    if (motor_rpm == 3500) motor_rpm = 2500;
-    if (input_rpm == 15) input_rpm = 8;
-    if (output_rpm == 30) input_rpm = 15;
-    if (voltage == 1020) voltage = 5;
+    motor_rpm++;
+    input_rpm++;
+    output_rpm++;
+    voltage++;
+    if (motor_rpm >= 3500) motor_rpm = 2500;
+    if (input_rpm >= 15) input_rpm = 8;
+    if (output_rpm >= 30) input_rpm = 15;
+    if (voltage >= 1020) voltage = 5;
   
-    byte buf[12];
-    
-    
-    buf[0] = timestamp & 255;
-    buf[1] = (timestamp >> 8)  & 255;
-    buf[2] = (timestamp >> 16) & 255;
-    buf[3] = (timestamp >> 24) & 255;
-    buf[4] = (motor_rpm) & 255;
-    buf[5] = (motor_rpm >> 8) & 255;
-    buf[6] = (input_rpm) & 255;
-    buf[7] = (input_rpm >> 8) & 255;
-    buf[8] = (output_rpm) & 255;
-    buf[9] = (output_rpm >> 8) & 255;
-    buf[10] = (voltage) & 255;
-    buf[11] = (voltage >> 8) && 255;
-    
-    /*
-    buf[0] = (byte)((timestamp >> 24) & 255);
-    buf[1] = (byte)((timestamp >> 16)  & 255);
-    buf[2] = (byte)((timestamp >> 8) & 255);
-    buf[3] = (byte)((timestamp) & 255);
-    buf[4] = (byte)((motor_rpm >> 8) & 255);
-    buf[5] = (byte)((motor_rpm) & 255);
-    buf[6] = (byte)((input_rpm >> 8) & 255);
-    buf[7] = (byte)((input_rpm) & 255);
-    buf[8] = (byte)((output_rpm >> 8) & 255);
-    buf[9] = (byte)((output_rpm) & 255);
-    buf[10] = (byte)((voltage >> 8) & 255);
-    buf[11] = (byte)((voltage) & 255);
-    */
     //WHEN VALUE REACHES 255 CAUSES JAVA TO CREATE A NEW LINE!!!! NEED TO USE ASCII???
     Serial.write('S');
     //Serial.write(buf, 12);
@@ -117,6 +87,7 @@ void loop() {
     Serial.print(voltage);
     Serial.write('E');
     Serial.write(255);
+    delay(1000);
   }
 }
 
