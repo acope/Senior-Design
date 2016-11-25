@@ -1,0 +1,28 @@
+{
+    "name": "TimerOne", 
+    "repository": {
+        "url": "https://github.com/PaulStoffregen/TimerOne.git", 
+        "type": "git"
+    }, 
+    "platforms": [
+        "atmelavr", 
+        "teensy"
+    ], 
+    "frameworks": [
+        "arduino"
+    ], 
+    "version": "aaeb4a36f5", 
+    "authors": [
+        {
+            "maintainer": false, 
+            "name": "Paul Stoffregen", 
+            "url": "https://github.com/PaulStoffregen", 
+            "email": null
+        }
+    ], 
+    "keywords": [
+        "timer"
+    ], 
+    "id": 131, 
+    "description": "Allow to use the built-in 16 bit Timer1"
+}
