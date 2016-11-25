@@ -79,22 +79,16 @@ Computer (java) setup goes here
 #### Arduino Mega Code
 
 1. Clone ```sd_www_odtu``` repository into local folder.
-
-  If you are on Linux, run
-  ```bash
-  git clone https://[YOUR USERNAME]@bitbucket.org/kmalhan/sd_www_odtu.git
-  ```
 2. Open Atom with Platform IO
 3. Open ```Platform IO Home``` and select ```Open Project```
 4. Select ```c``` folder inside repository.
 5. Go to ```PlatformIO``` -> ```Build```
 6. Go to ```PlatformIO``` -> ```Upload```
-
-  For the reference ```PlatformIO``` option looks like following
-
-  ![PlatformIO Tab](c/doc/img/tab.png)
-
 7. Arduino is ready to be used
+
+For the reference ```PlatformIO``` option looks like following
+
+![PlatformIO Tab](c/doc/img/tab.png)
 
 #### Java Code
 
