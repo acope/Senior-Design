@@ -32,7 +32,7 @@ void timerCallback()
     {
       // If I don't update for 500 ms, gui is dead
       alive_count_down_--;
-      if (alive_count_down_ <= 0);
+      if (alive_count_down_ <= 0)
         f_gui_dead_ = true;
     }
   }
