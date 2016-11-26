@@ -131,7 +131,6 @@ extern volatile bool restart_sd_;                     //!< restart sd card
 extern volatile bool restart_init_;                   //!< restart initialization
 
 extern const float motor_encoder_tooth_;  //!< motor encoder tooth number
-extern const float odrive_encoder_tooth_; //!< odrive encoder tooth number
 
 // Flags
 extern volatile bool f_record_request_;         ///< record request task flag

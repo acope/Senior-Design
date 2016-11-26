@@ -61,7 +61,6 @@ volatile bool f_motor_control_ = false;
 volatile bool f_start_pid_ = false;
 
 const float motor_encoder_tooth_ = 15.0;
-const float odrive_encoder_tooth_ = 360.0;
 
 // Error Checking
 volatile unsigned int p_error_check_ = 5;
