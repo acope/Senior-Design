@@ -15,12 +15,13 @@ import java.util.logging.Logger;
  * RXTX dll are automatically created for Windows system ONLY! To use with other systems dll must be installed manually.<br>
  * Please see RXTX wiki for more support rxtx.qbang.org<br>
  * @author Austin Copeman
- * @version 1.5
+ * @version 1.5.1
  */
 public class ODrive {
     private static final String RXTX_SERIAL_DLL = "rxtxSerial.dll";
     private static final String PATH_WIN_32 = "/res/winDLLs/32bit/"; 
-    private static final String PATH_WIN_64 = "/res/winDLLs/64bit/"; 
+    private static final String PATH_WIN_64 = "/res/winDLLs/64bit/";
+    
     
     /**
      * Main

@@ -89,7 +89,7 @@ public class OFile {
               motorRPM = Integer.parseInt(separated[i]);
           }
           if(i==3){
-              inputRPM = convert.convertRawRPM(Integer.parseInt(separated[i]), samplingRate);
+              inputRPM = convert.convertRawRPM(Integer.parseInt(separated[i]), samplingRate)*3; //Multiply by 3 for ratio between gears
           }
           if(i==4){
               outputRPM = convert.convertRawRPM(Integer.parseInt(separated[i]), samplingRate);
@@ -105,9 +105,10 @@ public class OFile {
         readData[3] = Integer.toString(motorRPM); //Read dc motor rpm
         readData[4] = df.format(inputRPM); //input to odrive
         readData[5] = df.format(outputRPM); //output of odrive
-        readData[6] = df.format(voltage);
-        readData[7] = df.format(convert.calculateCurrent(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Current
-        readData[8] = df.format(convert.calculatePower(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Power
+        readData[6] = df.format(outputRPM * 7); //Alternator RPM: Ratio between gears
+        readData[7] = df.format(voltage);
+        readData[8] = df.format(convert.calculateCurrent(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Current
+        readData[9] = df.format(convert.calculatePower(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Power
         //readData[9] = "-";//Need to calculate efficiency
         wb = readFile(workBookName);
         HSSFSheet = wb.getSheetAt(0); 
@@ -159,7 +160,7 @@ public class OFile {
          * Must be created before writing to excel sheet
          */
     public void CreateWBook(){
-        String[] labels = {"Date", "Time", "Data Stamp", "Motor RPM", "Input RPM", "Output RPM", "Voltage(V)", "Current(A)", "Power(W)"}; 
+        String[] labels = {"Date", "Time", "Data Stamp", "Motor RPM", "Input RPM", "Output RPM", "Alternator RPM" ,"Voltage(V)", "Current(A)", "Power(W)"}; 
         
         String date = dt.getDateNumOnly();
         String time = dt.getTimeNumOnly();         

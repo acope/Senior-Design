@@ -42,7 +42,7 @@ public class DataConversion {
      */
     public double convertRawRPM(int rawRPM, int sampleRate){
         
-        return (double)rawRPM * (60.0 / (sampleRate)) / 360.0;
+        return (double)rawRPM * (60.0 / (sampleRate)) / 64.0; //64 = tooth per revolution, 60 = 60 seconds per minute
     }
     
     /**

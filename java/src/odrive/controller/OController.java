@@ -95,12 +95,12 @@ public final class OController implements Observer{
                 //If connected start listening to COM port and enable/disable GUI
                 if(connected) {
                     view.setStatusBarText("Connected to Arduino on " + comPort + " at " + baudRateS + "bps");
-                    Thread.sleep(2000);
+                    Thread.sleep(2000); //Allows Arduino to get ready before starting
                     view.connectionPanelEnabled(true);
                     
                 }
             }
-            catch(Exception ex){
+            catch(NumberFormatException | InterruptedException ex){
                 String message = ex.getMessage();
                 if(message == null || message.trim().equals(" ")){
                     message = "Generic Error on Connection!";
@@ -137,6 +137,7 @@ public final class OController implements Observer{
      */
     private void startButtonActionListener(){
         view.getStartButton().addActionListener((ActionEvent e) -> {
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Start button selected");
             startDataLogging();
         });
     }
@@ -149,14 +150,13 @@ public final class OController implements Observer{
      */
     private void startDataLogging(){
         try {
-                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Start button selected");
+                Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data logging started");
                 view.setStatusBarText("Setting up communication with Arduino. Please wait...");
                 //Create a new Excel workbook for data logging
                 file.CreateWBook();
                 Logger.getLogger(OController.class.getName()).log(Level.INFO, "New Excel workbook created");
                 //Allows Arduino to get ready, figure out new way
-                Thread.sleep(2000);
-                
+                Thread.sleep(2000);               
                 view.setStatusBarText("Data logging in process. Please do not disconnect the Arduino");
                 //Start up time counter
                 upTime.start();
@@ -185,6 +185,7 @@ public final class OController implements Observer{
      */   
     private void stopButtonActionListener(){
         view.getStopButton().addActionListener((ActionEvent e) -> {
+            Logger.getLogger(OController.class.getName()).log(Level.INFO, "Stop button selected");
             stopDataLogging();
         }); 
     }
@@ -196,7 +197,7 @@ public final class OController implements Observer{
     private void stopDataLogging(){
         safety.stop();
         upTime.stop();
-        Logger.getLogger(OController.class.getName()).log(Level.INFO, "Stop button selected");
+        Logger.getLogger(OController.class.getName()).log(Level.INFO, "Data logging stopped");
         view.setStatusBarText("Data logging has been stopped");         
         //PC sends C for complete of testing
         link.writeSerial("C");
@@ -347,7 +348,8 @@ public final class OController implements Observer{
                     build.append(c);
                 }
                 Logger.getLogger(OController.class.getName()).log(Level.WARNING, "Error on Arduino: " + build.toString(), arg);
-                view.setStatusBarText(build.toString());
+                view.errorJOptionPane("Error on Arduino: " + build.toString());
+                //view.setStatusBarText(build.toString());
                 //Stop Motor
                 stopDataLogging();
                 break;
