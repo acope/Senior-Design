@@ -72,7 +72,17 @@ Next, Set up environment to use Arduino Mesga ADK
 
 #### Desktop Software Development Environment
 
-Computer (java) setup goes here
+The Java code was originally developed with the IDE Netbeans v8.1 using Java JDK 1.8 32bit.
+The continuation of the Java code can be continued from from any prefered IDE.
+
+The following external libraries are needed for running and compilation of the code. They can be found in the respository under the ```Java``` section ```lib```
+1. Ardulink-v0.6.1
+2. dom4j-1.6.1
+3. jfreechart-1.0.19
+4. miglayout-4.0
+5. poi-3.15
+6. rxtx-2.1-7-bins-r2
+7. xmlbeans-2.3.0
 
 ## How to Compile from Source
 
@@ -92,6 +102,18 @@ For the reference ```PlatformIO``` option looks like following
 
 #### Java Code
 
-Compile and package instruction goes here
+To compile the code the easiest method is with an IDE. 
+To build in Netbeans
+1. Make sure no errors exist within the project or else the project will not build
+2. Press ```Clean and Build Project```, either from the toolbar or under the ```Run```
+3. If the project has been built with no errors in the folder that the project was created under in Netbeans and new folder called ```dist``` should appear with the jar file and dependencies.
 
 ## Troubleshooting
+The Java code has a built in logging function that is used for debugging when running. Currently this function is only available during real time operation, hopefully in future imporvements a log file can be created. 
+The logs can only be seen when the program is started with a command window
+To run the code with the command window perform the following:
+1. Open a command window and CD to location of the ODrive.jar file or open a file browser to the location of the ODrive.jar and hold down shift and right mouse click on an empty area within the window and press ```Open command window here```
+2. In the command window type ```Java -jar ODrive.jar```
+
+## Known Issues
+There is one know issue is the code, when the Java programming is running on a 64bit JVM system when the disconnect button is pressed the program freezes. No known way to fix this issue believe it is withing the DLL files included in the program. To prevent this issue simply close the GUI without pressing disconnect, the program will automatically disconnect from the Arduino
