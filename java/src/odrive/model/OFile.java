@@ -109,14 +109,15 @@ public class OFile {
         readData[7] = df.format(voltage);
         readData[8] = df.format(convert.calculateCurrent(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Current
         readData[9] = df.format(convert.calculatePower(voltage, VOLTAGE_DIVIDER_RESISTANCE)); //Power
-        //readData[9] = "-";//Need to calculate efficiency
+        
         wb = readFile(workBookName);
         HSSFSheet = wb.getSheetAt(0); 
         Row newRow = HSSFSheet.createRow(HSSFSheet.getPhysicalNumberOfRows());
  
-        for(int i=0; i<readData.length-1; i++){   
+        for(int i=0; i<readData.length; i++){   
             Cell c = newRow.createCell(i); 
             c.setCellValue(readData[i]);
+            Logger.getLogger(OFile.class.getName()).log(Level.INFO, "Data{0}: {1}", new Object[]{i, readData[i]});
         } 
         
         try { 
@@ -190,7 +191,7 @@ public class OFile {
             labelStyle.setVerticalAlignment(VerticalAlignment.CENTER);    
             c.setCellStyle(labelStyle);
             
-            sheet.setDefaultColumnWidth(15);
+            sheet.setDefaultColumnWidth(21);
             sheet.createFreezePane(0, 1);
         }
         
